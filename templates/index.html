@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Training Plan Generator</title>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    padding: 32px 16px 64px;
+    background: #F4F4F2;
+    color: #1A1A1A;
+    font-family: Calibri, "Segoe UI", Arial, sans-serif;
+  }
+  .wrap { max-width: 640px; margin: 0 auto; }
+  h1 { font-size: 20px; font-weight: 700; margin: 0 0 4px; }
+  .sub { color: #555; font-size: 13px; margin: 0 0 24px; }
+
+  form {
+    background: #FFF;
+    border: 1px solid #CCC;
+    padding: 20px 24px 24px;
+  }
+
+  fieldset {
+    border: none;
+    border-top: 1px solid #DDD;
+    padding: 14px 0 4px;
+    margin: 0 0 4px;
+  }
+  fieldset:first-of-type { border-top: none; padding-top: 0; }
+  legend { font-size: 11px; font-weight: 700; text-transform: uppercase;
+           letter-spacing: 0.04em; color: #777; padding: 0; }
+
+  .row { display: flex; flex-wrap: wrap; gap: 12px 16px; margin-bottom: 12px; }
+  .field { flex: 1 1 160px; min-width: 140px; }
+  .field.wide { flex-basis: 100%; }
+  label { display: block; font-size: 12.5px; color: #333; margin-bottom: 3px; }
+  label .opt { color: #999; font-weight: normal; }
+  .hint { font-size: 11px; color: #888; margin-top: 2px; }
+
+  input[type=text], input[type=number], input[type=date], textarea {
+    width: 100%;
+    font: inherit;
+    font-size: 13px;
+    padding: 6px 7px;
+    border: 1px solid #BBB;
+    background: #FFF;
+  }
+  textarea { resize: vertical; min-height: 44px; }
+  input:focus, textarea:focus { outline: 2px solid #333; outline-offset: -1px; }
+
+  .checkbox-row { display: flex; align-items: center; gap: 6px; }
+  .checkbox-row input { width: auto; }
+  .checkbox-row label { margin: 0; }
+
+  details {
+    margin-top: 6px;
+    border-top: 1px solid #DDD;
+    padding-top: 10px;
+  }
+  summary {
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 700;
+    color: #333;
+    padding: 4px 0;
+  }
+  summary:hover { color: #000; }
+
+  .pair { display: flex; gap: 8px; }
+  .pair .field { flex: 1; }
+
+  button {
+    margin-top: 20px;
+    width: 100%;
+    padding: 10px;
+    font: inherit;
+    font-size: 14px;
+    font-weight: 700;
+    background: #1A1A1A;
+    color: #FFF;
+    border: none;
+    cursor: pointer;
+  }
+  button:hover { background: #333; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Training Plan Generator</h1>
+  <p class="sub">Fill in the basics. Everything else has a sensible default - open "Advanced" only if you want to change how the plan is built.</p>
+
+  <form action="/generate" method="post">
+
+    <fieldset>
+      <legend>Paces</legend>
+      <div class="row">
+        <div class="field">
+          <label for="z2_pace">Easy (Z2) pace <span class="opt">mm:ss / km</span></label>
+          <input type="text" id="z2_pace" name="z2_pace" value="{{ d.z2_pace }}" pattern="[0-9]{1,2}:[0-9]{2}" required>
+        </div>
+        <div class="field">
+          <label for="threshold_pace">Threshold pace <span class="opt">optional</span></label>
+          <input type="text" id="threshold_pace" name="threshold_pace" placeholder="auto: Z2 - 1:00" pattern="[0-9]{1,2}:[0-9]{2}">
+        </div>
+        <div class="field">
+          <label for="vo2max_pace">VO2max pace <span class="opt">optional</span></label>
+          <input type="text" id="vo2max_pace" name="vo2max_pace" placeholder="auto: threshold - 0:15" pattern="[0-9]{1,2}:[0-9]{2}">
+        </div>
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend>Plan</legend>
+      <div class="row">
+        <div class="field">
+          <label for="current_weekly_km">Current weekly mileage <span class="opt">km</span></label>
+          <input type="number" id="current_weekly_km" name="current_weekly_km" value="{{ d.current_weekly_km }}" min="0" step="1" required>
+        </div>
+        <div class="field">
+          <label for="training_distance_km">Goal race distance <span class="opt">km</span></label>
+          <input type="number" id="training_distance_km" name="training_distance_km" placeholder="e.g. 42.2" min="0" step="0.1">
+        </div>
+        <div class="field">
+          <label for="weeks">Plan length <span class="opt">weeks, optional</span></label>
+          <input type="number" id="weeks" name="weeks" placeholder="auto: ends on race day" min="1" step="1">
+        </div>
+      </div>
+      <div class="row">
+        <div class="field">
+          <label for="race_date">Race day</label>
+          <input type="date" id="race_date" name="race_date">
+        </div>
+        <div class="field">
+          <label for="taper_weeks">Taper <span class="opt">weeks, per race</span></label>
+          <input type="number" id="taper_weeks" name="taper_weeks" value="{{ d.taper_weeks }}" min="1" max="3" step="1">
+        </div>
+        <div class="field">
+          <label for="recovery_weeks">Recovery <span class="opt">weeks, per race</span></label>
+          <input type="number" id="recovery_weeks" name="recovery_weeks" value="{{ d.recovery_weeks }}" min="0" max="3" step="1">
+        </div>
+      </div>
+      <div class="checkbox-row">
+        <input type="checkbox" id="use_color" name="use_color">
+        <label for="use_color">Color-code quality sessions on the page</label>
+      </div>
+    </fieldset>
+
+    <details>
+      <summary>Advanced</summary>
+
+      <fieldset>
+        <legend>Multiple races</legend>
+        <div class="field wide">
+          <label for="additional_race_dates">Additional race dates <span class="opt">optional, one per line</span></label>
+          <textarea id="additional_race_dates" name="additional_race_dates" placeholder="2026-10-18"></textarea>
+          <p class="hint">Each date gets its own taper and recovery window, same as the main race day above.</p>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Quality session starting point</legend>
+        <div class="row">
+          <div class="field">
+            <label>Uphill <span class="opt">reps &times; minutes</span></label>
+            <div class="pair">
+              <input type="number" name="hill_reps" value="{{ d.hill_start[0] }}" min="1" step="1">
+              <input type="number" name="hill_min" value="{{ d.hill_start[1] }}" min="0" step="0.5">
+            </div>
+          </div>
+          <div class="field">
+            <label>VO2max <span class="opt">reps &times; minutes</span></label>
+            <div class="pair">
+              <input type="number" name="vo2max_reps" value="{{ d.vo2max_start[0] }}" min="1" step="1">
+              <input type="number" name="vo2max_min" value="{{ d.vo2max_start[1] }}" min="0" step="0.5">
+            </div>
+          </div>
+          <div class="field">
+            <label>Threshold <span class="opt">reps &times; minutes</span></label>
+            <div class="pair">
+              <input type="number" name="threshold_reps" value="{{ d.threshold_start[0] }}" min="1" step="1">
+              <input type="number" name="threshold_min" value="{{ d.threshold_start[1] }}" min="0" step="0.5">
+            </div>
+          </div>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Progression &amp; caps</legend>
+        <div class="row">
+          <div class="field">
+            <label for="max_growth_rate">Max weekly mileage growth</label>
+            <input type="number" id="max_growth_rate" name="max_growth_rate" value="{{ d.max_growth_rate }}" min="0" max="1" step="0.01">
+          </div>
+          <div class="field">
+            <label for="deload_factor">Deload week factor</label>
+            <input type="number" id="deload_factor" name="deload_factor" value="{{ d.deload_factor }}" min="0" max="1" step="0.01">
+          </div>
+          <div class="field">
+            <label for="long_run_fraction">Long run starting share</label>
+            <input type="number" id="long_run_fraction" name="long_run_fraction" value="{{ d.long_run_fraction }}" min="0" max="1" step="0.01">
+          </div>
+        </div>
+        <div class="row">
+          <div class="field">
+            <label for="long_run_build_factor">Long run vs. easy run (build weeks)</label>
+            <input type="number" id="long_run_build_factor" name="long_run_build_factor" value="{{ d.long_run_build_factor }}" min="1" step="0.1">
+          </div>
+          <div class="field">
+            <label for="long_run_min_increment">Long run min. weekly increase <span class="opt">km</span></label>
+            <input type="number" id="long_run_min_increment" name="long_run_min_increment" value="{{ d.long_run_min_increment }}" min="0" step="0.5">
+          </div>
+          <div class="field">
+            <label for="taper_long_run_floor">Taper long-run floor</label>
+            <input type="number" id="taper_long_run_floor" name="taper_long_run_floor" value="{{ d.taper_long_run_floor }}" min="0" max="1" step="0.01">
+          </div>
+        </div>
+        <div class="row">
+          <div class="field">
+            <label for="over_target_tolerance">Over-target flag tolerance</label>
+            <input type="number" id="over_target_tolerance" name="over_target_tolerance" value="{{ d.over_target_tolerance }}" min="0" step="0.01">
+          </div>
+          <div class="field">
+            <label for="min_easy_km">Min. easy run <span class="opt">km</span></label>
+            <input type="number" id="min_easy_km" name="min_easy_km" value="{{ d.min_easy_km }}" min="0" step="0.5">
+          </div>
+          <div class="field">
+            <label for="max_easy_km">Max. easy run <span class="opt">km</span></label>
+            <input type="number" id="max_easy_km" name="max_easy_km" value="{{ d.max_easy_km }}" min="0" step="0.5">
+          </div>
+        </div>
+        <div class="row">
+          <div class="field">
+            <label for="max_long_run_km">Max. long run <span class="opt">km, optional</span></label>
+            <input type="number" id="max_long_run_km" name="max_long_run_km" placeholder="auto: from race distance" min="0" step="0.5">
+          </div>
+          <div class="field">
+            <label for="segment_km">"Actual" gauge box size <span class="opt">km</span></label>
+            <input type="number" id="segment_km" name="segment_km" value="{{ d.segment_km }}" min="0.5" step="0.5">
+          </div>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Quality session structure</legend>
+        <div class="row">
+          <div class="field">
+            <label for="warmup_min">Warm-up <span class="opt">minutes</span></label>
+            <input type="number" id="warmup_min" name="warmup_min" value="{{ d.warmup_min }}" min="0" step="1">
+          </div>
+          <div class="field">
+            <label for="cooldown_min">Cool-down <span class="opt">minutes</span></label>
+            <input type="number" id="cooldown_min" name="cooldown_min" value="{{ d.cooldown_min }}" min="0" step="1">
+          </div>
+          <div class="field">
+            <label for="pause_min_default">Recovery jog (VO2max/threshold) <span class="opt">minutes</span></label>
+            <input type="number" id="pause_min_default" name="pause_min_default" value="{{ d.pause_min_default }}" min="0" step="0.5">
+          </div>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Calendar</legend>
+        <div class="field">
+          <label for="start_date">Force a start date <span class="opt">optional, snaps to that week's Monday</span></label>
+          <input type="date" id="start_date" name="start_date">
+        </div>
+      </fieldset>
+
+    </details>
+
+    <button type="submit">Generate plan</button>
+  </form>
+</div>
+</body>
+</html>
