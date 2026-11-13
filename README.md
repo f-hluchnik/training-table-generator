@@ -17,6 +17,10 @@ pytest
 
 The Typst compiler comes with the `typst` Python package; nothing else needs installing.
 
+## Season files
+
+A plan is described by a short TOML file; see `seasons/` for examples and [`docs/PLAN.md`](docs/PLAN.md) §4 for every field.
+
 ## Documentation
 
 - [`docs/PLAN.md`](docs/PLAN.md): goals, requirements, architecture, data contracts

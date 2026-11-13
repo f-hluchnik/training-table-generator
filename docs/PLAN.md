@@ -45,12 +45,13 @@ Modules of the package `ttg`. Everything marked *pure* follows D-013.
 
 ## 4. Data contracts
 
-### season.toml (input, D-011)
+### season.toml (input, D-011, D-025)
 
-Minimal example. Required: the races, a pace anchor and the starting load (what you run now).
+Required: at least one race, a race result as the pace anchor, and the starting load. Everything else is optional. Unknown fields are errors.
+
+Minimal example:
 
 ```toml
-title = "Marathon 2027"
 start = 2027-05-03            # or: weeks = 20  (neither → next Monday)
 
 [[race]]
@@ -59,66 +60,97 @@ date = 2027-10-10
 distance_km = 42.195          # priority = "A" by default
 
 [paces]
-race_result = { distance_km = 42.195, time = "3:30:02" }   # anchor for defaults
+race_result = { distance_km = 42.195, time = "3:30:02" }
 
-[load]                        # required: what you run now
-easy_run_km = 12              # regular weeks 12+12, reduced weeks 12+6 (D-022)
-runs_per_week = 4             # optional, 3–6 (D-016)
+[load]
+easy_run_km = 12
 long_run_km = 15
 ```
 
-The 2026 reference uses more:
+All fields:
+
+| Field | Type | Default | Meaning |
+|---|---|---|---|
+| `start` | date | — | Week 1 is the Monday-based week containing it. At most one of `start` and `weeks`; neither → next Monday (D-004). |
+| `weeks` | integer ≥ 1 | — | Plan length, counted back from the last race week. |
+| `[sheet] title` | text | `"training plan"` | Title printed on the sheet. |
+| `[sheet] rules` | list of texts | TRAINING_MODEL §8 | "Life happens" rules in the footer (D-008). |
+| `[[race]] name` | text | required | Unique. |
+| `[[race]] date` | date | required | First race day. |
+| `[[race]] end` | date ≥ `date` | — | Last day of a multi-day race. |
+| `[[race]] distance_km` | number > 0 | required | Decides the race type (TRAINING_MODEL §5). |
+| `[[race]] priority` | `"A"`, `"B"`, `"C"` | `"A"` | D-017. |
+| `[[race]] taper_weeks` | integer ≥ 1 | by distance | Includes the race week (D-009). Not for C races. |
+| `[[race]] specific_weeks` | integer ≥ 0 | by distance | Race-specific block. Not for C races. |
+| `[[race]] recovery_weeks` | integer ≥ 0 | by distance | Recovery after the race. Not for C races. |
+| `[paces] race_result` | `{ distance_km, time }` | required | Anchor for the default paces (D-015); `time` is `"h:mm:ss"` or `"m:ss"`. |
+| `[paces] easy`, `mp`, `threshold`, `interval` | `"m:ss"` per km | derived | Overrides (D-005). |
+| `[load] easy_run_km` | integer ≥ 1 | required | Length of an easy run (D-022). |
+| `[load] long_run_km` | integer ≥ 1 | required | Long run of the first week. |
+| `[load] runs_per_week` | integer 3–6 | 4 | D-016. |
+| `[overrides] N` | table | — | Changes to week N (D-012); fields below. |
+| `… easy` | `"regular"`, `"reduced"` | computed | Easy-run pattern (D-022). |
+| `… quality` | table, see below | computed | The quality session. |
+| `… long_run_km` | integer ≥ 0 | computed | 0 = no long run. |
+| `… note` | text | computed | Replaces the last column (planned km or *taper*, *race*, …). |
+
+A quality session is `{ type, reps, minutes | km }`. `type` is `"H"`, `"I"`, `"T"` or `"MP"` with `reps` and exactly one of `minutes` or `km` per repetition; `"S"` (strides) and `"none"` take no other field. Examples:
 
 ```toml
-[[race]]
-name = "Beskydská sedmička"
-date = 2026-08-28
-end = 2026-08-29               # multi-day race: both days bold
-distance_km = 101
-priority = "B"
-
-[paces]
-mp = "4:58"                    # goal pace overrides the derived one
-threshold = "4:30"
-
-[phases]                       # length overrides (weeks)
-recovery_after = { "Beskydská sedmička" = 2 }
-
-[overrides.1]                  # reduced easy pair (likewise weeks 2 and 3)
-easy = "reduced"
-[overrides.13]
-quality = "H 10x1'"
-[overrides.14]
-long_run_km = 40
-
-[sheet]
-phase_labels = ["base", "strength", "volume"]
+[overrides]
+1  = { easy = "reduced" }
+13 = { quality = { type = "H", reps = 10, minutes = 1 } }
+20 = { quality = { type = "MP", reps = 3, km = 3 }, note = "check" }
 ```
 
-The exact schema is fixed in T-02. Every field beyond the minimal example needs a decision (CLAUDE.md §3).
+**Errors** (nothing is built; the message names the field, e.g. `race[2].date: …`): unknown field, wrong type, value out of range, missing required field, `start` together with `weeks`, a race ending before `start`, duplicate race names, `end` before `date`, a phase length on a C race. Not yet checked: a race before the start implied by `weeks` (T-04) and an override for a week past the end of the plan (T-06).
 
-### plan.json (contract between expand and render, D-012)
+The 2026 reference and the test season are in `seasons/`.
+
+### plan.json (contract between expand and render, D-012, D-027)
+
+Everything the sheet shows, computed in Python, including the display strings. The template only lays it out. A hand-made sample of 2026 weeks 1–4 is `tests/fixtures/sample-plan-2026-weeks-1-4.json`.
 
 ```json
 {
+  "schema_version": 1,
   "title": "marathon training plan",
-  "paces": [{"code": "ER", "pace": "5:30", "label": "easy"}, ...],
+  "paces": [{"code": "I", "pace": "4:15+2'", "label": "hard"}, ...],
   "gauge": {"km_per_box": 1, "boxes": 80, "label_every_km": 10},
   "weeks": [{
-    "number": 1, "start": "2026-05-04", "days": [4,5,6,7,8,9,10],
-    "bold_days": [], "last_day_index": 6,
-    "month": "may", "phase": "base", "kind": "build",
+    "number": 23,
+    "days": [{"date": "2026-10-05", "text": "5", "race": false}, ..., {"date": "2026-10-10", "text": "10", "race": true}, null],
+    "month": "oct",
+    "kind": "race",
+    "phase_label": "taper",
     "easy": {"km": [12, 6], "text": "12+6"},
-    "quality": {"code": "H", "km": 8, "text": "H: 6x1'"},
-    "long": {"km": 15, "mp_km": 0, "text": "15 km"},
-    "planned_km": 41, "box_80pct": 33, "note": ""
-  }],
-  "footer": {"legend": "...", "rules": ["..."], "success": "≥ 80 % of planned km"},
-  "warnings": ["..."]
+    "quality": {"type": "none", "km": 0, "text": "–"},
+    "long": {"km": 42.2, "mp_km": 0, "text": "RACE"},
+    "planned_km": 18, "box_80pct": 15, "note": "race"
+  }, ...],
+  "footer": {
+    "colours": [{"colour": "green", "shape": "fill", "label": "easy run"}, ..., {"colour": "red", "shape": "triangle", "label": "unexpected event"}],
+    "rules": ["Short on time: …", "Tired or ill: …"],
+    "success": "A week counts at ≥ 80 % of the planned km."
+  },
+  "warnings": [{"code": "C4", "week": 14, "message": "…"}]
 }
 ```
 
-The renderer reads only this. Month and phase row spans are computed by the template by grouping equal consecutive values; this is layout, not logic.
+| Field | Meaning |
+|---|---|
+| `paces` | The pace legend, in print order; `pace` and `label` may be empty. |
+| `gauge.boxes` | The highest planned week rounded up to the next `label_every_km` (D-019). |
+| `weeks[].days` | Always 7 entries, Monday to Sunday; `text` is the printed day of the month; `race` marks a race day (printed bold); `null` for days after the plan ends on the last race day. |
+| `weeks[].month` | The month containing the week's Thursday. |
+| `weeks[].kind` | `build`, `deload`, `specific`, `taper`, `race`, `recovery`. |
+| `weeks[].phase_label` | The phase column text (D-026). |
+| `weeks[].quality.type` | As in the season file: `H`, `I`, `T`, `MP`, `S`, `none`. |
+| `weeks[].box_80pct` | The gauge box after which the 80 % border is drawn (D-019). |
+| `weeks[].note` | The text of the last column: the planned km or a word. |
+| `warnings` | Not printed on the sheet; `week` may be `null`. |
+
+How a race counts in `planned_km` is decided in T-06. Month and phase cells span the consecutive weeks with equal values; this grouping is layout, not logic.
 
 ## 5. The sheet (R-1)
 

@@ -1,0 +1,45 @@
+# The 2026 season, reproducing docs/reference/2026-marathon-training.pdf (D-020).
+# Overrides use only general features; where 2026 differs from the defaults and
+# no general setting covers it, the golden test lists the difference (T-06).
+
+start = 2026-05-04
+
+[sheet]
+title = "marathon training plan"
+
+[[race]]
+name = "Beskydská sedmička"
+date = 2026-08-28
+end = 2026-08-29
+distance_km = 101
+priority = "B"
+taper_weeks = 3        # default for a B ultra: 2
+recovery_weeks = 2     # default for an ultra: 3
+
+[[race]]
+name = "Běhej Lesy Lednice"
+date = 2026-10-10
+distance_km = 42.195   # its specific block is compressed to 2 weeks, with a warning
+
+[paces]
+# The marathon of this season, used as the check value in TRAINING_MODEL §2.
+race_result = { distance_km = 42.195, time = "3:30:02" }
+easy = "5:30"
+mp = "4:58"
+threshold = "4:30"     # about 10 s/km faster than derived: expected warning C8
+interval = "4:15"
+
+[load]
+easy_run_km = 12
+long_run_km = 15
+runs_per_week = 4
+
+[overrides]
+1 = { easy = "reduced" }
+2 = { easy = "reduced" }
+3 = { easy = "reduced" }
+13 = { quality = { type = "H", reps = 10, minutes = 1 } }   # the rule gives 9 × 1′ (TRAINING_MODEL §4)
+14 = { long_run_km = 40 }
+19 = { note = "flush" }
+20 = { note = "check" }
+21 = { note = "peak" }
