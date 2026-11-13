@@ -25,13 +25,6 @@ MONTHS = ("jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", 
 
 # The pace legend, in print order, labelled as in the reference.
 EASY_LABEL, INTERVAL_LABEL, THRESHOLD_LABEL = "easy", "hard", "comfortably hard"
-# D-007: the colour legend.
-COLOURS = (
-    {"colour": "green", "shape": "fill", "label": "easy run"},
-    {"colour": "yellow", "shape": "fill", "label": "quality run"},
-    {"colour": "blue", "shape": "fill", "label": "long run"},
-    {"colour": "red", "shape": "triangle", "label": "unexpected event"},
-)
 
 # D-018 notation.
 NO_SESSION = "–"
@@ -57,7 +50,6 @@ def export(plan: Plan, warnings: Iterable[PlanWarning]) -> dict[str, Any]:
         "weeks": [_week(week, plan.season.races) for week in plan.weeks],
         "footer": {
             "races": [race_text(race) for race in plan.season.races],
-            "colours": list(COLOURS),
             "rules": list(sheet.rules),
             "success": SUCCESS_TEXT,
         },

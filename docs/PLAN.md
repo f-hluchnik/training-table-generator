@@ -133,7 +133,6 @@ Everything the sheet shows, computed in Python, including the display strings. T
   }, ...],
   "footer": {
     "races": ["Beskydská sedmička 28–29 aug (B)", "Běhej Lesy Lednice 10 oct (A)"],
-    "colours": [{"colour": "green", "shape": "fill", "label": "easy run"}, ..., {"colour": "red", "shape": "triangle", "label": "unexpected event"}],
     "rules": ["Short on time: …", "Tired or ill: …"],
     "success": "A week counts at ≥ 80 % of the planned km."
   },
@@ -175,8 +174,9 @@ Column order as in the reference:
 
 Below the table:
 - the pace legend (e.g. `ER=5:30 [easy]; I=4:15+2′ [hard]; …`)
-- the colour legend (D-007)
 - the life-happens rules and the 80 % rule (D-008, D-006)
+
+No colour legend: the sheet is black and white, and the colours the runner uses are his own (D-032).
 
 Typography follows the reference: a serif face for the calendar, monospace for the prescriptions. Line weights follow D-024.
 

@@ -34,7 +34,7 @@ The planned km of a week is the sum of its planned sessions (quality sessions es
 - **Calendar cells:** one per day, coloured after each run: green easy, yellow quality, blue long, red triangle in a corner for an unexpected event (illness, trip, ...).
 - **Gauge:** narrow boxes of 2 km, coloured at the end of the week by the km actually run.
 
-The tool tracks nothing; it only prints the empty sheet and the colour legend.
+The tool tracks nothing; it only prints the empty sheet. *Amended by D-032:* no colour legend on the sheet.
 
 ### D-008 "Life happens" rules printed on the sheet
 The order in which sessions are dropped is printed in the footer. The text is configurable.
@@ -244,3 +244,6 @@ How `ttg.expand` turns phases into weeks. The numbers are named constants in `tt
 - **C3 compares easy runs + long run**, not the total planned km. *Owner, S5:* agreed. On the total, 2026 warned in weeks 2, 6 and 10 only because the rotation moves from hills (estimated 6 km) to intervals (10 km); now it warns only for week 14, the 40 km long-run override.
 - **C7 is compared in whole km**, the sheet's precision (D-025). *Proposed.* 2026 week 2 (I 5 × 3′ = 3.53 km against 8 % of 44 km = 3.52 km) no longer warns over 0.01 km. The I progression holds within the same limit (D-030), so C7 fires only for overrides; test-2027 has no warnings.
 - 2026 warns C8, C4 (weeks 13, 14), C3 (week 14) and C1 (week 23). The ticket expected C4, C8 and the shortened specific block; C3 for week 14 is the override's jump and is kept.
+### D-032 No colour legend on the sheet
+*Owner, S5:* the sheet is otherwise black and white, so a legend of coloured swatches is out of place. The colour scheme of D-007 stays the runner's own; the sheet and plan.json no longer carry it (`footer.colours` removed from the contract).
+*Later, if wanted:* an option for coloured print, where the table is its own legend (e.g. the ER, QR and LR columns tinted in the colours of their runs), ticket T-13.
