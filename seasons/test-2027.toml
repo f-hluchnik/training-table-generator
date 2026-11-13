@@ -1,0 +1,29 @@
+# An arbitrary season that tests the defaults (D-020): two tune-up races and a
+# marathon, everything else defaulted. The owner reviews its output once (T-06),
+# then it is frozen as a snapshot.
+
+start = 2027-03-01
+
+[[race]]
+name = "Half marathon"
+date = 2027-04-04
+distance_km = 21.0975
+priority = "C"
+
+[[race]]
+name = "10 km"
+date = 2027-09-05
+distance_km = 10
+priority = "C"
+
+[[race]]
+name = "Marathon"
+date = 2027-10-10
+distance_km = 42.195
+
+[paces]
+race_result = { distance_km = 42.195, time = "3:30:02" }
+
+[load]
+easy_run_km = 12
+long_run_km = 15

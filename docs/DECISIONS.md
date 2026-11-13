@@ -118,12 +118,14 @@ Default: A.
 - `seasons/2026.toml` must reproduce the reference table, using overrides where 2026 differs from the new defaults. This tests expressiveness.
 - `seasons/test-2027.toml` is an arbitrary season (the owner has no 2027 races yet) whose output the owner reviews once and which is then frozen. This tests the defaults. Proposal: half marathon (C) in April, 10 km (C) in early September, marathon (A) in October.
 
+*Amended 13 Nov 2026 (owner):* the 2026 plan has known flaws and is not a perfect example. No input field or rule is added only to reproduce it. `seasons/2026.toml` uses the general features; every remaining difference is listed in the golden test as intentional. Known so far: the grey weekly km in the reference are not the sums of the sessions (its second page subtracts a correction, e.g. 38 printed for a 41 km week), whereas D-006 prints the sum; and the phase labels follow D-026.
+
 ---
 
 ## Open questions (need the owner)
 
 - **Q-1** *Answered:* Python 3.11 and 3.12 available; work in a virtual environment → D-011.
-- **Q-2** *Answered:* only labels → D-021.
+- **Q-2** *Answered:* only labels → D-021, later replaced by D-026.
 - **Q-3** *Answered:* easy runs don't grow → D-022.
 - **Q-4** *Answered:* a thicker line, minimal → D-019.
 - **Q-5** *Answered:* km only in v1; elevation is a later ticket. The ultra quality sessions are not limited to hills → D-023.
@@ -134,6 +136,8 @@ Default: A.
 ## Agreed later in the session
 
 ### D-021 Phase names are display labels only
+*Superseded by D-026 (13 Nov 2026): the position-based labels were arbitrary.*
+
 All general-preparation weeks are one phase kind, *build*, with the same rules. The rotated phase label on the sheet is a mental map for the runner. Build blocks are labelled by position, one label per 4-week cycle: *base*, *strength*, *volume*, then *volume* again. The labels are configurable in `[sheet]`. Specific, taper, race and recovery phases have their own default labels.
 
 ### D-022 Easy runs: predictable background, no growth
@@ -157,3 +161,27 @@ The sheet is printed and kept on the wall for months, so it must look aesthetica
 
 No other weights. The exact values (e.g. 1.5 / 0.75 / 0.25 pt) and greys are chosen in T-08 and approved by the owner on a printed page.
 
+---
+
+## Agreed in session S1 (13 Nov 2026)
+
+### D-025 season.toml schema
+The fields and their validation are documented in PLAN §4. Choices beyond PLAN's first draft:
+- **Phase lengths live on the race:** optional `taper_weeks`, `specific_weeks`, `recovery_weeks` on `[[race]]`, instead of a separate `[phases]` section keyed by race name. A length belongs to one race, and a mistyped race name cannot silently miss. Not allowed on C races (D-017).
+- **A quality override is a table,** `{ type = "H", reps = 10, minutes = 1 }`, not a notation string like `"H 10x1'"`. *Owner:* prefer the explicit form, so the file is clear when coming back to it after months.
+- **Display-only settings are in `[sheet]`:** `title` and `rules` (D-008). No phase labels (D-026).
+- **`race_result` is always required,** even when every pace is overridden: check C8 compares an overridden threshold pace with the derived one.
+- **Overrides per week:** `easy`, `quality`, `long_run_km`, `note`. *Owner:* notes for special weeks are wanted (e.g. *holiday*). There is no label override (D-026).
+- Km in the load and in overrides are whole numbers, as printed on the sheet.
+
+### D-026 Phase labels are derived, never typed
+*Owner:* labels should not be arbitrary; rather none than random ones. The phase column shows only labels the compiler derives from the phase:
+- general build weeks, deloads included → *build*;
+- the race-specific block → the race type: *10 km*, *half*, *marathon*, *ultra*;
+- the taper including the race week → *taper*;
+- recovery after a race → *recovery*.
+
+Not configurable. *Supersedes* D-021 (base / strength / volume by position).
+
+### D-027 plan.json contract
+The fields are documented in PLAN §4. Every value the sheet prints is computed in Python, including each day's printed date and whether it is a race day (D-012); the template does no date arithmetic. Days are always 7 per week, `null` after the plan ends. `schema_version` marks the contract for a future web renderer (Q-6). Warnings are structured (`code`, `week`, `message`) and not printed on the sheet.

@@ -2,7 +2,7 @@
 
 Status: **todo**, **in progress**, **done**, **blocked (reason)**. One branch per ticket, named `t-NN-short-name`.
 
-All decisions needed for T-01–T-10 are made (D-001–D-022). Q-5 and Q-6 are for the later tickets.
+All decisions needed for T-01–T-10 are made (D-001–D-027). Q-5 and Q-6 are for the later tickets.
 
 ```
 T-01 ─▶ T-02 ─┬─▶ T-03 ─┐
@@ -23,7 +23,7 @@ T-01 ─▶ T-02 ─┬─▶ T-03 ─┐
 
 **Done when:** `pip install -e .[dev] && pytest` passes on a clean checkout (with an empty test suite plus one smoke test) and CI is green.
 
-### T-02 Domain model and season file — todo
+### T-02 Domain model and season file — done
 - `model` dataclasses, `spec` loader and validation with clear error messages.
 - Fix the `season.toml` schema (PLAN §4).
 - Fix the `plan.json` schema and write a hand-made sample for the first 4 weeks of 2026, which T-08 uses.
@@ -31,8 +31,10 @@ T-01 ─▶ T-02 ─┬─▶ T-03 ─┐
 
 **Done when:** both seasons load; invalid files (bad date, start after the last race, unknown field) fail with a message naming the field; the schema is documented in PLAN §4.
 
+*Done 13 Nov 2026 (S1):* schemas D-025–D-027. The `Pace` type (parse and format) was salvaged here because the loader validates paces; T-03 adds the derivation. Only the input-side model exists; `Phase`, `Week` and `Plan` come with T-04 and T-06. Sample: `tests/fixtures/sample-plan-2026-weeks-1-4.json`.
+
 ### T-03 Paces — todo
-- Salvage `Pace` from the prototype.
+- `Pace` (parse, format) exists since T-02; add what the derivation needs.
 - VDOT from a race result and derived easy / MP / T / I (D-015); overrides.
 - Verify against Daniels' published tables for at least three VDOT values.
 
@@ -40,6 +42,7 @@ T-01 ─▶ T-02 ─┬─▶ T-03 ─┐
 
 ### T-04 Calendar and phase layout — todo
 - Monday weeks; the month of a week; race weeks, multi-day races; plan length from `start` or `weeks`.
+- Error when a race falls before the start implied by `weeks` (the loader only checks an explicit `start`).
 - Backward layout and compression with warnings (`TRAINING_MODEL.md` §5).
 - Calibrate the default lengths table and record the sources.
 
@@ -59,8 +62,9 @@ T-01 ─▶ T-02 ─┬─▶ T-03 ─┐
 **Done when:** tests reproduce the 2026 quality sessions and their km.
 
 ### T-06 Week expansion and overrides — todo
-- Phase rules → weeks, the 3:1 cycle, phase labels (D-021), LR progression and caps, deload, taper, race and recovery weeks.
-- `[overrides]`; `export` to `plan.json`.
+- Phase rules → weeks, the 3:1 cycle, phase labels (D-026), LR progression and caps, deload, taper, race and recovery weeks.
+- `[overrides]`, with an error for an override past the last week; `export` to `plan.json` (D-027).
+- Prune `seasons/2026.toml` overrides that the defaults make unnecessary, and list the remaining differences (D-020).
 
 **Done when:** golden test: `seasons/2026.toml` produces the reference table week for week (intentional differences listed in the test). `test-2027` is reviewed by the owner and frozen as a snapshot.
 
@@ -70,7 +74,7 @@ Warnings C1–C8 (`TRAINING_MODEL.md` §7), each a small function with a named t
 **Done when:** each check has a firing and a non-firing test; 2026 produces the expected warnings (C4, C8, shortened specific block).
 
 ### T-08 Typst renderer — todo (can start after T-02)
-- `templates/plan.typ` reproducing the reference sheet from `plan.json` (PLAN §5); gauge per D-019 (1 km per box, 80 % marker); line hierarchy per D-024; an ER column wide enough for 4 easy runs.
+- `templates/plan.typ` reproducing the reference sheet from `plan.json` (PLAN §5), starting from `tests/fixtures/sample-plan-2026-weeks-1-4.json`; gauge per D-019 (1 km per box, 80 % marker); line hierarchy per D-024; an ER column wide enough for 4 easy runs.
 - Fonts: choose ones bundled or commonly available, and document the choice.
 
 **Done when:** the hand-made sample renders, and later the full 2026 plan. Compare a page image side by side with the reference PDF; the owner approves the look on a printed page (D-024).
