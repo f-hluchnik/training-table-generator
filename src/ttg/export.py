@@ -15,13 +15,14 @@ from ttg.sessions import RECOVERY_JOG_MINUTES, STRIDES_COUNT, STRIDES_SECONDS, h
 
 # 2: `weeks[].phase` added, `gauge.km_per_box` dropped (D-037).
 # 3: `weeks[].phase_short` added (D-044).
-SCHEMA_VERSION = 3
+# 4: `weeks[].box_80pct` dropped: the gauge has no 80 % marker (D-045).
+SCHEMA_VERSION = 4
 
 # D-019: one box per km (not configurable), labels every 10 km; the gauge covers the highest planned week.
 GAUGE_LABEL_EVERY_KM = 10
-# D-006: a week counts at ≥ 80 % of its planned km.
+# D-006: a week counts at ≥ 80 % of its planned km; printed in the footer only (D-045).
 SUCCESS_SHARE = 0.8
-SUCCESS_TEXT = "A week counts at ≥ 80 % of the planned km."
+SUCCESS_TEXT = f"A week counts as fully done at {round(SUCCESS_SHARE * 100)} % of its planned km."
 
 # D-044: the phase column's short forms, for a band too short to show the word at a readable size
 # (a one-week recovery). Race types by distance, not `mar.`, which would read as March.
@@ -154,7 +155,6 @@ def _week(week: Week, phase_number: int, races: Sequence[Race]) -> dict[str, Any
             "text": long_run_text(week.long_run),
         },
         "planned_km": week.planned_km,
-        "box_80pct": math.ceil(SUCCESS_SHARE * week.planned_km),
         "note": _note(week),
     }
 

@@ -117,7 +117,7 @@ Everything the sheet shows, computed in Python, including the display strings. T
 
 ```json
 {
-  "schema_version": 3,
+  "schema_version": 4,
   "title": "marathon training plan",
   "paces": [{"code": "I", "pace": "4:15+2'", "label": "hard"}, ...],
   "gauge": {"boxes": 80, "label_every_km": 10},
@@ -132,12 +132,12 @@ Everything the sheet shows, computed in Python, including the display strings. T
     "easy": {"km": [12, 6], "text": "12+6"},
     "quality": {"type": "none", "km": 0, "text": "–"},
     "long": {"km": 0, "mp_km": 0, "text": "RACE 42 km"},
-    "planned_km": 18, "box_80pct": 15, "note": "race"
+    "planned_km": 18, "note": "race"
   }, ...],
   "footer": {
     "races": ["Beskydská sedmička 28–29 aug (B)", "Běhej Lesy Lednice 10 oct (A)"],
     "rules": ["Short on time: …", "Tired or ill: …"],
-    "success": "A week counts at ≥ 80 % of the planned km."
+    "success": "A week counts as fully done at 80 % of its planned km."
   },
   "warnings": [{"code": "C4", "week": 14, "message": "…"}]
 }
@@ -157,7 +157,6 @@ Everything the sheet shows, computed in Python, including the display strings. T
 | `weeks[].quality.km` | The estimate of `TRAINING_MODEL.md` §3; a C race counts its distance (D-030). |
 | `weeks[].long.km` | The long run. A race replaces it in its race week, or a C race from the half marathon up; an A or B race counts 0, a C race its distance (D-030). |
 | `footer.races` | Every race, in date order, as printed under the pace legend: name, date(s), priority, `hilly` if marked (D-030, D-041). |
-| `weeks[].box_80pct` | The gauge box after which the 80 % border is drawn (D-019). |
 | `weeks[].note` | The text of the last column: the planned km in build, deload and specific weeks; *taper*, *race* or *recovery* otherwise; or the override's `note` (D-030). |
 | `warnings` | Not printed on the sheet; `week` may be `null`. |
 
@@ -179,7 +178,7 @@ Column order as in the reference:
 
 Below the table:
 - the pace legend, one entry per session code in the table (e.g. `ER=5:30 [easy]; S=6 km + 6×20″ [easy, with fast relaxed strides]; H [hard uphill effort, jog down]; I=4:15+2′ [hard]; …`, D-034)
-- the life-happens rules and the 80 % rule (D-008, D-006)
+- the life-happens rules and the 80 % rule (D-008, D-006); the gauge has no 80 % marker (D-045)
 
 No colour legend: the sheet is black and white, and the colours the runner uses are his own (D-032).
 

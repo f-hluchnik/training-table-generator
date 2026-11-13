@@ -1,5 +1,5 @@
 {
-  "schema_version": 3,
+  "schema_version": 4,
   "title": "training plan",
   "paces": [
     {
@@ -105,7 +105,6 @@
         "text": "15 km"
       },
       "planned_km": 45,
-      "box_80pct": 36,
       "note": "45"
     },
     {
@@ -170,7 +169,6 @@
         "text": "17 km"
       },
       "planned_km": 49,
-      "box_80pct": 40,
       "note": "49"
     },
     {
@@ -235,7 +233,6 @@
         "text": "19 km"
       },
       "planned_km": 52,
-      "box_80pct": 42,
       "note": "52"
     },
     {
@@ -300,7 +297,6 @@
         "text": "14 km"
       },
       "planned_km": 38,
-      "box_80pct": 31,
       "note": "38"
     },
     {
@@ -365,7 +361,6 @@
         "text": "RACE 21 km"
       },
       "planned_km": 45,
-      "box_80pct": 36,
       "note": "45"
     },
     {
@@ -430,7 +425,6 @@
         "text": "21 km"
       },
       "planned_km": 51,
-      "box_80pct": 41,
       "note": "51"
     },
     {
@@ -495,7 +489,6 @@
         "text": "23 km"
       },
       "planned_km": 57,
-      "box_80pct": 46,
       "note": "57"
     },
     {
@@ -560,7 +553,6 @@
         "text": "17 km"
       },
       "planned_km": 41,
-      "box_80pct": 33,
       "note": "41"
     },
     {
@@ -625,7 +617,6 @@
         "text": "24 km"
       },
       "planned_km": 59,
-      "box_80pct": 48,
       "note": "59"
     },
     {
@@ -690,7 +681,6 @@
         "text": "24 km"
       },
       "planned_km": 54,
-      "box_80pct": 44,
       "note": "54"
     },
     {
@@ -755,7 +745,6 @@
         "text": "24 km"
       },
       "planned_km": 58,
-      "box_80pct": 47,
       "note": "58"
     },
     {
@@ -820,7 +809,6 @@
         "text": "18 km"
       },
       "planned_km": 42,
-      "box_80pct": 34,
       "note": "42"
     },
     {
@@ -885,7 +873,6 @@
         "text": "24 km"
       },
       "planned_km": 59,
-      "box_80pct": 48,
       "note": "59"
     },
     {
@@ -950,7 +937,6 @@
         "text": "24 km"
       },
       "planned_km": 55,
-      "box_80pct": 44,
       "note": "55"
     },
     {
@@ -1015,7 +1001,6 @@
         "text": "24 km"
       },
       "planned_km": 58,
-      "box_80pct": 47,
       "note": "58"
     },
     {
@@ -1080,7 +1065,6 @@
         "text": "18 km"
       },
       "planned_km": 42,
-      "box_80pct": 34,
       "note": "42"
     },
     {
@@ -1145,7 +1129,6 @@
         "text": "24 km"
       },
       "planned_km": 61,
-      "box_80pct": 49,
       "note": "61"
     },
     {
@@ -1210,7 +1193,6 @@
         "text": "24 km"
       },
       "planned_km": 55,
-      "box_80pct": 44,
       "note": "55"
     },
     {
@@ -1275,7 +1257,6 @@
         "text": "24 km"
       },
       "planned_km": 58,
-      "box_80pct": 47,
       "note": "58"
     },
     {
@@ -1340,7 +1321,6 @@
         "text": "18 km"
       },
       "planned_km": 42,
-      "box_80pct": 34,
       "note": "42"
     },
     {
@@ -1405,7 +1385,6 @@
         "text": "24 km"
       },
       "planned_km": 62,
-      "box_80pct": 50,
       "note": "62"
     },
     {
@@ -1470,7 +1449,6 @@
         "text": "24 km"
       },
       "planned_km": 55,
-      "box_80pct": 44,
       "note": "55"
     },
     {
@@ -1535,7 +1513,6 @@
         "text": "24 km"
       },
       "planned_km": 58,
-      "box_80pct": 47,
       "note": "58"
     },
     {
@@ -1600,7 +1577,6 @@
         "text": "18 km"
       },
       "planned_km": 42,
-      "box_80pct": 34,
       "note": "42"
     },
     {
@@ -1665,7 +1641,6 @@
         "text": "26 km (6 MP)"
       },
       "planned_km": 63,
-      "box_80pct": 51,
       "note": "63"
     },
     {
@@ -1730,7 +1705,6 @@
         "text": "28 km"
       },
       "planned_km": 69,
-      "box_80pct": 56,
       "note": "69"
     },
     {
@@ -1795,7 +1769,6 @@
         "text": "30 km"
       },
       "planned_km": 64,
-      "box_80pct": 52,
       "note": "64"
     },
     {
@@ -1860,7 +1833,6 @@
         "text": "23 km"
       },
       "planned_km": 47,
-      "box_80pct": 38,
       "note": "47"
     },
     {
@@ -1925,7 +1897,6 @@
         "text": "32 km (8 MP)"
       },
       "planned_km": 76,
-      "box_80pct": 61,
       "note": "76"
     },
     {
@@ -1990,7 +1961,6 @@
         "text": "32 km"
       },
       "planned_km": 79,
-      "box_80pct": 64,
       "note": "79"
     },
     {
@@ -2055,7 +2025,6 @@
         "text": "19 km"
       },
       "planned_km": 48,
-      "box_80pct": 39,
       "note": "taper"
     },
     {
@@ -2120,7 +2089,6 @@
         "text": "RACE 42 km"
       },
       "planned_km": 24,
-      "box_80pct": 20,
       "note": "race"
     }
   ],
@@ -2134,7 +2102,7 @@
       "Short on time: drop an easy run → intensity → long run.",
       "Tired or ill: drop intensity first."
     ],
-    "success": "A week counts at ≥ 80 % of the planned km."
+    "success": "A week counts as fully done at 80 % of its planned km."
   },
   "warnings": []
 }

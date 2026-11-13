@@ -1,5 +1,5 @@
 {
-  "schema_version": 3,
+  "schema_version": 4,
   "title": "marathon training plan",
   "paces": [
     {
@@ -105,7 +105,6 @@
         "text": "15 km"
       },
       "planned_km": 39,
-      "box_80pct": 32,
       "note": "39"
     },
     {
@@ -170,7 +169,6 @@
         "text": "17 km"
       },
       "planned_km": 44,
-      "box_80pct": 36,
       "note": "44"
     },
     {
@@ -235,7 +233,6 @@
         "text": "19 km"
       },
       "planned_km": 47,
-      "box_80pct": 38,
       "note": "47"
     },
     {
@@ -300,7 +297,6 @@
         "text": "14 km"
       },
       "planned_km": 38,
-      "box_80pct": 31,
       "note": "38"
     },
     {
@@ -365,7 +361,6 @@
         "text": "21 km"
       },
       "planned_km": 51,
-      "box_80pct": 41,
       "note": "51"
     },
     {
@@ -430,7 +425,6 @@
         "text": "23 km"
       },
       "planned_km": 57,
-      "box_80pct": 46,
       "note": "57"
     },
     {
@@ -495,7 +489,6 @@
         "text": "25 km"
       },
       "planned_km": 60,
-      "box_80pct": 48,
       "note": "60"
     },
     {
@@ -560,7 +553,6 @@
         "text": "19 km"
       },
       "planned_km": 43,
-      "box_80pct": 35,
       "note": "43"
     },
     {
@@ -625,7 +617,6 @@
         "text": "27 km"
       },
       "planned_km": 57,
-      "box_80pct": 46,
       "note": "57"
     },
     {
@@ -690,7 +681,6 @@
         "text": "29 km"
       },
       "planned_km": 63,
-      "box_80pct": 51,
       "note": "63"
     },
     {
@@ -755,7 +745,6 @@
         "text": "31 km"
       },
       "planned_km": 67,
-      "box_80pct": 54,
       "note": "67"
     },
     {
@@ -820,7 +809,6 @@
         "text": "23 km"
       },
       "planned_km": 47,
-      "box_80pct": 38,
       "note": "47"
     },
     {
@@ -885,7 +873,6 @@
         "text": "33 km"
       },
       "planned_km": 64,
-      "box_80pct": 52,
       "note": "64"
     },
     {
@@ -950,7 +937,6 @@
         "text": "40 km"
       },
       "planned_km": 75,
-      "box_80pct": 60,
       "note": "75"
     },
     {
@@ -1015,7 +1001,6 @@
         "text": "26 km"
       },
       "planned_km": 55,
-      "box_80pct": 44,
       "note": "taper"
     },
     {
@@ -1080,7 +1065,6 @@
         "text": "21 km"
       },
       "planned_km": 50,
-      "box_80pct": 40,
       "note": "taper"
     },
     {
@@ -1145,7 +1129,6 @@
         "text": "RACE 101 km"
       },
       "planned_km": 24,
-      "box_80pct": 20,
       "note": "race"
     },
     {
@@ -1210,7 +1193,6 @@
         "text": "–"
       },
       "planned_km": 18,
-      "box_80pct": 15,
       "note": "recovery"
     },
     {
@@ -1275,7 +1257,6 @@
         "text": "12 km"
       },
       "planned_km": 30,
-      "box_80pct": 24,
       "note": "flush"
     },
     {
@@ -1340,7 +1321,6 @@
         "text": "24 km (6 MP)"
       },
       "planned_km": 61,
-      "box_80pct": 49,
       "note": "check"
     },
     {
@@ -1405,7 +1385,6 @@
         "text": "26 km"
       },
       "planned_km": 67,
-      "box_80pct": 54,
       "note": "peak"
     },
     {
@@ -1470,7 +1449,6 @@
         "text": "16 km"
       },
       "planned_km": 45,
-      "box_80pct": 36,
       "note": "taper"
     },
     {
@@ -1531,7 +1509,6 @@
         "text": "RACE 42 km"
       },
       "planned_km": 24,
-      "box_80pct": 20,
       "note": "race"
     }
   ],
@@ -1544,7 +1521,7 @@
       "Short on time: drop an easy run → intensity → long run.",
       "Tired or ill: drop intensity first."
     ],
-    "success": "A week counts at ≥ 80 % of the planned km."
+    "success": "A week counts as fully done at 80 % of its planned km."
   },
   "warnings": [
     {

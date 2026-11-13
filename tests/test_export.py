@@ -154,10 +154,8 @@ def test_footer_lists_the_races(document_2026):
     assert document_2026["footer"]["races"] == races
 
 
-def test_gauge_covers_the_highest_week_and_the_80_percent_box(document_2026):
+def test_gauge_covers_the_highest_week(document_2026):
     assert document_2026["gauge"] == {"boxes": 80, "label_every_km": 10}
-    first = week(document_2026, 1)
-    assert first["box_80pct"] == 32  # ⌈0.8 × 39⌉
 
 
 def test_pace_legend_in_print_order(document_2026):
@@ -177,7 +175,7 @@ def test_title_footer_and_warnings(plan_2026):
     document = export(replace(plan_2026, warnings=(warning,)))
     assert document["title"] == "marathon training plan"
     assert document["footer"]["rules"] == list(plan_2026.season.sheet.rules)
-    assert document["footer"]["success"] == "A week counts at ≥ 80 % of the planned km."
+    assert document["footer"]["success"] == "A week counts as fully done at 80 % of its planned km."
     assert document["warnings"] == [{"code": "C2", "week": None, "message": "message"}]
 
 
