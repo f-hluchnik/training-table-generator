@@ -213,6 +213,9 @@
     .join("; ")
 )
 
+// The races of the season, so a "RACE" cell can be told apart (owner, S5).
+#let race-list = [#strong[races]: #plan.footer.races.join("; ")]
+
 #let swatch(entry) = {
   let size = 3.2mm
   let shade = shades.at(entry.colour)
@@ -247,6 +250,7 @@
 #v(2mm)
 #align(center)[
   #pace-legend \
+  #race-list \
   #v(0.5mm)
   #colour-legend \
   #v(0.5mm)

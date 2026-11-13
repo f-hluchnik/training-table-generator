@@ -288,6 +288,10 @@
     }
   ],
   "footer": {
+    "races": [
+      "Beskydská sedmička 28–29 aug (B)",
+      "Běhej Lesy Lednice 10 oct (A)"
+    ],
     "colours": [
       {
         "colour": "green",

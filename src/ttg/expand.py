@@ -6,7 +6,7 @@ changes only its own week, never the progressions after it (D-030). Pure (D-013)
 """
 
 from collections import Counter, defaultdict
-from collections.abc import Callable, Iterator, Mapping, Sequence
+from collections.abc import Iterator, Mapping, Sequence
 from dataclasses import dataclass, field, replace
 from datetime import date
 from types import MappingProxyType
@@ -59,6 +59,11 @@ SPECIFIC_ROTATION: Mapping[RaceType, tuple[SessionType, ...]] = MappingProxyType
     }
 )
 
+# [default, owner S5] A C race up to 10 km replaces the quality run (D-017). From the half
+# marathon up it is the week's long, hard effort: it replaces the long run, and the week has
+# no other quality run.
+SHORT_C_RACE = RaceType.TEN_K
+
 
 def expand(season: Season, today: date) -> Plan:
     """The weeks of the season's plan, overrides applied. Raises SeasonError for an override past the end."""
@@ -69,7 +74,7 @@ def expand(season: Season, today: date) -> Plan:
         season=season,
         paces=expander.paces,
         weeks=expander.with_overrides(weeks),
-        warnings=layout.warnings + expander.warnings(),
+        warnings=layout.warnings + expander.warnings(weeks),
     )
 
 
@@ -105,9 +110,12 @@ class _Expander:
     def _week(self, number: int, phase: Phase) -> Week:
         kind = self._kind(number, phase)
         target = self._target(number)
-        make_quality, long = self._sessions(kind, number, phase, target)
-        c_races = self._c_races.get(number)
-        quality = c_races[0] if c_races else make_quality()  # a C race replaces the quality run (D-017)
+        c_race = self._c_race(number)
+        # Easy runs are reduced in every week that is not a loading week (D-022).
+        easy = self._easy_runs(EasyRuns.REGULAR if kind.is_loading else EasyRuns.REDUCED)
+        long = self._long_run(kind, number, phase, target, c_race)
+        long_km = self._long_run_km(long)
+        quality = self._quality(kind, target, c_race, other_week_km=sum(easy) + long_km)
         self._progress.loading_streak = self._progress.loading_streak + 1 if kind.is_loading else 0
         calendar = self.layout.calendar
         return Week(
@@ -117,11 +125,11 @@ class _Expander:
             kind=kind,
             phase=phase,
             target=target,
-            # Easy runs are reduced in every week that is not a loading week (D-022).
-            easy=self._easy_runs(EasyRuns.REGULAR if kind.is_loading else EasyRuns.REDUCED),
+            easy=easy,
             quality=quality,
             quality_km=self._quality_km(quality),
             long_run=long,
+            long_run_km=long_km,
         )
 
     def _kind(self, number: int, phase: Phase) -> WeekKind:
@@ -138,44 +146,59 @@ class _Expander:
                 return WeekKind.RECOVERY
         raise ValueError(f"unknown phase kind {phase.kind}")
 
-    def _sessions(
-        self, kind: WeekKind, number: int, phase: Phase, target: Race
-    ) -> tuple[Callable[[], Session], LongRun | Race | None]:
-        """The week's quality run (made only if no C race replaces it) and long run.
-
-        Advances the progressions: the long run, and the race bookkeeping in a race week.
-        """
+    def _long_run(
+        self, kind: WeekKind, number: int, phase: Phase, target: Race, c_race: Race | None
+    ) -> LongRun | Race | None:
+        """The week's long run; advances the long-run progression unless a C race takes its place."""
+        if kind is WeekKind.RACE:
+            assert phase.race is not None  # a taper belongs to its race
+            self._finish_race()
+            return phase.race
+        if c_race is not None and _replaces_long_run(c_race):
+            return c_race
         easy_run_km = self.season.load.easy_run_km
-        progress = self._progress
         match kind:
-            case WeekKind.BUILD:
-                return lambda: self._next_quality(BUILD_ROTATION), self._loading_long_run(kind, target)
-            case WeekKind.SPECIFIC:
-                rotation = SPECIFIC_ROTATION[target.type]
-                return lambda: self._next_quality(rotation), self._loading_long_run(kind, target)
+            case WeekKind.BUILD | WeekKind.SPECIFIC:
+                return self._loading_long_run(kind, target)
             case WeekKind.DELOAD:
-                assert progress.long_run_km is not None  # a deload follows three loading weeks
-                return strides_session, LongRun(long_run.deload(progress.long_run_km, easy_run_km))
+                assert self._progress.long_run_km is not None  # a deload follows three loading weeks
+                return LongRun(long_run.deload(self._progress.long_run_km, easy_run_km))
             case WeekKind.TAPER:
                 weeks_to_race_week = phase.last_week - number
-                return taper_session, LongRun(long_run.taper(self._taper_peak(), weeks_to_race_week, easy_run_km))
-            case WeekKind.RACE:
-                assert phase.race is not None  # a taper belongs to its race
-                self._finish_race()
-                return no_session, phase.race
+                return LongRun(long_run.taper(self._taper_peak(), weeks_to_race_week, easy_run_km))
             case WeekKind.RECOVERY:
                 first_week = number == phase.first_week  # easy runs only (TRAINING_MODEL.md §4)
-                return no_session, None if first_week else LongRun(easy_run_km)
+                return None if first_week else LongRun(easy_run_km)
         raise ValueError(f"unknown week kind {kind}")
 
-    def _next_quality(self, rotation: tuple[SessionType, ...]) -> Session:
+    def _quality(self, kind: WeekKind, target: Race, c_race: Race | None, other_week_km: int) -> Session | Race:
+        """The week's quality run; advances the rotation unless a C race takes its place."""
+        if c_race is not None:
+            # A long C race took the long run's place; one hard effort a week is enough.
+            return no_session() if _replaces_long_run(c_race) and kind is not WeekKind.RACE else c_race
+        match kind:
+            case WeekKind.BUILD:
+                return self._next_quality(BUILD_ROTATION, other_week_km)
+            case WeekKind.SPECIFIC:
+                return self._next_quality(SPECIFIC_ROTATION[target.type], other_week_km)
+            case WeekKind.DELOAD:
+                return strides_session()
+            case WeekKind.TAPER:
+                return taper_session()
+            case WeekKind.RACE | WeekKind.RECOVERY:
+                return no_session()
+        raise ValueError(f"unknown week kind {kind}")
+
+    def _next_quality(self, rotation: tuple[SessionType, ...], other_week_km: int) -> Session:
         """The next session of a rotation; each type progresses each time it occurs [2026]."""
         progress = self._progress
         session_type = rotation[progress.rotation_positions[rotation] % len(rotation)]
         progress.rotation_positions[rotation] += 1
-        session = progression_session(session_type, progress.occurrences[session_type], self.paces)
+        occurrence = progress.occurrences[session_type]
         progress.occurrences[session_type] += 1
-        return session
+        return progression_session(
+            session_type, occurrence, self.paces, self.season.load.easy_run_km, other_week_km
+        )
 
     def _loading_long_run(self, kind: WeekKind, target: Race) -> LongRun:
         """+2 km a loading week up to the cap; after a race, a restart (TRAINING_MODEL.md §4, §6)."""
@@ -219,6 +242,11 @@ class _Expander:
             return self._race_weeks[-1][0]
         return max(self.season.races, key=lambda race: race.distance_km)
 
+    def _c_race(self, number: int) -> Race | None:
+        """The week's C race; of several, the first (`warnings` reports the others)."""
+        races = self._c_races.get(number)
+        return races[0] if races else None
+
     def _easy_runs(self, pattern: EasyRuns) -> tuple[int, ...]:
         load = self.season.load
         return easy_run_kms(load.easy_run_km, load.runs_per_week, pattern)
@@ -228,18 +256,36 @@ class _Expander:
             return round_km(quality.distance_km)  # a C race counts (owner, S5)
         return round_km(session_km(quality, self.paces, self.season.load.easy_run_km))
 
-    def warnings(self) -> tuple[PlanWarning, ...]:
-        """C1 for C races that share a week: only the first replaces the quality run."""
-        return tuple(
+    @staticmethod
+    def _long_run_km(long: LongRun | Race | None) -> int:
+        if isinstance(long, LongRun):
+            return long.km
+        if isinstance(long, Race) and not long.is_key:
+            return round_km(long.distance_km)  # a C race counts, an A or B race does not (owner, S5)
+        return 0
+
+    def warnings(self, weeks: Sequence[Week]) -> tuple[PlanWarning, ...]:
+        """C1 for C races that share a week or fall in a recovery block (TRAINING_MODEL.md §4)."""
+        shared = (
             PlanWarning(
                 WarningCode.RACES_TOO_CLOSE,
                 number,
-                f'"{races[0].name}" and "{races[1].name}" are in the same week: '
-                f'only "{races[0].name}" replaces the quality run',
+                f'"{races[0].name}" and "{races[1].name}" are in the same week: only "{races[0].name}" is on the sheet',
             )
             for number, races in self._c_races.items()
             if len(races) > 1
         )
+        in_recovery = (
+            PlanWarning(
+                WarningCode.RACES_TOO_CLOSE,
+                week.number,
+                f'"{race.name}" falls in the recovery after "{week.phase.race.name}": racing returns sooner '
+                "than the recovery block allows",
+            )
+            for week in weeks
+            if week.kind is WeekKind.RECOVERY and week.phase.race and (race := self._c_race(week.number))
+        )
+        return (*shared, *in_recovery)
 
     # --- overrides ----------------------------------------------------------------
 
@@ -255,14 +301,20 @@ class _Expander:
 
     def _overridden(self, week: Week, override: WeekOverride) -> Week:
         quality = week.quality if override.quality is None else override.quality
+        long = week.long_run if override.long_run_km is None else _long_run_override(week, override.long_run_km)
         return replace(
             week,
             easy=week.easy if override.easy is None else self._easy_runs(override.easy),
             quality=quality,
             quality_km=self._quality_km(quality),
-            long_run=week.long_run if override.long_run_km is None else _long_run_override(week, override.long_run_km),
+            long_run=long,
+            long_run_km=self._long_run_km(long),
             note=week.note if override.note is None else override.note,
         )
+
+
+def _replaces_long_run(c_race: Race) -> bool:
+    return c_race.type is not SHORT_C_RACE
 
 
 def _long_run_override(week: Week, km: int) -> LongRun | None:

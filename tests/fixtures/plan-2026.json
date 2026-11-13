@@ -1099,7 +1099,7 @@
       "long": {
         "km": 0,
         "mp_km": 0,
-        "text": "RACE"
+        "text": "RACE 101 km"
       },
       "planned_km": 18,
       "box_80pct": 15,
@@ -1473,7 +1473,7 @@
       "long": {
         "km": 0,
         "mp_km": 0,
-        "text": "RACE"
+        "text": "RACE 42 km"
       },
       "planned_km": 18,
       "box_80pct": 15,
@@ -1481,6 +1481,10 @@
     }
   ],
   "footer": {
+    "races": [
+      "Beskydská sedmička 28–29 aug (B)",
+      "Běhej Lesy Lednice 10 oct (A)"
+    ],
     "colours": [
       {
         "colour": "green",

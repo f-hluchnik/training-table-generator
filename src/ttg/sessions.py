@@ -30,6 +30,11 @@ MAX_THRESHOLD_MINUTES = 40
 MP_START_REPS, MP_REP_KM = 3, 3  # marathon-pace repeats, +1 rep a week [2026]
 # The last MP km of a marathon-specific long run: 6, 8, 10, … [default].
 LONG_RUN_MP_START_KM, LONG_RUN_MP_STEP_KM = 6, 2
+# Daniels: running at I pace in one session is at most the lesser of 10 km and 8 % of the
+# week [source 11]. The I progression holds at the last step within it (owner, S5); compared in
+# whole km, the sheet's precision (D-025).
+MAX_INTERVAL_KM = 10
+MAX_INTERVAL_SHARE_OF_WEEK = 0.08
 # Daniels: one session holds at most the lesser of 90 min or 16 miles at M pace [source 20].
 # The 16 miles (25.7 km) only binds below 3:21/km, so the minutes are the cap here.
 MAX_MARATHON_PACE_MINUTES = 90
@@ -59,6 +64,24 @@ def interval_session(occurrence: int) -> Session:
         reps=INTERVAL_START_REPS + occurrence % 2,
         minutes=INTERVAL_START_MINUTES + occurrence // 2,
     )
+
+
+def capped_interval_session(occurrence: int, paces: TrainingPaces, easy_run_km: int, other_week_km: int) -> Session:
+    """`interval_session`, held at the last step within Daniels' limit for its week.
+
+    `other_week_km` are the week's km without this session (easy runs and long run).
+    """
+    for step in range(occurrence, 0, -1):
+        session = interval_session(step)
+        week_km = other_week_km + round_km(session_km(session, paces, easy_run_km))
+        if round_km(work_km(session, paces.interval)) <= interval_limit_km(week_km):
+            return session
+    return interval_session(0)
+
+
+def interval_limit_km(week_km: int) -> int:
+    """The most km at I pace one session of a `week_km` week should hold, in whole km."""
+    return round_km(min(MAX_INTERVAL_KM, MAX_INTERVAL_SHARE_OF_WEEK * week_km))
 
 
 def threshold_session(occurrence: int) -> Session:
@@ -106,13 +129,18 @@ def no_session() -> Session:
     return Session(SessionType.NONE)
 
 
-def progression_session(session_type: SessionType, occurrence: int, paces: TrainingPaces) -> Session:
-    """The `occurrence`-th session (from 0) of a progressing type: H, I, T or MP."""
+def progression_session(
+    session_type: SessionType, occurrence: int, paces: TrainingPaces, easy_run_km: int, other_week_km: int
+) -> Session:
+    """The `occurrence`-th session (from 0) of a progressing type: H, I, T or MP.
+
+    `other_week_km` are the week's km without this session; the I cap depends on them.
+    """
     match session_type:
         case SessionType.HILLS:
             return hill_session(occurrence)
         case SessionType.INTERVALS:
-            return interval_session(occurrence)
+            return capped_interval_session(occurrence, paces, easy_run_km, other_week_km)
         case SessionType.THRESHOLD:
             return threshold_session(occurrence)
         case SessionType.MARATHON_PACE:
@@ -145,15 +173,23 @@ def session_km(session: Session, paces: TrainingPaces, easy_run_km: int) -> floa
     if session.type is SessionType.STRIDES:
         return float(half_easy_run_km(easy_run_km))
     easy_km_per_minute = _km_per_minute(paces.easy)
-    work_km = session.reps * (session.km or _work_km(session, paces))
+    # Hill efforts count at easy pace.
+    work = work_km(session, _effort_pace(session.type, paces))
     recoveries = (session.reps - 1) * _recovery_minutes(session)
     easy_minutes = WARMUP_MINUTES + COOLDOWN_MINUTES + recoveries
-    return work_km + easy_minutes * easy_km_per_minute
+    return work + easy_minutes * easy_km_per_minute
 
 
-def _work_km(session: Session, paces: TrainingPaces) -> float:
-    """Km of one repetition given in minutes; hill efforts count at easy pace."""
-    return session.minutes * _km_per_minute(_effort_pace(session.type, paces))
+def work_km(session: Session, pace: Pace) -> float:
+    """Km of work (recoveries excluded) at `pace`, for repetitions given in minutes or in km."""
+    per_rep = session.km if session.km is not None else session.minutes * _km_per_minute(pace)
+    return session.reps * per_rep
+
+
+def work_minutes(session: Session, pace: Pace) -> float:
+    """Minutes of work (recoveries excluded) at `pace`, for repetitions given in minutes or in km."""
+    per_rep = session.minutes if session.km is None else session.km / _km_per_minute(pace)
+    return session.reps * per_rep
 
 
 def _effort_pace(session_type: SessionType, paces: TrainingPaces) -> Pace:

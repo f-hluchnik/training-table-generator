@@ -81,7 +81,7 @@ The test allows 3 km and pins the estimate itself. The hill km are low because t
 - **3:1 cycle:** three loading weeks (build or specific), then one deload week **[2026, source 6]**. Any taper, race or recovery week restarts the count, so the cycle runs on from the build into the specific block and starts afresh after a race (D-030).
 - **Quality rotation:** H → I → T **[2026]**. Each type progresses each time it occurs **[2026]**:
   - H: 6×1′ → +1 rep each time; at 10 reps, halve the reps and double the duration. In 2026 the owner wrote 10×1′ for the 4th occurrence, where this rule gives 9×1′; that week is an override in the reference season.
-  - I: 5×3′ → 6×3′ → 5×4′ → 6×4′ → 5×5′ …
+  - I: 5×3′ → 6×3′ → 5×4′ → 6×4′ → 5×5′ …, held at the last step within Daniels' limit for the week: the lesser of 10 km and 8 % of the week at I pace, in whole km **[source 11]** (D-030).
   - T: 3×8′ → 3×10′ → 4×8′ → 4×10′ → 5×8′, held there by the cap of **40′ total at T** (tempo work is 15–40 min) **[source 5]**.
 - **LR:** +2 km per loading week **[2026: +2–3 km]**, up to the build cap (§6); the cap stops growth but never cuts a longer starting long run. Coaches usually add 1–2 miles a week to the long run **[source 22]**; the "10 % rule" is about weekly volume and has weak evidence **[source 21]**, so it is only a warning (C3). After a race the LR restarts at 75 % of the previous peak, at most the next race's build cap **[default, owner S5]**. A reduced LR (deload, taper, restart) is never shorter than an easy run **[default]**.
 - **Easy runs:** regular (D-022).
@@ -114,13 +114,16 @@ Elevation (vertical metres) is out of scope in v1 (Q-5).
 Taper, race and recovery weeks all use the reduced easy pair (D-022).
 
 ### race week
-The race replaces the LR. The race day prints bold in the calendar, and the week's row ends on race day.
+The race replaces the LR and prints its distance, `RACE 42 km`; the footer lists the races by name (D-030). The race day prints bold in the calendar, and the week's row ends on race day.
+
+### C races (D-017, D-030)
+A C race up to 10 km replaces the week's quality run. From the half marathon up it replaces the long run, and the week has no quality run: one long, hard effort a week **[default, coach S5]**. Either way the replaced progression continues the next week as if nothing happened, and the race counts in the planned km.
 
 ### recovery (after a race)
 - **Week 1:** easy runs only, no LR.
 - **Week 2 and later:** easy runs plus a LR of one easy run's length ("flush" in 2026, 12 km) **[2026]**.
 - After that, the next phase starts.
-- Pfitzinger uses a 5-week return-to-running schedule after a marathon **[source 9]**. Our recovery block is shorter because the next phase starts gently anyway; a warning fires if quality returns sooner than the defaults below.
+- Pfitzinger uses a 5-week return-to-running schedule after a marathon **[source 9]**. Our recovery block is shorter because the next phase starts gently anyway. The rules put no quality run into a recovery block; a C race inside it warns (C1). An override that adds quality is taken as is (D-030).
 
 ## 5. Phase layout (D-009, D-029)
 

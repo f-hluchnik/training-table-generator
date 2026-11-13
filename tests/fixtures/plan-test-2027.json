@@ -336,18 +336,18 @@
         "text": "12+12"
       },
       "quality": {
-        "type": "race",
-        "km": 21,
-        "text": "RACE"
+        "type": "none",
+        "km": 0,
+        "text": "–"
       },
       "long": {
         "km": 21,
         "mp_km": 0,
-        "text": "21 km"
+        "text": "RACE 21 km"
       },
-      "planned_km": 66,
-      "box_80pct": 53,
-      "note": "66"
+      "planned_km": 45,
+      "box_80pct": 36,
+      "note": "45"
     },
     {
       "number": 6,
@@ -404,13 +404,13 @@
         "text": "H: 7x1'"
       },
       "long": {
-        "km": 23,
+        "km": 21,
         "mp_km": 0,
-        "text": "23 km"
+        "text": "21 km"
       },
-      "planned_km": 53,
-      "box_80pct": 43,
-      "note": "53"
+      "planned_km": 51,
+      "box_80pct": 41,
+      "note": "51"
     },
     {
       "number": 7,
@@ -467,13 +467,13 @@
         "text": "I: 6x3'"
       },
       "long": {
-        "km": 24,
+        "km": 23,
         "mp_km": 0,
-        "text": "24 km"
+        "text": "23 km"
       },
-      "planned_km": 58,
-      "box_80pct": 47,
-      "note": "58"
+      "planned_km": 57,
+      "box_80pct": 46,
+      "note": "57"
     },
     {
       "number": 8,
@@ -530,13 +530,13 @@
         "text": "S"
       },
       "long": {
-        "km": 18,
+        "km": 17,
         "mp_km": 0,
-        "text": "18 km"
+        "text": "17 km"
       },
-      "planned_km": 42,
-      "box_80pct": 34,
-      "note": "42"
+      "planned_km": 41,
+      "box_80pct": 33,
+      "note": "41"
     },
     {
       "number": 9,
@@ -967,17 +967,17 @@
       },
       "quality": {
         "type": "I",
-        "km": 11,
-        "text": "I: 6x4'"
+        "km": 10,
+        "text": "I: 5x4'"
       },
       "long": {
         "km": 24,
         "mp_km": 0,
         "text": "24 km"
       },
-      "planned_km": 59,
-      "box_80pct": 48,
-      "note": "59"
+      "planned_km": 58,
+      "box_80pct": 47,
+      "note": "58"
     },
     {
       "number": 16,
@@ -1219,17 +1219,17 @@
       },
       "quality": {
         "type": "I",
-        "km": 11,
-        "text": "I: 5x5'"
+        "km": 10,
+        "text": "I: 5x4'"
       },
       "long": {
         "km": 24,
         "mp_km": 0,
         "text": "24 km"
       },
-      "planned_km": 59,
-      "box_80pct": 48,
-      "note": "59"
+      "planned_km": 58,
+      "box_80pct": 47,
+      "note": "58"
     },
     {
       "number": 20,
@@ -1471,17 +1471,17 @@
       },
       "quality": {
         "type": "I",
-        "km": 12,
-        "text": "I: 6x5'"
+        "km": 10,
+        "text": "I: 5x4'"
       },
       "long": {
         "km": 24,
         "mp_km": 0,
         "text": "24 km"
       },
-      "planned_km": 60,
-      "box_80pct": 48,
-      "note": "60"
+      "planned_km": 58,
+      "box_80pct": 47,
+      "note": "58"
     },
     {
       "number": 24,
@@ -1724,7 +1724,7 @@
       "quality": {
         "type": "race",
         "km": 10,
-        "text": "RACE"
+        "text": "RACE 10 km"
       },
       "long": {
         "km": 30,
@@ -2044,7 +2044,7 @@
       "long": {
         "km": 0,
         "mp_km": 0,
-        "text": "RACE"
+        "text": "RACE 42 km"
       },
       "planned_km": 18,
       "box_80pct": 15,
@@ -2052,6 +2052,11 @@
     }
   ],
   "footer": {
+    "races": [
+      "Half marathon 4 apr (C)",
+      "10 km 5 sep (C)",
+      "Marathon 10 oct (A)"
+    ],
     "colours": [
       {
         "colour": "green",

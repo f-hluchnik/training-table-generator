@@ -8,7 +8,7 @@ from pathlib import Path
 import pytest
 
 from ttg.expand import expand
-from ttg.export import export, long_run_text, phase_label, quality_text
+from ttg.export import export, long_run_text, phase_label, quality_text, race_text
 from ttg.model import LongRun, Phase, PhaseKind, PlanWarning, Priority, Race, Session, SessionType, WarningCode
 from ttg.spec import load_season
 
@@ -40,7 +40,7 @@ def week(document, number):
         (Session(SessionType.MARATHON_PACE, reps=3, km=3), "MP: 3x3 km"),
         (Session(SessionType.STRIDES), "S"),
         (Session(SessionType.NONE), "–"),
-        (Race("Tune-up", date(2027, 4, 4), 21.0975, Priority.C), "RACE"),
+        (Race("Tune-up", date(2027, 4, 4), 10, Priority.C), "RACE 10 km"),
     ],
 )
 def test_quality_text(quality, text):
@@ -49,7 +49,7 @@ def test_quality_text(quality, text):
 
 @pytest.mark.parametrize(
     ("long_run", "text"),
-    [(LongRun(15), "15 km"), (LongRun(20, 6), "20 km (6 MP)"), (MARATHON, "RACE"), (None, "–")],
+    [(LongRun(15), "15 km"), (LongRun(20, 6), "20 km (6 MP)"), (MARATHON, "RACE 42 km"), (None, "–")],
 )
 def test_long_run_text(long_run, text):
     assert long_run_text(long_run) == text
@@ -92,14 +92,31 @@ def test_note_is_the_planned_km_a_word_or_the_override(document_2026):
 
 
 def test_race_week_long_run_is_not_counted(document_2026):
-    assert week(document_2026, 17)["long"] == {"km": 0, "mp_km": 0, "text": "RACE"}
+    assert week(document_2026, 17)["long"] == {"km": 0, "mp_km": 0, "text": "RACE 101 km"}
 
 
 def test_a_c_race_is_a_quality_run_of_type_race(plan_2026):
     tune_up = Race("Tune-up", date(2026, 5, 10), 10, Priority.C)  # Sunday of week 1
     season = replace(plan_2026.season, races=(tune_up, *plan_2026.season.races))
     plan = expand(season, TODAY)
-    assert week(export(plan, ()), 1)["quality"] == {"type": "race", "km": 10, "text": "RACE"}
+    assert week(export(plan, ()), 1)["quality"] == {"type": "race", "km": 10, "text": "RACE 10 km"}
+
+
+@pytest.mark.parametrize(
+    ("race", "text"),
+    [
+        (MARATHON, "Marathon 10 oct (A)"),
+        (Race("Ultra", date(2026, 8, 28), 101, Priority.B, end=date(2026, 8, 29)), "Ultra 28–29 aug (B)"),
+        (Race("Stage race", date(2026, 8, 31), 101, end=date(2026, 9, 2)), "Stage race 31 aug – 2 sep (A)"),
+    ],
+)
+def test_race_list_entry(race, text):
+    assert race_text(race) == text
+
+
+def test_footer_lists_the_races(document_2026):
+    races = ["Beskydská sedmička 28–29 aug (B)", "Běhej Lesy Lednice 10 oct (A)"]
+    assert document_2026["footer"]["races"] == races
 
 
 def test_gauge_covers_the_highest_week_and_the_80_percent_box(document_2026):

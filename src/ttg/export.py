@@ -10,7 +10,7 @@ from datetime import date
 from typing import Any
 
 from ttg.model import LongRun, Phase, PhaseKind, Plan, PlanWarning, Race, Session, SessionType, Week, WeekKind
-from ttg.sessions import RECOVERY_JOG_MINUTES
+from ttg.sessions import RECOVERY_JOG_MINUTES, round_km
 
 SCHEMA_VERSION = 1
 
@@ -55,7 +55,12 @@ def export(plan: Plan, warnings: Iterable[PlanWarning]) -> dict[str, Any]:
             "label_every_km": GAUGE_LABEL_EVERY_KM,
         },
         "weeks": [_week(week, plan.season.races) for week in plan.weeks],
-        "footer": {"colours": list(COLOURS), "rules": list(sheet.rules), "success": SUCCESS_TEXT},
+        "footer": {
+            "races": [race_text(race) for race in plan.season.races],
+            "colours": list(COLOURS),
+            "rules": list(sheet.rules),
+            "success": SUCCESS_TEXT,
+        },
         "warnings": [{"code": str(w.code), "week": w.week, "message": w.message} for w in warnings],
     }
 
@@ -68,9 +73,19 @@ def phase_label(phase: Phase) -> str:
     return str(phase.kind)
 
 
+def race_cell_text(race: Race) -> str:
+    """`RACE 21 km`: which race it is, the footer's race list says (owner, S5)."""
+    return f"{RACE_TEXT} {round_km(race.distance_km)} km"
+
+
+def race_text(race: Race) -> str:
+    """The footer's entry: `Prague Marathon 10 oct (A)`, `Beskydská sedmička 28–29 aug (B)`."""
+    return f"{race.name} {_date_range(race.date, race.last_day)} ({race.priority})"
+
+
 def quality_text(quality: Session | Race) -> str:
     if isinstance(quality, Race):
-        return RACE_TEXT
+        return race_cell_text(quality)
     match quality.type:
         case SessionType.NONE:
             return NO_SESSION
@@ -85,7 +100,7 @@ def long_run_text(long_run: LongRun | Race | None) -> str:
     if long_run is None:
         return NO_SESSION
     if isinstance(long_run, Race):
-        return RACE_TEXT
+        return race_cell_text(long_run)
     if long_run.mp_km:
         return f"{long_run.km} km ({long_run.mp_km} MP)"
     return f"{long_run.km} km"
@@ -144,6 +159,19 @@ def _gauge_boxes(planned_kms: Iterable[int]) -> int:
     """The highest planned week rounded up to the next label (D-019); at least one label."""
     highest = max(planned_kms, default=0)
     return max(1, math.ceil(highest / GAUGE_LABEL_EVERY_KM)) * GAUGE_LABEL_EVERY_KM // KM_PER_BOX
+
+
+def _date_range(first: date, last: date) -> str:
+    """`10 oct`, `28–29 aug`, `31 aug – 1 sep`."""
+    if first == last:
+        return _day_and_month(first)
+    if first.month == last.month:
+        return f"{first.day}–{_day_and_month(last)}"
+    return f"{_day_and_month(first)} – {_day_and_month(last)}"
+
+
+def _day_and_month(day: date) -> str:
+    return f"{day.day} {MONTHS[day.month - 1]}"
 
 
 def _number(value: float) -> str:
