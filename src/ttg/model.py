@@ -6,8 +6,8 @@ hold already-validated data. The plan side (phases, weeks, the plan) is built by
 `ttg.layout` and `ttg.expand`.
 """
 
+import datetime as dt  # not `from datetime import date`: `Race.date` would shadow the type
 from dataclasses import dataclass
-from datetime import date, timedelta
 from enum import StrEnum
 
 from ttg.paces import MARATHON_KM, Pace, TrainingPaces, derive_paces
@@ -93,17 +93,17 @@ class EasyRuns(StrEnum):
 @dataclass(frozen=True)
 class Race:
     name: str
-    date: date
+    date: dt.date
     distance_km: float
     priority: Priority = Priority.A
-    end: date | None = None  # last day of a multi-day race
+    end: dt.date | None = None  # last day of a multi-day race
     # Phase-length overrides in weeks (D-009, D-025); None = the default for the distance.
     taper_weeks: int | None = None  # includes the race week
     specific_weeks: int | None = None
     recovery_weeks: int | None = None
 
     @property
-    def last_day(self) -> date:
+    def last_day(self) -> dt.date:
         return self.end or self.date
 
     @property
@@ -121,7 +121,7 @@ class RaceResult:
     """A recent race result: the anchor for the default paces (D-015)."""
 
     distance_km: float
-    time: timedelta
+    time: dt.timedelta
 
 
 @dataclass(frozen=True)
@@ -188,7 +188,7 @@ class Season:
     races: tuple[Race, ...]  # sorted by date
     paces: Paces
     load: Load
-    start: date | None = None  # at most one of start and weeks (D-004)
+    start: dt.date | None = None  # at most one of start and weeks (D-004)
     weeks: int | None = None
     sheet: Sheet = Sheet()
     overrides: tuple[WeekOverride, ...] = ()  # sorted by week
@@ -249,7 +249,7 @@ class LongRun:
 @dataclass(frozen=True)
 class Week:
     number: int  # 1-based
-    days: tuple[date | None, ...]  # Monday to Sunday; None after the plan ends
+    days: tuple[dt.date | None, ...]  # Monday to Sunday; None after the plan ends
     month: int  # 1–12, the month of the week's Thursday
     kind: WeekKind
     phase: Phase
@@ -296,4 +296,4 @@ class Plan:
     season: Season
     paces: TrainingPaces  # overrides applied
     weeks: tuple[Week, ...]
-    warnings: tuple[PlanWarning, ...]  # from the layout and the expansion; the checks add theirs (T-07)
+    warnings: tuple[PlanWarning, ...]  # all of them, ordered by week: layout, expansion and checks

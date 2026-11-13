@@ -86,7 +86,13 @@ Warnings about the plan (a long run above half the week, a plan too short for it
 
 ## Development
 
-Work in the activated virtual environment (set-up above). `pytest` runs the tests; CI runs them on Python 3.11 and 3.12 and builds both reference seasons. The repository is organised by ticket (one branch per ticket); see the documentation below.
+Work in the activated virtual environment (set-up above). Before committing, run what CI runs on Python 3.11 and 3.12:
+
+```sh
+ruff check && ruff format --check && mypy && pytest
+```
+
+`ruff format` fixes the formatting. CI also builds both reference seasons and keeps their PDFs. The repository is organised by ticket (one branch per ticket); see the documentation below.
 
 ## Documentation
 

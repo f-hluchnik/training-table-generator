@@ -90,19 +90,18 @@ def interval_limit_km(week_km: int) -> int:
 
 def threshold_session(occurrence: int) -> Session:
     """3×8′ → 3×10′ → 4×8′ → 4×10′ → 5×8′, held there by the cap on minutes at T."""
-    session = _uncapped_threshold_session(occurrence)
-    while session.reps * session.minutes > MAX_THRESHOLD_MINUTES:
+    reps, minutes = _uncapped_threshold_shape(occurrence)
+    while reps * minutes > MAX_THRESHOLD_MINUTES:
         occurrence -= 1
-        session = _uncapped_threshold_session(occurrence)
-    return session
+        reps, minutes = _uncapped_threshold_shape(occurrence)
+    return Session(SessionType.THRESHOLD, reps=reps, minutes=minutes)
 
 
-def _uncapped_threshold_session(occurrence: int) -> Session:
-    return Session(
-        SessionType.THRESHOLD,
-        reps=THRESHOLD_START_REPS + occurrence // 2,
-        minutes=THRESHOLD_START_MINUTES + THRESHOLD_LONGER_REP_EXTRA_MINUTES * (occurrence % 2),
-    )
+def _uncapped_threshold_shape(occurrence: int) -> tuple[int, int]:
+    """(reps, minutes per rep) of the `occurrence`-th T session, before the cap."""
+    reps = THRESHOLD_START_REPS + occurrence // 2
+    minutes = THRESHOLD_START_MINUTES + THRESHOLD_LONGER_REP_EXTRA_MINUTES * (occurrence % 2)
+    return reps, minutes
 
 
 def marathon_pace_session(occurrence: int, mp: Pace) -> Session:
@@ -179,21 +178,36 @@ def session_km(session: Session, paces: TrainingPaces, easy_run_km: int) -> floa
     easy_km_per_minute = _km_per_minute(paces.easy)
     # Hill efforts count at easy pace.
     work = work_km(session, _effort_pace(session.type, paces))
-    recoveries = (session.reps - 1) * _recovery_minutes(session)
+    recoveries = (_reps(session) - 1) * _recovery_minutes(session)
     easy_minutes = WARMUP_MINUTES + COOLDOWN_MINUTES + recoveries
     return work + easy_minutes * easy_km_per_minute
 
 
 def work_km(session: Session, pace: Pace) -> float:
     """Km of work (recoveries excluded) at `pace`, for repetitions given in minutes or in km."""
-    per_rep = session.km if session.km is not None else session.minutes * _km_per_minute(pace)
-    return session.reps * per_rep
+    if session.km is not None:
+        return _reps(session) * session.km
+    return _reps(session) * _rep_minutes(session) * _km_per_minute(pace)
 
 
 def work_minutes(session: Session, pace: Pace) -> float:
     """Minutes of work (recoveries excluded) at `pace`, for repetitions given in minutes or in km."""
-    per_rep = session.minutes if session.km is None else session.km / _km_per_minute(pace)
-    return session.reps * per_rep
+    if session.km is not None:
+        return _reps(session) * session.km / _km_per_minute(pace)
+    return _reps(session) * _rep_minutes(session)
+
+
+def _reps(session: Session) -> int:
+    if session.reps is None:
+        raise ValueError(f"a {session.type} session has no repetitions")
+    return session.reps
+
+
+def _rep_minutes(session: Session) -> float:
+    """Minutes per repetition of a session given in minutes (spec allows exactly one of minutes or km)."""
+    if session.minutes is None:
+        raise ValueError(f"this {session.type} session is given in km, not minutes")
+    return session.minutes
 
 
 def _effort_pace(session_type: SessionType, paces: TrainingPaces) -> Pace:

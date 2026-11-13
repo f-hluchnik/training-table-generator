@@ -7,7 +7,7 @@ only guard that the template accepts the plan.json contract and does not crash.
 import copy
 import json
 import re
-from datetime import date, timedelta
+from datetime import date
 from pathlib import Path
 
 import pytest
@@ -15,12 +15,11 @@ import typst
 
 from ttg.expand import expand
 from ttg.export import export
-from ttg.model import Load, Paces, Race, RaceResult, Season
-from ttg.render import TEMPLATE, render_pdf
+from ttg.model import Race
+from ttg.render import PLAN_INPUT, TEMPLATE, render_pdf
 
-TODAY = date(2026, 11, 13)
+from support import FIXTURES, TODAY, season
 
-FIXTURES = Path(__file__).parent / "fixtures"
 SAMPLES = [
     FIXTURES / "sample-plan-2026-weeks-1-4.json",
     FIXTURES / "plan-2026.json",
@@ -82,14 +81,20 @@ def test_a_longer_plan_continues_on_a_second_page_at_the_minimum_row_height():
 
 
 def test_a_month_or_phase_band_longer_than_a_page_breaks_across_pages():
-    """A generated 60-week plan has a build band of about 50 weeks. Unbreakable bands pushed the
-    whole table to page 2, left page 1 with only the title and cut off the last weeks."""
-    marathon = Race("Marathon", date(2027, 10, 10), 42.195)
-    season = Season(
-        races=(marathon,),
-        paces=Paces(RaceResult(42.195, timedelta(hours=3, minutes=30, seconds=2))),
-        load=Load(easy_run_km=12, long_run_km=15),
-        weeks=60,
-    )
-    plan = expand(season, TODAY)
-    assert _page_count(render_pdf(export(plan, ()))) == 2
+    """Unbreakable bands pushed the whole table to page 2, left page 1 with only the title and cut
+    off the last weeks."""
+    assert _page_count(render_pdf(_sixty_week_plan())) == 2
+
+
+def test_a_band_continued_on_the_next_page_is_labelled_on_both():
+    """Weeks 1–47 fit page 1: the build band (weeks 1–50) and July (46–50) are cut at the break."""
+    plan_text = json.dumps(_sixty_week_plan())
+    labels = json.loads(typst.query(TEMPLATE, "<ttg-band>", field="value", sys_inputs={PLAN_INPUT: plan_text}))
+    assert labels.count("build") == 2
+    assert labels.count("jul") == 2
+    assert labels.count("marathon") == 1
+
+
+def _sixty_week_plan() -> dict:
+    """A generated plan whose build band is about 50 weeks: longer than a page."""
+    return export(expand(season(Race("Marathon", date(2027, 10, 10), 42.195), weeks=60), TODAY))

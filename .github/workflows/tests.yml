@@ -15,6 +15,9 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
       - run: pip install -e '.[dev]'
+      - run: ruff check
+      - run: ruff format --check
+      - run: mypy
       - run: pytest
       # Build both reference seasons end to end and keep the PDFs for review (T-09).
       - run: |

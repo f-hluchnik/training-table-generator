@@ -3,17 +3,26 @@ checked for every sample and snapshot in tests/test_sample_plan.py."""
 
 from dataclasses import replace
 from datetime import date
-from pathlib import Path
 
 import pytest
 
 from ttg.expand import expand
 from ttg.export import export, long_run_text, phase_label, quality_text, race_text
-from ttg.model import LongRun, Phase, PhaseKind, PlanWarning, Priority, Race, Session, SessionType, WarningCode
+from ttg.model import (
+    LongRun,
+    Phase,
+    PhaseKind,
+    PlanWarning,
+    Priority,
+    Race,
+    Session,
+    SessionType,
+    WarningCode,
+)
 from ttg.spec import load_season
 
-SEASONS = Path(__file__).parents[1] / "seasons"
-TODAY = date(2026, 11, 13)
+from support import SEASONS, TODAY, season
+
 MARATHON = Race("Marathon", date(2027, 10, 10), 42.195)
 
 
@@ -24,7 +33,7 @@ def plan_2026():
 
 @pytest.fixture(scope="module")
 def document_2026(plan_2026):
-    return export(plan_2026, plan_2026.warnings)
+    return export(plan_2026)
 
 
 def week(document, number):
@@ -99,7 +108,7 @@ def test_a_c_race_is_a_quality_run_of_type_race(plan_2026):
     tune_up = Race("Tune-up", date(2026, 5, 10), 10, Priority.C)  # Sunday of week 1
     season = replace(plan_2026.season, races=(tune_up, *plan_2026.season.races))
     plan = expand(season, TODAY)
-    assert week(export(plan, ()), 1)["quality"] == {"type": "race", "km": 10, "text": "RACE 10 km"}
+    assert week(export(plan), 1)["quality"] == {"type": "race", "km": 10, "text": "RACE 10 km"}
 
 
 @pytest.mark.parametrize(
@@ -120,7 +129,7 @@ def test_footer_lists_the_races(document_2026):
 
 
 def test_gauge_covers_the_highest_week_and_the_80_percent_box(document_2026):
-    assert document_2026["gauge"] == {"km_per_box": 1, "boxes": 80, "label_every_km": 10}
+    assert document_2026["gauge"] == {"boxes": 80, "label_every_km": 10}
     first = week(document_2026, 1)
     assert first["box_80pct"] == 32  # ⌈0.8 × 39⌉
 
@@ -139,8 +148,21 @@ def test_pace_legend_in_print_order(document_2026):
 
 def test_title_footer_and_warnings(plan_2026):
     warning = PlanWarning(WarningCode.PLAN_TOO_SHORT, None, "message")
-    document = export(plan_2026, [warning])
+    document = export(replace(plan_2026, warnings=(warning,)))
     assert document["title"] == "marathon training plan"
     assert document["footer"]["rules"] == list(plan_2026.season.sheet.rules)
     assert document["footer"]["success"] == "A week counts at ≥ 80 % of the planned km."
     assert document["warnings"] == [{"code": "C2", "week": None, "message": "message"}]
+
+
+def test_phases_are_numbered_so_adjacent_phases_with_one_label_stay_apart():
+    """Two 10 km races a week apart: two one-week tapers in a row, both labelled `taper`."""
+    first, second = (Race(name, day, 10) for name, day in (("a", date(2027, 3, 14)), ("b", date(2027, 3, 21))))
+    weeks = export(expand(season(first, second, start=date(2027, 3, 1)), TODAY))["weeks"]
+    assert [(w["phase"], w["phase_label"]) for w in weeks] == [(1, "10 km"), (2, "taper"), (3, "taper")]
+
+
+def test_the_2026_phases_are_numbered_in_order(document_2026):
+    phases = [week["phase"] for week in document_2026["weeks"]]
+    assert phases == sorted(phases)
+    assert phases[0] == 1 and len(set(phases)) == phases[-1]

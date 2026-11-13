@@ -1,8 +1,7 @@
 """Warnings C3–C8 (T-07): each check fires and stays quiet; 2026 gives the expected warnings."""
 
 from dataclasses import replace
-from datetime import date, timedelta
-from pathlib import Path
+from datetime import date
 
 import pytest
 
@@ -20,9 +19,8 @@ from ttg.model import (
     Load,
     Paces,
     Plan,
+    Priority,
     Race,
-    RaceResult,
-    Season,
     Session,
     SessionType,
     WarningCode,
@@ -32,16 +30,16 @@ from ttg.model import (
 from ttg.paces import Pace
 from ttg.spec import load_season
 
-SEASONS = Path(__file__).parents[1] / "seasons"
-TODAY = date(2026, 11, 13)
+from support import LOAD, PACES, SEASONS, TODAY
+from support import season as support_season
+
 MARATHON = Race("Marathon", date(2027, 10, 10), 42.195)
-RESULT = RaceResult(42.195, timedelta(hours=3, minutes=30, seconds=2))  # derived T 4:40.2
 C1, C3, C4, C8 = (WarningCode.RACES_TOO_CLOSE, WarningCode.WEEKLY_RAMP,
                   WarningCode.LONG_RUN_SHARE, WarningCode.PACE_CONSISTENCY)  # fmt: skip
 
 
-def plan_of(*overrides: WeekOverride, load: Load = Load(12, 15), paces: Paces = Paces(RESULT)) -> Plan:
-    season = Season(races=(MARATHON,), paces=paces, load=load, start=date(2027, 5, 3), overrides=overrides)
+def plan_of(*overrides: WeekOverride, load: Load = LOAD, paces: Paces = PACES) -> Plan:
+    season = support_season(MARATHON, paces=paces, load=load, start=date(2027, 5, 3), overrides=overrides)
     return expand(season, TODAY)
 
 
@@ -101,6 +99,16 @@ def test_c5_fires_when_the_starting_long_run_is_above_the_cap():
     assert weeks_of(long_run_above_cap(plan_of(load=Load(12, 34))))[:3] == [1, 2, 3]
 
 
+def test_c4_and_c5_ignore_a_race_in_the_long_runs_place():
+    """A 50 km C race in a marathon plan is not a long run above the 32 km cap (D-039)."""
+    ultra = Race("Ultra", date(2027, 5, 30), 50, Priority.C)  # Sunday of week 4
+    season = support_season(ultra, MARATHON, start=date(2027, 5, 3))
+    plan = expand(season, TODAY)
+    assert plan.weeks[3].long_run == ultra
+    assert list(long_run_share(plan)) == []
+    assert list(long_run_above_cap(plan)) == []
+
+
 # --- C6 threshold volume -------------------------------------------------------------------
 
 
@@ -147,12 +155,12 @@ def test_c7_fires_above_10_km_in_a_big_week():
 
 def test_c8_quiet_without_a_threshold_override_or_close_to_the_derived_pace():
     assert list(pace_consistency(plan_of())) == []
-    assert list(pace_consistency(plan_of(paces=replace(Paces(RESULT), threshold=Pace.parse("4:31"))))) == []
+    assert list(pace_consistency(plan_of(paces=replace(PACES, threshold=Pace.parse("4:31"))))) == []
 
 
 @pytest.mark.parametrize(("threshold", "direction"), [("4:30", "faster"), ("4:51", "slower")])
 def test_c8_fires_more_than_10_seconds_off(threshold, direction):
-    warnings = list(pace_consistency(plan_of(paces=replace(Paces(RESULT), threshold=Pace.parse(threshold)))))
+    warnings = list(pace_consistency(plan_of(paces=replace(PACES, threshold=Pace.parse(threshold)))))
     assert [(w.code, w.week) for w in warnings] == [(C8, None)]
     assert direction in warnings[0].message
 
@@ -161,7 +169,7 @@ def test_c8_fires_more_than_10_seconds_off(threshold, direction):
 
 
 def test_2026_gives_the_expected_warnings():
-    warnings = check(expand(load_season(SEASONS / "2026.toml"), TODAY))
+    warnings = expand(load_season(SEASONS / "2026.toml"), TODAY).warnings
     assert [(w.code, w.week) for w in warnings] == [
         (C8, None),  # T 4:30 vs derived 4:40
         (C4, 13),  # 33 of 64 km: the hill session's estimate is low
@@ -171,6 +179,6 @@ def test_2026_gives_the_expected_warnings():
     ]
 
 
-def test_check_keeps_the_layout_and_expansion_warnings():
+def test_the_plan_carries_the_checks_warnings_too():
     plan = expand(load_season(SEASONS / "2026.toml"), TODAY)
-    assert set(plan.warnings) <= set(check(plan))
+    assert set(check(plan)) < set(plan.warnings)

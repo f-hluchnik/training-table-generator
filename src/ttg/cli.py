@@ -12,7 +12,6 @@ from datetime import date
 from pathlib import Path
 
 from ttg import __version__
-from ttg.checks import check
 from ttg.expand import expand
 from ttg.export import export
 from ttg.model import PlanWarning, SeasonError
@@ -53,10 +52,9 @@ def _build(season_path: Path, output: Path | None) -> int:
     except (SeasonError, OSError) as error:
         print(f"ttg: error: {error}", file=sys.stderr)
         return EXIT_INPUT_ERROR
-    warnings = check(plan)
     directory = output if output is not None else DEFAULT_OUTPUT_ROOT / season_path.stem
-    written = write_outputs(export(plan, warnings), directory)
-    for warning in warnings:
+    written = write_outputs(export(plan), directory)
+    for warning in plan.warnings:
         print(_format_warning(warning), file=sys.stderr)
     for path in written:
         print(f"wrote {path}")

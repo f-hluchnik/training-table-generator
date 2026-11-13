@@ -99,16 +99,18 @@ def test_derived_paces_of_the_2026_marathon():
     assert vdot(MARATHON_KM, result) == pytest.approx(44.5, abs=0.1)
     paces = derive_paces(MARATHON_KM, result)
     assert [p.format() for p in (paces.easy, paces.mp, paces.threshold, paces.interval)] == [
-        "5:37", "4:59", "4:40", "4:18",
+        "5:37",
+        "4:59",
+        "4:40",
+        "4:18",
     ]
 
 
 def test_faster_result_gives_faster_paces():
     slow, fast = derive_paces(10, clock("50:00")), derive_paces(10, clock("40:00"))
-    assert all(f < s for f, s in zip(
-        (fast.easy, fast.mp, fast.threshold, fast.interval),
-        (slow.easy, slow.mp, slow.threshold, slow.interval),
-    ))
+    fast_paces = (fast.easy, fast.mp, fast.threshold, fast.interval)
+    slow_paces = (slow.easy, slow.mp, slow.threshold, slow.interval)
+    assert all(f < s for f, s in zip(fast_paces, slow_paces, strict=True))
 
 
 def test_paces_are_ordered_by_intensity():

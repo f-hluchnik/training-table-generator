@@ -1,5 +1,5 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "title": "marathon training plan",
   "paces": [
     {
@@ -29,7 +29,6 @@
     }
   ],
   "gauge": {
-    "km_per_box": 1,
     "boxes": 50,
     "label_every_km": 10
   },
@@ -75,6 +74,7 @@
       ],
       "month": "may",
       "kind": "build",
+      "phase": 1,
       "phase_label": "build",
       "easy": {
         "km": [
@@ -138,6 +138,7 @@
       ],
       "month": "may",
       "kind": "build",
+      "phase": 1,
       "phase_label": "build",
       "easy": {
         "km": [
@@ -201,6 +202,7 @@
       ],
       "month": "may",
       "kind": "build",
+      "phase": 1,
       "phase_label": "build",
       "easy": {
         "km": [
@@ -264,6 +266,7 @@
       ],
       "month": "may",
       "kind": "deload",
+      "phase": 1,
       "phase_label": "build",
       "easy": {
         "km": [

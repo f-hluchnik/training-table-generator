@@ -1,7 +1,7 @@
 """Warnings C3–C8 (TRAINING_MODEL.md §7, D-031).
 
 Each check is a small function of the plan with a named threshold. C1 and C2
-come from the layout (D-029) and the expansion; `check` only merges them.
+come from the layout (D-029) and the expansion; `ttg.expand` merges them with these.
 Warnings never stop the build (D-001) and are not printed on the sheet (D-027).
 Pure (D-013).
 """
@@ -10,7 +10,7 @@ from collections.abc import Callable, Iterator
 from itertools import pairwise
 
 from ttg import long_run
-from ttg.model import Plan, PlanWarning, Session, SessionType, WarningCode, Week
+from ttg.model import LongRun, Plan, PlanWarning, Session, SessionType, WarningCode, Week
 from ttg.paces import derive_paces
 from ttg.sessions import (
     MAX_INTERVAL_KM,
@@ -37,12 +37,12 @@ MAX_THRESHOLD_DEVIATION_SECONDS = 10
 
 
 def check(plan: Plan) -> tuple[PlanWarning, ...]:
-    """All warnings of the plan, ordered by week; warnings about the whole plan first."""
-    warnings = [*plan.warnings]
+    """Warnings C3–C8 of the plan's weeks and paces (not C1 and C2, which come with the plan)."""
+    warnings: list[PlanWarning] = []
     for weekly_check in _WEEKLY_CHECKS:
         warnings += weekly_check(plan)
     warnings += pace_consistency(plan)
-    return tuple(sorted(warnings, key=lambda warning: (warning.week or 0, warning.code)))
+    return tuple(warnings)
 
 
 def weekly_ramp(plan: Plan) -> Iterator[PlanWarning]:
@@ -61,8 +61,8 @@ def weekly_ramp(plan: Plan) -> Iterator[PlanWarning]:
 
 
 def long_run_share(plan: Plan) -> Iterator[PlanWarning]:
-    """C4."""
-    for week in plan.weeks:
+    """C4: not for a race in the long run's place, which is not a long run (D-039)."""
+    for week in _weeks_with_a_long_run(plan):
         if week.long_run_km > MAX_LONG_RUN_SHARE * week.planned_km:
             yield PlanWarning(
                 WarningCode.LONG_RUN_SHARE,
@@ -73,8 +73,11 @@ def long_run_share(plan: Plan) -> Iterator[PlanWarning]:
 
 
 def long_run_above_cap(plan: Plan) -> Iterator[PlanWarning]:
-    """C5: only an override or a long starting long run can pass the cap of the target race."""
-    for week in plan.weeks:
+    """C5: only an override or a long starting long run can pass the cap of the target race.
+
+    Not for a race in the long run's place: a long C race is not a long run (D-039).
+    """
+    for week in _weeks_with_a_long_run(plan):
         cap = long_run.cap(week.target.type)
         if week.long_run_km > cap:
             yield PlanWarning(
@@ -144,6 +147,10 @@ def _percent(share: float, sign: bool = False) -> str:
 
 def _easy_and_long_km(week: Week) -> int:
     return sum(week.easy) + week.long_run_km
+
+
+def _weeks_with_a_long_run(plan: Plan) -> Iterator[Week]:
+    return (week for week in plan.weeks if isinstance(week.long_run, LongRun))
 
 
 def _sessions_of(plan: Plan, session_type: SessionType) -> Iterator[tuple[Week, Session]]:

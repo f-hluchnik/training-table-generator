@@ -9,13 +9,13 @@ from collections.abc import Iterable, Sequence
 from datetime import date
 from typing import Any
 
-from ttg.model import LongRun, Phase, PhaseKind, Plan, PlanWarning, Race, Session, SessionType, Week, WeekKind
+from ttg.model import LongRun, Phase, PhaseKind, Plan, Race, Session, SessionType, Week, WeekKind
 from ttg.sessions import RECOVERY_JOG_MINUTES, STRIDES_COUNT, STRIDES_SECONDS, half_easy_run_km, round_km
 
-SCHEMA_VERSION = 1
+# 2: `weeks[].phase` added, `gauge.km_per_box` dropped (D-037).
+SCHEMA_VERSION = 2
 
-# D-019: 1 km per box, labels every 10 km; the gauge covers the highest planned week.
-KM_PER_BOX = 1
+# D-019: one box per km (not configurable), labels every 10 km; the gauge covers the highest planned week.
 GAUGE_LABEL_EVERY_KM = 10
 # D-006: a week counts at ≥ 80 % of its planned km.
 SUCCESS_SHARE = 0.8
@@ -37,25 +37,25 @@ STRIDES_TEXT = "S"
 NOTE_WORDS = {WeekKind.TAPER: "taper", WeekKind.RACE: "race", WeekKind.RECOVERY: "recovery"}
 
 
-def export(plan: Plan, warnings: Iterable[PlanWarning]) -> dict[str, Any]:
-    """The plan.json document of `plan` with `warnings` (not printed on the sheet)."""
+def export(plan: Plan) -> dict[str, Any]:
+    """The plan.json document of `plan`, warnings included (they are not printed on the sheet)."""
     sheet = plan.season.sheet
+    phase_numbers = _phase_numbers(plan.weeks)
     return {
         "schema_version": SCHEMA_VERSION,
         "title": sheet.title,
         "paces": _pace_legend(plan),
         "gauge": {
-            "km_per_box": KM_PER_BOX,
             "boxes": _gauge_boxes(week.planned_km for week in plan.weeks),
             "label_every_km": GAUGE_LABEL_EVERY_KM,
         },
-        "weeks": [_week(week, plan.season.races) for week in plan.weeks],
+        "weeks": [_week(week, phase_numbers[week.phase], plan.season.races) for week in plan.weeks],
         "footer": {
             "races": [race_text(race) for race in plan.season.races],
             "rules": list(sheet.rules),
             "success": SUCCESS_TEXT,
         },
-        "warnings": [{"code": str(w.code), "week": w.week, "message": w.message} for w in warnings],
+        "warnings": [{"code": str(w.code), "week": w.week, "message": w.message} for w in plan.warnings],
     }
 
 
@@ -87,7 +87,9 @@ def quality_text(quality: Session | Race) -> str:
             return STRIDES_TEXT
     if quality.km is not None:
         return f"{quality.type}: {quality.reps}x{_number(quality.km)} km"
-    return f"{quality.type}: {quality.reps}x{_number(quality.minutes)}'"
+    if quality.minutes is not None:
+        return f"{quality.type}: {quality.reps}x{_number(quality.minutes)}'"
+    raise ValueError(f"a {quality.type} session needs minutes or km")
 
 
 def long_run_text(long_run: LongRun | Race | None) -> str:
@@ -100,12 +102,19 @@ def long_run_text(long_run: LongRun | Race | None) -> str:
     return f"{long_run.km} km"
 
 
-def _week(week: Week, races: Sequence[Race]) -> dict[str, Any]:
+def _phase_numbers(weeks: Iterable[Week]) -> dict[Phase, int]:
+    """Each phase's number on the sheet, from 1. Two adjacent phases can share a label (two tapers)."""
+    phases = dict.fromkeys(week.phase for week in weeks)
+    return {phase: number for number, phase in enumerate(phases, start=1)}
+
+
+def _week(week: Week, phase_number: int, races: Sequence[Race]) -> dict[str, Any]:
     return {
         "number": week.number,
         "days": [_day(day, races) for day in week.days],
         "month": MONTHS[week.month - 1],
         "kind": str(week.kind),
+        "phase": phase_number,
         "phase_label": phase_label(week.phase),
         "easy": {"km": list(week.easy), "text": "+".join(str(km) for km in week.easy)},
         "quality": {
@@ -155,7 +164,7 @@ def _pace_legend(plan: Plan) -> list[dict[str, str]]:
 def _gauge_boxes(planned_kms: Iterable[int]) -> int:
     """The highest planned week rounded up to the next label (D-019); at least one label."""
     highest = max(planned_kms, default=0)
-    return max(1, math.ceil(highest / GAUGE_LABEL_EVERY_KM)) * GAUGE_LABEL_EVERY_KM // KM_PER_BOX
+    return max(1, math.ceil(highest / GAUGE_LABEL_EVERY_KM)) * GAUGE_LABEL_EVERY_KM
 
 
 def _date_range(first: date, last: date) -> str:

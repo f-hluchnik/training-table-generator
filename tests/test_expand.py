@@ -3,20 +3,16 @@ tests/test_golden_2026.py."""
 
 from dataclasses import replace
 from datetime import date, timedelta
-from pathlib import Path
 
 import pytest
 
 from ttg.expand import expand
 from ttg.model import (
     EasyRuns,
-    Load,
     LongRun,
-    Paces,
     Plan,
     Priority,
     Race,
-    RaceResult,
     Season,
     SeasonError,
     Session,
@@ -29,8 +25,9 @@ from ttg.model import (
 from ttg.sessions import capped_interval_session, interval_limit_km, interval_session, round_km, work_km
 from ttg.spec import load_season
 
-SEASONS = Path(__file__).parents[1] / "seasons"
-TODAY = date(2026, 11, 13)
+import support
+from support import SEASONS, TODAY
+
 H, I, T, MP, S, NONE = (
     SessionType.HILLS, SessionType.INTERVALS, SessionType.THRESHOLD,
     SessionType.MARATHON_PACE, SessionType.STRIDES, SessionType.NONE,
@@ -45,12 +42,7 @@ FIRST_SPECIFIC = 17  # of the MARATHON-only plan: build 1–16, specific 17–21
 
 def season(*races: Race, **fields) -> Season:
     fields.setdefault("start", START)
-    return Season(
-        races=tuple(sorted(races, key=lambda race: race.date)),
-        paces=Paces(RaceResult(42.195, timedelta(hours=3, minutes=30, seconds=2))),
-        load=Load(easy_run_km=12, long_run_km=15),
-        **fields,
-    )
+    return support.season(*races, **fields)
 
 
 def plan_of(*races: Race, **fields) -> Plan:
@@ -310,6 +302,24 @@ def test_a_long_run_override_keeps_the_mp_km_up_to_its_length():
     mp_week = next(w for w in plan.weeks if w.kind is SPECIFIC)
     overridden = plan_of(MARATHON, overrides=(WeekOverride(mp_week.number, long_run_km=4),))
     assert overridden.weeks[mp_week.number - 1].long_run == LongRun(4, 4)
+
+
+@pytest.mark.parametrize(
+    ("override", "field"),
+    [
+        (WeekOverride(23, long_run_km=10), "23.long_run_km"),  # the marathon's race week
+        (WeekOverride(2, quality=Session(T, reps=3, minutes=10)), "2.quality"),  # the 10 km tune-up's week
+    ],
+)
+def test_an_override_cannot_replace_a_race(override, field):
+    """D-038: the race would vanish from its cell while the day stays bold."""
+    with pytest.raises(SeasonError, match=rf'^overrides\.{field}: the [a-z ]+ of week \d+ is the race "'):
+        plan_of(TUNE_UP, MARATHON, overrides=(override,))
+
+
+def test_an_override_may_change_the_other_cells_of_a_race_week():
+    week_2 = plan_of(TUNE_UP, MARATHON, overrides=(WeekOverride(2, long_run_km=0),)).weeks[1]
+    assert (week_2.quality, week_2.long_run) == (TUNE_UP, None)
 
 
 def test_an_override_past_the_end_is_an_error():

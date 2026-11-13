@@ -6,11 +6,11 @@ and `plan-test-2027` are the generated snapshots (tests/test_snapshots.py)."""
 import json
 import math
 from datetime import date, timedelta
-from pathlib import Path
 
 import pytest
 
-FIXTURES = Path(__file__).parent / "fixtures"
+from support import FIXTURES
+
 SAMPLES = [
     FIXTURES / "sample-plan-2026-weeks-1-4.json",
     FIXTURES / "plan-2026.json",
@@ -21,7 +21,7 @@ SUCCESS_SHARE = 0.8  # D-006
 
 PLAN_KEYS = {"schema_version", "title", "paces", "gauge", "weeks", "footer", "warnings"}
 WEEK_KEYS = {
-    "number", "days", "month", "kind", "phase_label", "easy", "quality", "long",
+    "number", "days", "month", "kind", "phase", "phase_label", "easy", "quality", "long",
     "planned_km", "box_80pct", "note",
 }  # fmt: skip
 
@@ -33,7 +33,7 @@ def plan(request):
 
 def test_top_level_keys(plan):
     assert set(plan) == PLAN_KEYS
-    assert plan["schema_version"] == 1
+    assert plan["schema_version"] == 2
 
 
 def test_week_keys(plan):

@@ -1,7 +1,6 @@
 import copy
 import tomllib
 from datetime import date, timedelta
-from pathlib import Path
 
 import pytest
 
@@ -17,7 +16,7 @@ from ttg.model import (
 from ttg.paces import Pace
 from ttg.spec import SeasonError, load_season, parse_season
 
-SEASONS = Path(__file__).parent.parent / "seasons"
+from support import SEASONS
 
 MINIMAL = tomllib.loads(
     """
