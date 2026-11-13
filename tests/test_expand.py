@@ -142,7 +142,7 @@ def test_deload_taper_race_and_recovery_quality(plan_2026):
     weeks = {week.number: week for week in plan_2026.weeks}
     assert weeks[4].quality == Session(S)
     assert weeks[15].quality == weeks[16].quality == Session(T, reps=6, km=1)
-    assert weeks[17].quality.type is NONE
+    assert weeks[17].quality == Session(S)  # strides keep the legs sharp before the race
     assert weeks[18].quality.type is weeks[19].quality.type is NONE
 
 
@@ -204,9 +204,18 @@ def test_long_run_reaches_the_full_cap_only_in_the_specific_block():
     assert long_run_kms(specific) == [26, 28, 30, 23, 32]
 
 
-def test_marathon_specific_long_runs_end_with_mp_km_except_in_deloads():
+def test_every_other_marathon_specific_long_run_ends_with_mp_km():
     weeks = [w for w in plan_of(MARATHON).weeks if w.number >= FIRST_SPECIFIC and w.kind in (SPECIFIC, DELOAD)]
-    assert [w.long_run.mp_km for w in weeks] == [6, 8, 10, 0, 12]
+    # Weeks 17–21: MP, plain, MP, deload (no MP, not counted in the alternation), plain.
+    assert [w.long_run.mp_km for w in weeks] == [6, 0, 8, 0, 0]
+
+
+def test_no_mp_km_in_the_long_run_of_a_tune_up_race_week():
+    tune_up = replace(TUNE_UP, date=date(2027, 8, 29))  # Sunday of week 17, the first MP long run
+    weeks = plan_of(tune_up, MARATHON).weeks
+    assert weeks[16].quality == tune_up
+    assert weeks[16].long_run.mp_km == 0
+    assert weeks[17].long_run.mp_km == 6  # the alternation goes on: the next one has MP
     assert all(w.long_run.mp_km == 0 for w in plan_of(MARATHON).weeks if w.kind is BUILD)
 
 
@@ -222,7 +231,7 @@ def test_the_race_replaces_the_long_run_and_is_not_counted(plan_2026):
     race_week = plan_2026.weeks[16]
     assert race_week.long_run == plan_2026.season.races[0]
     assert race_week.long_run_km == 0
-    assert race_week.planned_km == sum(race_week.easy) == 18
+    assert race_week.planned_km == sum(race_week.easy) + race_week.quality_km == 24
 
 
 def test_recovery_first_week_without_long_run_then_one_easy_run_length(plan_2026):

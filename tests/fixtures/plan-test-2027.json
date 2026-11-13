@@ -1665,8 +1665,8 @@
       },
       "long": {
         "km": 28,
-        "mp_km": 8,
-        "text": "28 km (8 MP)"
+        "mp_km": 0,
+        "text": "28 km"
       },
       "planned_km": 69,
       "box_80pct": 56,
@@ -1728,8 +1728,8 @@
       },
       "long": {
         "km": 30,
-        "mp_km": 10,
-        "text": "30 km (10 MP)"
+        "mp_km": 0,
+        "text": "30 km"
       },
       "planned_km": 64,
       "box_80pct": 52,
@@ -1854,8 +1854,8 @@
       },
       "long": {
         "km": 32,
-        "mp_km": 12,
-        "text": "32 km (12 MP)"
+        "mp_km": 8,
+        "text": "32 km (8 MP)"
       },
       "planned_km": 76,
       "box_80pct": 61,
@@ -1917,8 +1917,8 @@
       },
       "long": {
         "km": 32,
-        "mp_km": 14,
-        "text": "32 km (14 MP)"
+        "mp_km": 0,
+        "text": "32 km"
       },
       "planned_km": 79,
       "box_80pct": 64,
@@ -2037,17 +2037,17 @@
         "text": "12+6"
       },
       "quality": {
-        "type": "none",
-        "km": 0,
-        "text": "–"
+        "type": "S",
+        "km": 6,
+        "text": "S"
       },
       "long": {
         "km": 0,
         "mp_km": 0,
         "text": "RACE 42 km"
       },
-      "planned_km": 18,
-      "box_80pct": 15,
+      "planned_km": 24,
+      "box_80pct": 20,
       "note": "race"
     }
   ],

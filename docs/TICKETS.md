@@ -65,14 +65,14 @@ T-01 ─▶ T-02 ─┬─▶ T-03 ─┐
 
 *Note (T-05):* the session types and reps are reproduced exactly; the km only within 3 km, because the owner's km are hand estimates (`TRAINING_MODEL.md` §3). Left for T-06: LR progression and caps, `LongRun` printing (`28 km (10 MP)`), which week gets which session. The hill rule keeps doubling the duration every 4th occurrence (5×2′, 5×4′, …); not capped, since 2026-length plans never reach it.
 
-### T-06 Week expansion and overrides — in progress (awaiting the owner's review of test-2027)
+### T-06 Week expansion and overrides — done
 - Phase rules → weeks, the 3:1 cycle, phase labels (D-026), LR progression and caps, deload, taper, race and recovery weeks.
 - `[overrides]`, with an error for an override past the last week; `export` to `plan.json` (D-027).
 - Prune `seasons/2026.toml` overrides that the defaults make unnecessary, and list the remaining differences (D-020).
 
 **Done when:** golden test: `seasons/2026.toml` produces the reference table week for week (intentional differences listed in the test). `test-2027` is reviewed by the owner and frozen as a snapshot.
 
-*S5 (13 Nov 2026):* `ttg.expand` (phases → weeks, overrides), `ttg.long_run` (growth, caps, deload, taper, restart), `ttg.export` (plan.json); the rules are D-030. Golden test `tests/test_golden_2026.py`: no overrides were added to copy the reference (owner); every difference is listed with its reason. Snapshots of both seasons in `tests/fixtures/plan-*.json` (`tests/test_snapshots.py`); the generated 2026 plan replaced the hand-transcribed `sample-plan-2026-full.json`. `build_session` gave way to per-type progressions (`progression_session`), so a rotation can continue across phases and past a C race. After the owner's first review (S5): longer C races replace the long run, the I progression is capped, races print their distance and are listed in the footer, a C race in a recovery block warns. **Left:** the owner reviews the updated `plan-test-2027.json` (PDF in the PR) and the rest of D-030's *Proposed* part; then T-06 is done.
+*S5 (13 Nov 2026):* `ttg.expand` (phases → weeks, overrides), `ttg.long_run` (growth, caps, deload, taper, restart), `ttg.export` (plan.json); the rules are D-030. Golden test `tests/test_golden_2026.py`: no overrides were added to copy the reference (owner); every difference is listed with its reason. Snapshots of both seasons in `tests/fixtures/plan-*.json` (`tests/test_snapshots.py`); the generated 2026 plan replaced the hand-transcribed `sample-plan-2026-full.json`. `build_session` gave way to per-type progressions (`progression_session`), so a rotation can continue across phases and past a C race. After the owner's first review (S5): longer C races replace the long run, the I progression is capped, races print their distance and are listed in the footer, a C race in a recovery block warns. Coach review of test-2027 (D-033): MP long runs alternate with plain ones, no MP in a tune-up race's week, strides in race week. The owner approved test-2027 with these rules; `plan-test-2027.json` is frozen.
 
 ### T-07 Checks — done
 Warnings C3–C8 (`TRAINING_MODEL.md` §7), each a small function with a named threshold constant. C1 and C2 come from the layout since T-04 (D-029); T-07 only merges them.
