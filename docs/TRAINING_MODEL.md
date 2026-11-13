@@ -41,7 +41,7 @@ McMillan names the same intensities Endurance, Stamina and Speed, and also start
 
 ## 3. Week structure (D-016)
 
-Four runs: ER, ER, quality run, LR. Easy runs are a regular pair *e*+*e* or a reduced pair *e*+*e*/2, never growing (D-022). The weekly planned km is the sum of the four runs (D-006). Quality-run km are estimated as follows **[2026, prototype]**: 10′ warm-up + reps × work + (reps − 1) × recovery + 10′ cool-down, everything at easy pace except the work itself (hill efforts also counted at easy pace). This reproduces the 2026 numbers (e.g. T 3 × 8′ ≈ 10 km).
+3–6 runs, default 4: one quality run, one LR, the rest easy runs (D-016). Easy runs are *e* each; in reduced weeks the last one is *e*/2. They never grow and are not a lever for anything else (D-022). The weekly planned km is the sum of all runs (D-006). Quality-run km are estimated as follows **[2026, prototype]**: 10′ warm-up + reps × work + (reps − 1) × recovery + 10′ cool-down, everything at easy pace except the work itself (hill efforts also counted at easy pace). This reproduces the 2026 numbers (e.g. T 3 × 8′ ≈ 10 km).
 
 ## 4. Phase kinds
 
@@ -52,12 +52,12 @@ Four runs: ER, ER, quality run, LR. Easy runs are a regular pair *e*+*e* or a re
   - I: 5×3′ → 6×3′ → 5×4′ → 6×4′ → 5×5′ …
   - T: 3×8′ → 3×10′ → 4×8′ → 4×10′, capped at **40′ total at T** (tempo work is 15–40 min) **[source 5]**.
 - **LR:** +2 km per build week **[2026: +2–3 km]**, up to the cap (§6).
-- **Easy runs:** the regular pair *e*+*e* (D-022).
+- **Easy runs:** regular (D-022).
 - **Labels:** one per 4-week cycle: base, strength, volume, volume … (D-021).
 
 ### deload (every 4th build week)
-- The easy runs drop to the reduced pair (12+6), the quality run becomes S (6 km), and the LR is set to **80 %** of the last build LR **[default]**.
-- That gives about 75 % of the previous week, matching the usual 10–30 % cut **[source 6, 7]**. Checked on the 2026 numbers: 54 → 40, 61 → 45, 67 → 50 km.
+- Defined by its purpose: **no intensity** (the quality run becomes S) and a **shorter long run, 75 % of the last build LR** **[default]**. The easy runs are reduced (D-022).
+- The weekly total is a consequence, not a target. With 2026's numbers it lands at about 70–80 % of the previous week, depending on the easy runs, which is inside the usual 10–30 % cut **[source 6, 7]**. No check polices it.
 - The week still feels like rest: no intensity and a clearly shorter long run.
 - 2026 cut to about 50–55 % (61 → 33 km). That is deeper than standard, which is acceptable but not the default; it is an override in the reference season.
 
@@ -68,7 +68,7 @@ Four runs: ER, ER, quality run, LR. Easy runs are a regular pair *e*+*e* or a re
 | ≤ 10 km | I and T alternating | capped lower (§6) |
 | half marathon | T | — |
 | marathon | MP repeats: 3×3 km, +1 rep a week **[2026]** | the last MP km grow 6 → 8 → 10 … **[default]** |
-| ultra | H | toward the ultra cap |
+| ultra | build rotation H → I → T (D-023) | toward the ultra cap |
 
 Elevation (vertical metres) is out of scope in v1 (Q-5).
 
@@ -162,7 +162,7 @@ Default footer (configurable):
 | Threshold pace | 4:30 | about 10 s/km fast | derived ≈ 4:40 |
 | Threshold volume | up to 4×10′ | within McMillan's 15–40′ | cap 40′ |
 | Interval volume | up to 6×4′ | within guidance | C7 |
-| Deload depth | 50–55 % | deeper than standard | ≈ 75 % |
+| Deload depth | 50–55 % | deeper than standard | no intensity, LR 75 % (≈ 70–80 % of the week) |
 | Long-run share | up to 54 % | high, a result of 4 runs a week | warning > 50 % |
 | Long run peak | 40 km (ultra) | fine for an ultra | cap per race (§6) |
 | Marathon block | 2 weeks of MP work | thin, forced by the race dates | compression + warning |

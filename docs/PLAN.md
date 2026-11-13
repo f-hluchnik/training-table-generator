@@ -63,6 +63,7 @@ race_result = { distance_km = 42.195, time = "3:30:02" }   # anchor for defaults
 
 [load]                        # required: what you run now
 easy_run_km = 12              # regular weeks 12+12, reduced weeks 12+6 (D-022)
+runs_per_week = 4             # optional, 3–6 (D-016)
 long_run_km = 15
 ```
 
@@ -92,6 +93,7 @@ long_run_km = 40
 
 [sheet]
 phase_labels = ["base", "strength", "volume"]
+km_per_box = 2                 # 1 or 2 (D-019)
 ```
 
 The exact schema is fixed in T-02. Every field beyond the minimal example needs a decision (CLAUDE.md §3).

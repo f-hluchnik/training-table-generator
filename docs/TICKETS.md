@@ -52,7 +52,7 @@ T-01 ─▶ T-02 ─┬─▶ T-03 ─┐
 - start after the race (error).
 
 ### T-05 Sessions and progressions — todo
-- Session catalogue (`TRAINING_MODEL.md` §1); the regular and reduced easy pairs (D-022).
+- Session catalogue (`TRAINING_MODEL.md` §1); 3–6 runs per week (D-016); regular and reduced easy runs (D-022).
 - H/I/T progressions salvaged from the prototype, MP repeats, LR with MP km, strides.
 - Quality km estimate; T cap.
 
@@ -70,7 +70,7 @@ Warnings C1–C8 (`TRAINING_MODEL.md` §7), each a small function with a named t
 **Done when:** each check has a firing and a non-firing test; 2026 produces the expected warnings (C4, C8, shortened specific block).
 
 ### T-08 Typst renderer — todo (can start after T-02)
-- `templates/plan.typ` reproducing the reference sheet from `plan.json` (PLAN §5); gauge per D-019, including the thicker 80 % border.
+- `templates/plan.typ` reproducing the reference sheet from `plan.json` (PLAN §5); gauge per D-019 (1 or 2 km per box, the thicker 80 % border); an ER column wide enough for 4 easy runs.
 - Fonts: choose ones bundled or commonly available, and document the choice.
 
 **Done when:** the hand-made sample renders, and later the full 2026 plan. Compare a page image side by side with the reference PDF; the owner approves the look.

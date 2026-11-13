@@ -3,7 +3,7 @@
 Status values: **Agreed** (confirmed by the owner), **Proposed** (architect's recommendation, waiting for the owner's yes/no), **Superseded**.
 Record new decisions at the end. Never renumber.
 
-Origin of D-001 to D-022: architecture review session, 13 Nov 2026. D-011 to D-020 were proposed by the architect and confirmed by the owner the same day.
+Origin of D-001 to D-023: architecture review session, 13 Nov 2026. The owner reviewed D-011 to D-020 in this file the same day; his comments are recorded in the decisions.
 
 ---
 
@@ -49,7 +49,7 @@ Where the owner has no opinion (deload depth, long-run share, taper shape, ...),
 
 ---
 
-## Agreed (proposed by the architect, confirmed by the owner)
+## Agreed (proposed by the architect, confirmed by the owner in this file)
 
 ### D-011 Season file in TOML
 One `season.toml` per plan. Python reads it with stdlib `tomllib` (Python ≥ 3.11), so there is no parser dependency. Alternative: YAML (needs PyYAML, and has implicit-typing pitfalls).
@@ -81,16 +81,11 @@ Everything except loading (`spec`), the command line (`cli`) and rendering (`ren
 *Why Daniels and not McMillan:* the owner prefers McMillan or Galloway. McMillan's calculator, however, is not published as a formula as far as we know, so it cannot be reproduced exactly; Daniels' equations are published. Zone names on the sheet stay neutral (easy, threshold, interval, MP).
 *Check:* 3:30:02 marathon → VDOT 44.5, threshold ≈ 4:40/km, interval ≈ 4:17/km, MP 4:59/km. The owner's 2026 values were T 4:30 and I 4:15, so threshold was about 10 s/km fast (see `TRAINING_MODEL.md` §2).
 
-### D-016 Fixed weekly structure
-Default four runs a week: two easy runs, one quality run, one long run. The number of easy runs can be configured (1–3). Sessions are not assigned to days: the runner fills the calendar by hand (D-007).
+### D-016 Weekly structure: 3–6 runs, always one quality run and one long run
+- `runs_per_week` = 3–6, default 4. Every week has exactly one quality run and one long run; the rest are easy runs (1–4).
+- Sessions are not assigned to days: the runner fills the calendar by hand (D-007).
 
-### D-017 Race priority A / B / C
-- **A:** full taper and recovery.
-- **B:** taper shortened by one week.
-- **C:** tune-up race. No taper or recovery block; it replaces that week's quality session.
-
-Default: A.
-*Why:* without C, any tune-up 10 km in a marathon build would get a full taper and recovery.
+*Owner's question:* would 3, 5 or 6 days be an unnecessary complication? *Answer:* no, as long as only the number of easy runs changes. That touches only the easy-run list (D-022) and the width of the ER column. A second quality session or a mid-week medium-long run (Pfitzinger style) would change the training model, so it would need a new decision.
 
 ### D-018 Unambiguous notation
 - `–` means no session.
@@ -105,10 +100,27 @@ Default: A.
 - Box width shrinks if the gauge would not fit the page.
 
 - The 80 % rule is shown minimally (Q-4): in each row, the border after the box where 80 % of that week's planned km is reached is drawn thicker. No other marks.
+- `km_per_box` (1 or 2) is a sheet setting; the default is 2.
+
+*Owner's question:* how would 1 km per box look? *Answer:* mocked up on 13 Nov 2026 with a 140 mm gauge. 80 km takes 80 boxes of 1.75 mm, about as narrow as the reference's boxes, which were 2 km each. It fits, but the gauge then needs most of the page width, and you colour up to ~70 boxes a week instead of ~35. The 80 % rule doesn't need 1 km resolution.
 
 ### D-020 Reference seasons as acceptance tests
 - `seasons/2026.toml` must reproduce the reference table, using overrides where 2026 differs from the new defaults. This tests expressiveness.
 - `seasons/test-2027.toml` is an arbitrary season (the owner has no 2027 races yet) whose output the owner reviews once and which is then frozen. This tests the defaults. Proposal: half marathon (C) in April, 10 km (C) in early September, marathon (A) in October.
+
+---
+
+## Proposed (waiting for the owner)
+
+### D-017 Race priority A / B / C
+- **A:** full taper and recovery.
+- **B:** taper shortened by one week.
+- **C:** tune-up race. No taper or recovery block; it replaces that week's quality session.
+
+Default: A.
+*Why:* without C, any tune-up 10 km in a marathon build would get a full taper and recovery.
+
+*Owner:* not answered yet.
 
 ---
 
@@ -118,7 +130,7 @@ Default: A.
 - **Q-2** *Answered:* only labels → D-021.
 - **Q-3** *Answered:* easy runs don't grow → D-022.
 - **Q-4** *Answered:* a thicker line, minimal → D-019.
-- **Q-5** Mountain ultras: should v1 handle elevation (vertical metres per week, hill-heavy long runs) or only km? Proposal: km only in v1. An ultra uses the marathon rules with a higher long-run cap and hills as the quality session; elevation is a later ticket.
+- **Q-5** *Answered:* km only in v1; elevation is a later ticket. The ultra quality sessions are not limited to hills → D-023.
 - **Q-6** Website route, later: (a) the Python core in the browser via Pyodide plus a Typst WebAssembly build, which works as a static site on GitHub Pages; (b) port the core to TypeScript; (c) a small server, which cannot run on GitHub Pages. No decision needed now; D-013 keeps (a) and (b) open. Typst-in-browser is not yet verified.
 
 ---
@@ -128,10 +140,15 @@ Default: A.
 ### D-021 Phase names are display labels only
 All general-preparation weeks are one phase kind, *build*, with the same rules. The rotated phase label on the sheet is a mental map for the runner. Build blocks are labelled by position, one label per 4-week cycle: *base*, *strength*, *volume*, then *volume* again. The labels are configurable in `[sheet]`. Specific, taper, race and recovery phases have their own default labels.
 
-### D-022 Easy runs: two fixed pairs, no growth
+### D-022 Easy runs: predictable background, no growth
 The input gives one easy-run length *e* (2026: 12 km).
-- **Regular weeks:** two runs of *e* (12+12).
-- **Reduced weeks** (deload, taper, race and recovery): *e* + *e*/2 (12+6), rounded to whole km.
+- **Regular weeks:** all easy runs are *e* (2026: 12+12).
+- **Reduced weeks** (deload, taper, race and recovery): the last easy run is *e*/2, rounded to whole km (2026: 12+6).
 
 Easy runs never grow; volume growth comes from the long run and the quality session. Any week can be overridden (2026 weeks 1–3 used the reduced pair).
+
+*Owner:* 12+6 is not a hard rule. Easy runs should be predictable, but they aren't the main thing. So **no other rule is calibrated against them**. The deload rule is defined by its purpose (no intensity, a shorter long run), and the weekly total falls wherever it falls (`TRAINING_MODEL.md` §4).
+
+### D-023 Ultra quality sessions keep the full rotation
+The ultra's race-specific block keeps the build rotation H → I → T; it is not limited to hills. What changes for an ultra is the long-run cap (`TRAINING_MODEL.md` §6). Elevation stays out of v1 (Q-5).
 
