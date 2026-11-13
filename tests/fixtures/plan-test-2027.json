@@ -1,5 +1,5 @@
 {
-  "schema_version": 4,
+  "schema_version": 5,
   "title": "training plan",
   "paces": [
     {
@@ -10,7 +10,7 @@
     {
       "code": "S",
       "pace": "6 km + 6×20″",
-      "label": "easy, with fast relaxed strides"
+      "label": "fast, relaxed strides"
     },
     {
       "code": "H",
@@ -19,12 +19,12 @@
     },
     {
       "code": "I",
-      "pace": "4:18+2'",
+      "pace": "4:18 + 2′ jog",
       "label": "hard"
     },
     {
       "code": "T",
-      "pace": "4:40+2'",
+      "pace": "4:40 + 2′ jog",
       "label": "comfortably hard"
     },
     {
@@ -2094,9 +2094,21 @@
   ],
   "footer": {
     "races": [
-      "Half marathon 4 apr (C)",
-      "10 km 5 sep (C)",
-      "Marathon 10 oct (A)"
+      {
+        "dates": "4 apr",
+        "name": "Half marathon",
+        "details": "C"
+      },
+      {
+        "dates": "5 sep",
+        "name": "10 km",
+        "details": "C"
+      },
+      {
+        "dates": "10 oct",
+        "name": "Marathon",
+        "details": "A"
+      }
     ],
     "rules": [
       "Short on time: drop an easy run → intensity → long run.",

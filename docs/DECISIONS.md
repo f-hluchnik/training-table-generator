@@ -264,7 +264,7 @@ How `ttg.expand` turns phases into weeks. The numbers are named constants in `tt
 
 test-2027 is frozen as the snapshot `tests/fixtures/plan-test-2027.json` with these rules.
 
-### D-034 Pace legend lists S and H
+### D-034 Pace legend lists S and H (typography and two wordings changed by D-047)
 *Owner, S5:* the legend missed the strides run. The legend now lists every session code printed in the table: `ER`, `S` (e/2 km easy with 6 × 20″ fast, relaxed strides, TRAINING_MODEL §1), `H` (hard uphill effort, jog down; effort-based, no pace, D-015), `I`, `T`, `MP`, `LR`.
 
 ---
@@ -343,3 +343,11 @@ test-2027 is frozen as the snapshot `tests/fixtures/plan-test-2027.json` with th
 
 ### D-046 The default output folder is next to the season file — Agreed (owner, S8)
 *Owner, S8:* the place where the PDF is generated depended on the folder `ttg` was run from; it should always be the same. `ttg build SEASON.toml` now writes into `out/<season file name>/` in the season file's own folder: `seasons/2026.toml` → `seasons/out/2026/`, from any working folder. Next to the season file and not in the repository's `out/`, because the tool also runs installed outside a checkout (D-035), where there is no repository folder to find. `-o DIR` keeps meaning `DIR`, relative to the working folder as usual. `out/` at any depth is git-ignored. *Amends* D-035.
+
+### D-047 A quiet footer — Agreed in principle (owner, S8); revised after the owner's review
+*Owner, S8:* the legend should look minimalistic, and it wasn't pleasing. It read `ER=5:30 [easy]; S=6 km + 6×20″ [easy, with fast relaxed strides]; … I=4:15+2' [hard]; …` in one dense line.
+- **Hierarchy by type, no grey** (owner: grey separators blended with grey descriptions; the designer's rule: let weight and style carry the order, and make separators a different kind of mark from text). The key bold with a colon, its value roman, its description italic.
+- **Pace legend:** **ER**: 5:30 *easy* | **S**: 6 km + 6×20″ *fast, relaxed strides* | … Same entries and order as D-034; no `=`, brackets or semicolons.
+- **Races:** the dates first, bold, like the codes (owner: "do something about the dates"), the name roman, the priority italic: **28–29 aug**: Beskydská sedmička *(B)*. The dates make the line self-explanatory, so it has no *races* label. `footer.races` entries are `{dates, name, details}`: `plan.json` 5.
+- **Separators:** a thin black vertical rule (0.4 pt, 2 mm each side) between the entries of every footer line. Tried and dropped on the way: wide spaces (too roomy), grey dots (invisible), a grey `|` (blended with the grey text), a map-like key with a column per session (owner: messy).
+- **Two texts in `plan.json`:** the recovery is written `4:15 + 2′ jog` (it was `4:15+2'`, a straight quote next to the strides' `″`), and the strides' description is *fast, relaxed strides*: the S code and *6 km* already say it is an easy run. The snapshots change only in these values and in the race entries.

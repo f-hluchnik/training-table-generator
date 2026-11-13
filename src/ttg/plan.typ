@@ -238,18 +238,25 @@
 }
 
 // ---------------------------------------------------------------- footer
-#let pace-legend = (
-  plan.paces
-    .map(entry => {
-      let pace = if entry.pace != "" { "=" + entry.pace } else { "" }
-      let label = if entry.label != "" { " [" + entry.label + "]" } else { "" }
-      [#strong(entry.code)#pace#label]
-    })
-    .join("; ")
-)
+// Quiet typography (D-047): hierarchy by the type alone, no grey and no `=`, brackets or
+// semicolons. Each entry is a bold key and a colon, its value roman, its description italic; a thin
+// black rule, a different kind of mark from the text, separates the entries of every footer line.
+#let separator-rule-weight = 0.4pt
+#let list-separator = [#h(2mm)#box(height: 0.75em, stroke: (left: separator-rule-weight + black))#h(2mm)]
 
-// The races of the season, so a "RACE" cell can be told apart (owner, S5).
-#let race-list = [#strong[races]: #plan.footer.races.join("; ")]
+#let pace-entry(entry) = {
+  [#strong(entry.code):]
+  if entry.pace != "" [ #entry.pace]
+  if entry.label != "" [ #emph(entry.label)]
+}
+#let pace-legend = plan.paces.map(pace-entry).join(list-separator)
+
+// The races of the season, so a "RACE" cell can be told apart (owner, S5): the dates set apart
+// like the session codes above them.
+#let race-entry(race) = [#strong(race.dates): #race.name #emph[(#race.details)]]
+#let race-list = plan.footer.races.map(race-entry).join(list-separator)
+
+#let footer-rules = (..plan.footer.rules, plan.footer.success).join(list-separator)
 
 // ---------------------------------------------------------------- page
 #set page(paper: "a4", flipped: true, margin: page-margin)
@@ -264,8 +271,9 @@
 
 #v(2mm)
 #align(center)[
-  #pace-legend \
-  #race-list \
+  #pace-legend
   #v(0.5mm)
-  #plan.footer.rules.join(" ") #plan.footer.success
+  #race-list
+  #v(0.5mm)
+  #footer-rules
 ]

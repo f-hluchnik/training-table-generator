@@ -1,5 +1,5 @@
 {
-  "schema_version": 4,
+  "schema_version": 5,
   "title": "marathon training plan",
   "paces": [
     {
@@ -10,7 +10,7 @@
     {
       "code": "S",
       "pace": "6 km + 6×20″",
-      "label": "easy, with fast relaxed strides"
+      "label": "fast, relaxed strides"
     },
     {
       "code": "H",
@@ -19,12 +19,12 @@
     },
     {
       "code": "I",
-      "pace": "4:15+2'",
+      "pace": "4:15 + 2′ jog",
       "label": "hard"
     },
     {
       "code": "T",
-      "pace": "4:30+2'",
+      "pace": "4:30 + 2′ jog",
       "label": "comfortably hard"
     },
     {
@@ -1514,8 +1514,16 @@
   ],
   "footer": {
     "races": [
-      "Beskydská sedmička 28–29 aug (B)",
-      "Běhej Lesy Lednice 10 oct (A)"
+      {
+        "dates": "28–29 aug",
+        "name": "Beskydská sedmička",
+        "details": "B"
+      },
+      {
+        "dates": "10 oct",
+        "name": "Běhej Lesy Lednice",
+        "details": "A"
+      }
     ],
     "rules": [
       "Short on time: drop an easy run → intensity → long run.",
