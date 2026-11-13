@@ -15,7 +15,7 @@ import typst
 
 from ttg.expand import expand
 from ttg.export import export
-from ttg.model import Race
+from ttg.model import Priority, Race
 from ttg.render import PLAN_INPUT, TEMPLATE, render_pdf
 
 from support import FIXTURES, TODAY, season
@@ -98,3 +98,38 @@ def test_a_band_continued_on_the_next_page_is_labelled_on_both():
 def _sixty_week_plan() -> dict:
     """A generated plan whose build band is about 50 weeks: longer than a page."""
     return export(expand(season(Race("Marathon", date(2027, 10, 10), 42.195), weeks=60), TODAY))
+
+
+# --- band labels fit their bands (D-044) -------------------------------------------------------
+
+READABLE_PT = 5  # the template's min-band-label-size
+
+
+def _band_fits(plan: dict) -> list[dict]:
+    plan_text = json.dumps(plan)
+    return json.loads(typst.query(TEMPLATE, "<ttg-band-fit>", field="value", sys_inputs={PLAN_INPUT: plan_text}))
+
+
+def _tight_plan() -> dict:
+    """38 weeks (rows of 3.9 mm): a 10 km race gets a one-week taper and a one-week recovery."""
+    ten_k = Race("Spring 10", date(2027, 4, 18), 10)
+    marathon = Race("Autumn marathon", date(2027, 8, 29), 42.195, recovery_weeks=0)
+    late = Race("Late 18", date(2027, 9, 26), 18, Priority.B)
+    return export(expand(season(ten_k, marathon, late, start=date(2027, 1, 4)), TODAY))
+
+
+def test_every_band_label_fits_inside_its_band():
+    fits = _band_fits(_tight_plan())
+    assert all(fit["width-mm"] <= fit["available-mm"] + 1e-6 for fit in fits)
+
+
+def test_a_band_too_short_for_its_word_shows_the_short_form_at_a_readable_size():
+    labels = {fit["label"]: fit["size-pt"] for fit in _band_fits(_tight_plan())}
+    assert "recovery" not in labels and labels["rec."] >= READABLE_PT
+    assert labels["tap."] >= READABLE_PT
+
+
+def test_a_word_that_fits_is_printed_whole_at_full_size():
+    fits = _band_fits(_load(SAMPLES[1]))  # the 2026 plan: 23 weeks, no band shorter than its word
+    assert {fit["size-pt"] for fit in fits} == {8}
+    assert "recovery" in {fit["label"] for fit in fits}

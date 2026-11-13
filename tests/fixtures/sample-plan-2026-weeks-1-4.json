@@ -1,5 +1,5 @@
 {
-  "schema_version": 2,
+  "schema_version": 3,
   "title": "marathon training plan",
   "paces": [
     {
@@ -76,6 +76,7 @@
       "kind": "build",
       "phase": 1,
       "phase_label": "build",
+      "phase_short": "bld.",
       "easy": {
         "km": [
           12,
@@ -140,6 +141,7 @@
       "kind": "build",
       "phase": 1,
       "phase_label": "build",
+      "phase_short": "bld.",
       "easy": {
         "km": [
           12,
@@ -204,6 +206,7 @@
       "kind": "build",
       "phase": 1,
       "phase_label": "build",
+      "phase_short": "bld.",
       "easy": {
         "km": [
           12,
@@ -268,6 +271,7 @@
       "kind": "deload",
       "phase": 1,
       "phase_label": "build",
+      "phase_short": "bld.",
       "easy": {
         "km": [
           12,

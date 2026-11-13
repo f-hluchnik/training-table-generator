@@ -117,7 +117,7 @@ Everything the sheet shows, computed in Python, including the display strings. T
 
 ```json
 {
-  "schema_version": 2,
+  "schema_version": 3,
   "title": "marathon training plan",
   "paces": [{"code": "I", "pace": "4:15+2'", "label": "hard"}, ...],
   "gauge": {"boxes": 80, "label_every_km": 10},
@@ -128,6 +128,7 @@ Everything the sheet shows, computed in Python, including the display strings. T
     "kind": "race",
     "phase": 6,
     "phase_label": "taper",
+    "phase_short": "tap.",
     "easy": {"km": [12, 6], "text": "12+6"},
     "quality": {"type": "none", "km": 0, "text": "–"},
     "long": {"km": 0, "mp_km": 0, "text": "RACE 42 km"},
@@ -150,6 +151,7 @@ Everything the sheet shows, computed in Python, including the display strings. T
 | `weeks[].month` | The month containing the week's Thursday. |
 | `weeks[].kind` | `build`, `deload`, `specific`, `taper`, `race`, `recovery`. |
 | `weeks[].phase` | The phase's number on the sheet, from 1; the phase column groups by it (D-037). |
+| `weeks[].phase_short` | The short form of `phase_label` (*bld.*, *spec.*, *tap.*, *rec.*, *10k*, *half*, *42k*, *ult.*), shown when the band is too short for the word at a readable size (D-044). |
 | `weeks[].phase_label` | The phase column text (D-026): *build*, *taper*, *recovery*, and for a race-specific block the race type, or *specific* when the race is not that distance (D-042). |
 | `weeks[].quality.type` | As in the season file: `H`, `I`, `T`, `MP`, `S`, `none`; or `race` for a C race up to 10 km, which replaces the quality run (D-017, D-030). |
 | `weeks[].quality.km` | The estimate of `TRAINING_MODEL.md` §3; a C race counts its distance (D-030). |
@@ -159,7 +161,7 @@ Everything the sheet shows, computed in Python, including the display strings. T
 | `weeks[].note` | The text of the last column: the planned km in build, deload and specific weeks; *taper*, *race* or *recovery* otherwise; or the override's `note` (D-030). |
 | `warnings` | Not printed on the sheet; `week` may be `null`. |
 
-All km are whole numbers. Month cells span the consecutive weeks of one month, phase cells those of one `phase`; a span continued on the next page is labelled again there (D-037). This grouping is layout, not logic.
+All km are whole numbers. Month cells span the consecutive weeks of one month, phase cells those of one `phase`; a span continued on the next page is labelled again there (D-037). This grouping is layout, not logic, and so is fitting a band's label to its length: a label shrinks to fit its band, and below 5 pt a phase band shows `phase_short` (D-044).
 
 ## 5. The sheet (R-1)
 

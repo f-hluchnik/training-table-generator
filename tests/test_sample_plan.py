@@ -21,7 +21,7 @@ SUCCESS_SHARE = 0.8  # D-006
 
 PLAN_KEYS = {"schema_version", "title", "paces", "gauge", "weeks", "footer", "warnings"}
 WEEK_KEYS = {
-    "number", "days", "month", "kind", "phase", "phase_label", "easy", "quality", "long",
+    "number", "days", "month", "kind", "phase", "phase_label", "phase_short", "easy", "quality", "long",
     "planned_km", "box_80pct", "note",
 }  # fmt: skip
 
@@ -33,7 +33,7 @@ def plan(request):
 
 def test_top_level_keys(plan):
     assert set(plan) == PLAN_KEYS
-    assert plan["schema_version"] == 2
+    assert plan["schema_version"] == 3
 
 
 def test_week_keys(plan):

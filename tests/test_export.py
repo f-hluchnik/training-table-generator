@@ -7,7 +7,7 @@ from datetime import date
 import pytest
 
 from ttg.expand import expand
-from ttg.export import export, long_run_text, phase_label, quality_text, race_text
+from ttg.export import PHASE_SHORT_LABELS, export, long_run_text, phase_label, quality_text, race_text
 from ttg.model import (
     LongRun,
     Phase,
@@ -15,6 +15,7 @@ from ttg.model import (
     PlanWarning,
     Priority,
     Race,
+    RaceType,
     Session,
     SessionType,
     WarningCode,
@@ -75,6 +76,18 @@ def test_long_run_text(long_run, text):
 )
 def test_phase_labels_are_derived(phase, label):
     assert phase_label(phase) == label
+
+
+def test_every_phase_label_has_a_short_form():
+    """D-044: a band too short for its word shows the short form, so every label needs one."""
+    labels = {str(kind) for kind in PhaseKind} | {str(race_type) for race_type in RaceType}
+    assert set(PHASE_SHORT_LABELS) == labels
+
+
+def test_weeks_carry_the_short_form_of_their_phase_label(document_2026):
+    assert {(w["phase_label"], w["phase_short"]) for w in document_2026["weeks"]} == {
+        ("build", "bld."), ("ultra", "ult."), ("taper", "tap."), ("recovery", "rec."), ("marathon", "42k"),
+    }  # fmt: skip
 
 
 @pytest.mark.parametrize(

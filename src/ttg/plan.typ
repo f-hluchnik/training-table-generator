@@ -89,7 +89,40 @@
 #let month-runs = runs(month-of)
 #let phase-runs = runs(phase-of)
 
-#let band(content, rows) = table.cell(
+// A rotated band label keeps this clearance from the lines at both ends of its band.
+#let band-label-clearance = 0.6mm
+// Below this size a label is hard to read on the printed sheet; a phase band shows its short form
+// instead (D-044).
+#let min-band-label-size = 5pt
+
+// The size at which `label` fits `available`: the text size, or smaller for a short band.
+#let fitting-size(label, available) = {
+  let natural = measure(text(font: serif, size: text-size, label)).width
+  if natural > available { text-size * (available / natural) } else { text-size }
+}
+
+// A band's label, shrunk to fit its band so it never runs over the band's lines (a two-week
+// recovery in a long plan). When the word would fall below the readable size, the band shows
+// `short` instead (a one-week recovery: `rec.`); months have no short form (D-044).
+#let band-label(label, short, rows) = context {
+  let available = rows * row-height - 2 * band-label-clearance
+  let size = fitting-size(label, available)
+  let (shown, shown-size) = if short == none or size >= min-band-label-size {
+    (label, size)
+  } else {
+    (short, fitting-size(short, available))
+  }
+  let width = measure(text(font: serif, size: shown-size, shown)).width
+  // The marker lets tests check the fit (`typst.query(..., "<ttg-band-fit>")`).
+  [#text(font: serif, size: shown-size, shown)#metadata((
+    label: shown,
+    size-pt: shown-size.pt(),
+    width-mm: width.mm(),
+    available-mm: available.mm(),
+  ))<ttg-band-fit>]
+}
+
+#let band(label, rows, short: none) = table.cell(
   rowspan: rows,
   // Cells spanning fixed-height rows are unbreakable by default; a band longer than a page
   // would push the whole table to the next page and overflow it.
@@ -98,7 +131,7 @@
   align: center + horizon,
   inset: 0pt,
   // The marker lets tests query the bands (`typst.query(..., "<ttg-band>")`).
-  [#rotate(-90deg, reflow: true, text(font: serif, content))#metadata(content)<ttg-band>],
+  [#rotate(-90deg, reflow: true, band-label(label, short, rows))#metadata(label)<ttg-band>],
 )
 
 #let prescription(text-content) = text(font: mono, text-content)
@@ -133,7 +166,7 @@
   }
   cells += range(box-count).map(_ => [])
   let phase-band = phase-bands.find(run => run.at(0) == index)
-  if phase-band != none { cells.push(band(week.phase_label, phase-band.at(1))) }
+  if phase-band != none { cells.push(band(week.phase_label, phase-band.at(1), short: week.phase_short)) }
   cells.push(prescription(week.easy.text))
   cells.push(prescription(week.quality.text))
   cells.push(prescription(week.long.text))
