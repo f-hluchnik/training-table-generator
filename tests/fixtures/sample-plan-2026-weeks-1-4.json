@@ -292,28 +292,6 @@
       "Beskydská sedmička 28–29 aug (B)",
       "Běhej Lesy Lednice 10 oct (A)"
     ],
-    "colours": [
-      {
-        "colour": "green",
-        "shape": "fill",
-        "label": "easy run"
-      },
-      {
-        "colour": "yellow",
-        "shape": "fill",
-        "label": "quality run"
-      },
-      {
-        "colour": "blue",
-        "shape": "fill",
-        "label": "long run"
-      },
-      {
-        "colour": "red",
-        "shape": "triangle",
-        "label": "unexpected event"
-      }
-    ],
     "rules": [
       "Short on time: drop an easy run → intensity → long run.",
       "Tired or ill: drop intensity first."

@@ -101,3 +101,4 @@ Delete the prototype files and Flask (D-014); update the README.
 ### Later (not scheduled)
 - **T-11** Website feasibility spike (Q-6): Pyodide + Typst WebAssembly on a static page.
 - **T-12** Elevation for mountain ultras (Q-5).
+- **T-13** Coloured print, optional (D-032): the colour scheme shown in the table itself, e.g. the ER, QR and LR columns tinted green, yellow and blue, instead of a separate legend.
