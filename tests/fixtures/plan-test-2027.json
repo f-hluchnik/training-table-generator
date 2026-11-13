@@ -8,6 +8,16 @@
       "label": "easy"
     },
     {
+      "code": "S",
+      "pace": "6 km + 6×20″",
+      "label": "easy, with fast relaxed strides"
+    },
+    {
+      "code": "H",
+      "pace": "",
+      "label": "hard uphill effort, jog down"
+    },
+    {
       "code": "I",
       "pace": "4:18+2'",
       "label": "hard"

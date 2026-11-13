@@ -226,11 +226,11 @@ How `ttg.expand` turns phases into weeks. The numbers are named constants in `tt
 - **The I progression holds within Daniels' limit**: at most the lesser of 10 km and 8 % of the week at I pace (source 11), in whole km, like T at 40′. Without it, test-2027 reached 6 × 5′ (7 km in a 60 km week).
 - **Which race:** a race cell prints its distance, `RACE 21 km` (amends D-018's bare `RACE`); the footer lists the races: `races: Half marathon 4 apr (C); …`. The note column is too narrow for names.
 - **A C race inside a recovery block warns** (C1): racing returns sooner than the recovery allows. Overrides that bring back quality are taken as is.
-- **The long run may plateau at the build cap** in long plans (test-2027: 24 km in weeks 9–24). *Coach, S5:* that is a maintenance long run in a long base period; the deloads give the variation, and the growth resumes in the race-specific block. No change.
+- **The long run may plateau at the build cap** in long plans (test-2027: 24 km in weeks 9–24). *Coach, S5:* that is a maintenance long run in a long base period; the deloads give the variation, and the growth resumes in the race-specific block. No change. *Checked against sources afterwards (owner's question):* holding a load for weeks before raising it is Daniels' own advice (about four weeks per step, source 25); 24 km at 5:37 is 2 h 15, inside his 150-minute long-run limit (source 25). As a share of the week (41–44 % of 55–59 km) it is above Daniels' 25–30 %, which is a property of 4 runs a week (D-016) and is policed by C4 at 50 %, not of the plateau.
 - **Overrides change only their own week.** Later weeks, the deload and the taper are computed from the rules, not from the overridden values (2026: the taper reduces from the computed 35 km peak, not from week 14's 40 km override). *Owner:* "if I want it to affect the other weeks, I should override them too."
 - **Long-run growth stays +2 km per loading week.** *Owner:* "the growth should be around 10 %?" The 10 % rule is about weekly volume, and its only randomised trial found no fewer injuries (Buist et al. 2008, source 21); long-run guidance is usually an absolute 1–2 miles a week (source 22). A percentage would put the biggest steps near the peak. The weekly 10 % stays a warning (C3). *Open:* the owner may still prefer 10 %; it is one function (`long_run.grow`).
 
-*Proposed (review in the T-06 pull request):*
+*Proposed in the T-06 pull request; agreed by the owner when merging (S5):*
 - **3:1 cycle:** a deload after every three consecutive loading weeks (build or specific); any taper, race or recovery week restarts the count. This places 2026's deloads in weeks 4, 8 and 12, and none in the two marathon weeks after the recovery. "Counted from the plan start" (`TRAINING_MODEL.md` §4) would have put one in week 20.
 - **Quality rotation:** each type keeps its own progression for the whole plan; a rotation (build H → I → T, which the ultra block continues; I/T for 10 km) continues where it stopped. A C race takes the quality run's place without advancing the rotation.
 - **Taper:** in the weeks before the race week, the quality run is T 6 × 1 km and the long run is 60 % of the peak since the last race in the week just before the race week, 75 % earlier. No MP km in the taper's long run. Race week: strides (D-033); the race replaces the long run.
@@ -242,7 +242,7 @@ How `ttg.expand` turns phases into weeks. The numbers are named constants in `tt
 
 ### D-031 Checks C3 and C7 (T-07)
 - **C3 compares easy runs + long run**, not the total planned km. *Owner, S5:* agreed. On the total, 2026 warned in weeks 2, 6 and 10 only because the rotation moves from hills (estimated 6 km) to intervals (10 km); now it warns only for week 14, the 40 km long-run override.
-- **C7 is compared in whole km**, the sheet's precision (D-025). *Proposed.* 2026 week 2 (I 5 × 3′ = 3.53 km against 8 % of 44 km = 3.52 km) no longer warns over 0.01 km. The I progression holds within the same limit (D-030), so C7 fires only for overrides; test-2027 has no warnings.
+- **C7 is compared in whole km**, the sheet's precision (D-025). *Agreed (owner, merging #14).* 2026 week 2 (I 5 × 3′ = 3.53 km against 8 % of 44 km = 3.52 km) no longer warns over 0.01 km. The I progression holds within the same limit (D-030), so C7 fires only for overrides; test-2027 has no warnings.
 - 2026 warns C8, C4 (weeks 13, 14), C3 (week 14) and C1 (week 23). The ticket expected C4, C8 and the shortened specific block; C3 for week 14 is the override's jump and is kept.
 ### D-032 No colour legend on the sheet
 *Owner, S5:* the sheet is otherwise black and white, so a legend of coloured swatches is out of place. The colour scheme of D-007 stays the runner's own; the sheet and plan.json no longer carry it (`footer.colours` removed from the contract).
@@ -256,3 +256,6 @@ How `ttg.expand` turns phases into weeks. The numbers are named constants in `tt
 - Not changed: in a long plan the weekly volume stays flat during the build (test-2027: 55–60 km for about 20 weeks). That is a maintenance base, a consequence of the plan's length and of fixed easy runs (D-022), not of the rules.
 
 test-2027 is frozen as the snapshot `tests/fixtures/plan-test-2027.json` with these rules.
+
+### D-034 Pace legend lists S and H
+*Owner, S5:* the legend missed the strides run. The legend now lists every session code printed in the table: `ER`, `S` (e/2 km easy with 6 × 20″ fast, relaxed strides, TRAINING_MODEL §1), `H` (hard uphill effort, jog down; effort-based, no pace, D-015), `I`, `T`, `MP`, `LR`.
