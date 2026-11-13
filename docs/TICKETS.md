@@ -13,7 +13,7 @@ T-01 ─▶ T-02 ─┬─▶ T-03 ─┐
 
 ---
 
-### T-01 Project skeleton — todo
+### T-01 Project skeleton — done
 - `pyproject.toml`: package `ttg`, `requires-python >= 3.11` (D-011), `typst` pinned, `pytest` as a dev dependency, console script `ttg`.
 - Development in a virtual environment: `python3 -m venv .venv && . .venv/bin/activate && pip install -e '.[dev]'`, documented in the README.
 - `src/ttg/` layout, `tests/`, `seasons/`, `templates/`.
