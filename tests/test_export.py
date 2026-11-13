@@ -77,6 +77,19 @@ def test_phase_labels_are_derived(phase, label):
     assert phase_label(phase) == label
 
 
+@pytest.mark.parametrize(
+    ("distance_km", "label"),
+    [
+        (10, "10 km"), (21.1, "half"), (42.2, "marathon"), (60, "ultra"), (101, "ultra"),
+        (5, "specific"), (15, "specific"), (30, "specific"), (42.4, "ultra"),
+    ],
+)  # fmt: skip
+def test_a_specific_block_names_its_race_type_only_for_that_distance(distance_km, label):
+    """D-042: a 30 km race trains as a marathon but is not labelled one."""
+    race = replace(MARATHON, distance_km=distance_km)
+    assert phase_label(Phase(PhaseKind.SPECIFIC, 9, 6, race)) == label
+
+
 def test_a_deload_in_a_specific_block_keeps_the_blocks_label(document_2026):
     assert (week(document_2026, 12)["kind"], week(document_2026, 12)["phase_label"]) == ("deload", "ultra")
 

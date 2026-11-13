@@ -25,7 +25,7 @@ One row per week (plans longer than about 40 weeks continue on a second page), w
 | Week | The week number, from 1. |
 | Mon–Sun | The day of the month: **one cell per day to colour after each run.** Race days are bold; the last week ends on the last race day. |
 | Gauge | One narrow box per km, labelled every 10 km. At the end of the week, colour as many boxes as km you ran. A heavier border marks 80 % of the week's planned km: **a week counts as done at ≥ 80 %.** |
-| Phase | Where you are in the season: *build*, the race-specific block (*10 km*, *half*, *marathon*, *ultra*), *taper*, *recovery*. |
+| Phase | Where you are in the season: *build*, the race-specific block (*10 km*, *half*, *marathon*, *ultra*, or *specific* for a race of another distance, e.g. 30 km), *taper*, *recovery*. |
 | ER | The easy runs, km each: `12+12`, or `12+6` in a lighter week. |
 | QR | The quality run (codes below). |
 | LR | The long run: `24 km`, or `28 km (10 MP)` with the last 10 km at marathon pace. |
@@ -181,7 +181,7 @@ When there isn't enough time, blocks give way in this order, each one only as fa
 
 **Build weeks.** Three loading weeks, then a deload week, repeating. The count restarts after a race and runs on into the race-specific block. The quality run rotates hills → intervals → threshold, and each type progresses each time it comes round:
 
-- **Hills:** 6×1′, one rep more each time; at 10 reps, half the reps at double the length (5×2′, …).
+- **Hills:** 6×1′, one rep more each time; at 10 reps, half the reps at double the length (5×2′, …), held at 5×4′ (at most 20′ of hill effort).
 - **Intervals:** 5×3′ → 6×3′ → 5×4′ → 6×4′ → …, held at no more than 10 km or 8 % of the week at interval pace.
 - **Threshold:** 3×8′ → 3×10′ → 4×8′ → 4×10′ → 5×8′, at most 40′ in total.
 

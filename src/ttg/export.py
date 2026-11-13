@@ -61,10 +61,15 @@ def export(plan: Plan) -> dict[str, Any]:
 
 
 def phase_label(phase: Phase) -> str:
-    """D-026: build, the race type for a specific block, taper, recovery."""
+    """D-026: build, taper, recovery, and the race type for a specific block.
+
+    A specific block names its race type only when the race is that distance; otherwise it is
+    `specific`, so a 30 km race, which trains as a marathon, is not labelled `marathon` (D-042).
+    """
     if phase.kind is PhaseKind.SPECIFIC:
         assert phase.race is not None  # a specific block belongs to its race
-        return str(phase.race.type)
+        if phase.race.is_its_types_distance:
+            return str(phase.race.type)
     return str(phase.kind)
 
 

@@ -7,8 +7,10 @@ hold already-validated data. The plan side (phases, weeks, the plan) is built by
 """
 
 import datetime as dt  # not `from datetime import date`: `Race.date` would shadow the type
+from collections.abc import Mapping
 from dataclasses import dataclass
 from enum import StrEnum
+from types import MappingProxyType
 
 from ttg.paces import MARATHON_KM, Pace, TrainingPaces, derive_paces
 
@@ -49,7 +51,8 @@ class Priority(StrEnum):
 class RaceType(StrEnum):
     """The race type decides phase lengths and the specific block (TRAINING_MODEL.md §4–§6).
 
-    The values are the phase labels of the race-specific block (D-026).
+    The values are the phase labels of the race-specific block when the race is the distance its
+    type is named after (D-026, D-042).
     """
 
     TEN_K = "10 km"  # up to 10 km
@@ -66,6 +69,12 @@ class RaceType(StrEnum):
         if distance_km <= MARATHON_KM + RACE_DISTANCE_SLACK_KM:
             return cls.MARATHON
         return cls.ULTRA
+
+
+# The distance each race type is named after (D-042). An ultra is any distance beyond a marathon.
+NAMED_DISTANCE_KM: Mapping[RaceType, float] = MappingProxyType(
+    {RaceType.TEN_K: TEN_K_KM, RaceType.HALF: HALF_MARATHON_KM, RaceType.MARATHON: MARATHON_KM}
+)
 
 
 class SessionType(StrEnum):
@@ -112,6 +121,12 @@ class Race:
     @property
     def type(self) -> RaceType:
         return RaceType.of(self.distance_km)
+
+    @property
+    def is_its_types_distance(self) -> bool:
+        """A 10 km, half or full marathon (within the slack), or any ultra: the type names the race (D-042)."""
+        named_km = NAMED_DISTANCE_KM.get(self.type)
+        return named_km is None or abs(self.distance_km - named_km) <= RACE_DISTANCE_SLACK_KM
 
     @property
     def is_key(self) -> bool:

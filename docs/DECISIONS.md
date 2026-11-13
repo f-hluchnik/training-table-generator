@@ -183,7 +183,7 @@ The fields and their validation are documented in PLAN §4. Choices beyond PLAN'
 ### D-026 Phase labels are derived, never typed
 *Owner:* labels should not be arbitrary; rather none than random ones. The phase column shows only labels the compiler derives from the phase:
 - general build weeks, deloads included → *build*;
-- the race-specific block → the race type: *10 km*, *half*, *marathon*, *ultra*;
+- the race-specific block → the race type: *10 km*, *half*, *marathon*, *ultra*; *specific* when the race is not that distance (amended by D-042);
 - the taper including the race week → *taper*;
 - recovery after a race → *recovery*.
 
@@ -312,10 +312,20 @@ test-2027 is frozen as the snapshot `tests/fixtures/plan-test-2027.json` with th
 *Owner, S7 (Q-8):* keep the race type by distance; add a "hilly" marker that leans into hill repeats, adjusted as an experienced coach would.
 - **Input:** `[[race]] hilly = true`, default `false`, not on C races (they have no specific block). *Hilly* means climbs, not a steady pace, decide the effort, as on a trail or mountain course; a rolling road marathon is not hilly. A boolean and not an elevation in metres: elevation stays parked (Q-7), and a threshold in m/km would be a number without a source.
 - **Rule:** the race keeps its type, phase lengths, caps and taper. In its race-specific block every other quality run is hill repeats (H); the others are the race's own intensity with threshold instead of marathon pace: H → I → H → T for 10 km and ultra, H → T for half and marathon. No MP km in its long runs. Details and sources in `TRAINING_MODEL.md` §4.
-- **The hill session itself is unchanged.** Its progression lengthens the efforts (1′ → 2′ → 4′) and runs twice as fast in the block; its jog down gives the small downhill dose that is enough (source 26).
+- **The hill session itself is unchanged** (capped later by D-043). Its progression lengthens the efforts (1′ → 2′ → 4′) and runs twice as fast in the block; its jog down gives the small downhill dose that is enough (source 26).
 - **The footer marks the race:** `Trail 10 oct (A, hilly)`, so the block's hills are explained on the sheet.
 
 *Owner's question: should every race have the H → I → T progression?* *Coach:* every plan already runs it through its build weeks. In the race-specific block a flat race narrows to its own intensity: specificity, the final phase is the race-specific one (sources 16, 30). Hills there would take the place of the flat race's most specific session, marathon pace above all. So no; `hilly` is the switch for races where hills are the specific demand.
 
 *Owner's question: how wrong is it to train for a hilly race without hills?* *Coach:* less wrong than it looks for the climbs: uphill running is mainly aerobic, and Koop's last word is that fitness matters most (source 26). The descents are the gap: they are muscular, so the quads need some downhill running, but a little goes a long way. A 30 km long run with 1,600 m of climbing is not needed; see `TRAINING_MODEL.md` §4 for what to do without hills.
 
+
+### D-042 A specific block names a distance only when the race is that distance — Agreed (owner, S8)
+*Owner, S8:* "nothing that isn't a marathon should be labeled marathon. It could say something like *specific*." The race type still comes from the distance (D-041 keeps that): a 30 km race trains as a marathon. Only the label changes. The race-specific block is labelled *10 km*, *half* or *marathon* when the race is within 0.1 km of that distance (the classification's slack, `TRAINING_MODEL.md` §5), *ultra* for any race beyond a marathon (an ultra is any distance beyond a marathon), and *specific* otherwise: a 5 km, 15 km or 30 km race. *Amends* D-026. Both reference seasons keep their labels.
+
+### D-043 Hill repeats are capped at 20′ of effort — Agreed (owner, S8), number proposed by the coach in PR #21
+*Owner, S8:* add a cap (the T-15 check found 9 × 4′, 36′ of hard climbing, in a 52-week hilly plan, and the uncapped rule would go on to 5 × 8′).
+- **Coach:** hill repeats as this plan uses them ("hard uphill effort, jog down") are VO₂max-type work. Efforts of 2–4′ reach and hold that intensity, and the time at it in one session tops out around 15–20′ (Koop, source 31); long-hill sessions are 4–6 reps of 2–4′, 15–20′ of climbing in total (source 32). Longer reps turn into threshold climbing, which the T session already covers.
+- **Rule:** at most 20′ of hill effort in one session, `MAX_HILL_MINUTES`, the top of both ranges. The progression holds at its last step within it, as T holds at 40′ (D-030): 6–9 × 1′ → 5–9 × 2′ → 5 × 4′, held. The 4′ reps are reached without a separate limit on rep length: the next step after 5 × 4′ already breaks the total.
+- An override above the cap is taken as is and does not warn; a check like C6 would be a new warning code.
+- Both reference seasons are unchanged (2026 peaks at 10 × 1′, test-2027 at 6 × 2′).

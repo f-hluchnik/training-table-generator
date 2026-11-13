@@ -150,7 +150,7 @@ Everything the sheet shows, computed in Python, including the display strings. T
 | `weeks[].month` | The month containing the week's Thursday. |
 | `weeks[].kind` | `build`, `deload`, `specific`, `taper`, `race`, `recovery`. |
 | `weeks[].phase` | The phase's number on the sheet, from 1; the phase column groups by it (D-037). |
-| `weeks[].phase_label` | The phase column text (D-026). |
+| `weeks[].phase_label` | The phase column text (D-026): *build*, *taper*, *recovery*, and for a race-specific block the race type, or *specific* when the race is not that distance (D-042). |
 | `weeks[].quality.type` | As in the season file: `H`, `I`, `T`, `MP`, `S`, `none`; or `race` for a C race up to 10 km, which replaces the quality run (D-017, D-030). |
 | `weeks[].quality.km` | The estimate of `TRAINING_MODEL.md` §3; a C race counts its distance (D-030). |
 | `weeks[].long.km` | The long run. A race replaces it in its race week, or a C race from the half marathon up; an A or B race counts 0, a C race its distance (D-030). |

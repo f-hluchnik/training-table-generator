@@ -63,7 +63,7 @@ T-01 ─▶ T-02 ─┬─▶ T-03 ─┐
 
 **Done when:** tests reproduce the 2026 quality sessions and their km.
 
-*Note (T-05):* the session types and reps are reproduced exactly; the km only within 3 km, because the owner's km are hand estimates (`TRAINING_MODEL.md` §3). Left for T-06: LR progression and caps, `LongRun` printing (`28 km (10 MP)`), which week gets which session. The hill rule keeps doubling the duration every 4th occurrence (5×2′, 5×4′, …); not capped, since 2026-length plans never reach it.
+*Note (T-05):* the session types and reps are reproduced exactly; the km only within 3 km, because the owner's km are hand estimates (`TRAINING_MODEL.md` §3). Left for T-06: LR progression and caps, `LongRun` printing (`28 km (10 MP)`), which week gets which session. The hill rule keeps doubling the duration every 4th occurrence (5×2′, 5×4′, …); not capped, since 2026-length plans never reach it. *Capped since S8 at 20′ (5 × 4′), D-043.*
 
 ### T-06 Week expansion and overrides — done
 - Phase rules → weeks, the 3:1 cycle, phase labels (D-026), LR progression and caps, deload, taper, race and recovery weeks.
@@ -125,7 +125,7 @@ Q-8 (b), owner S7: a `hilly` marker on a race leans its race-specific block into
 
 *S7:* `[[race]] hilly = true` (D-041, proposed by the coach, for the owner in the PR). The specific block alternates hill repeats with the race's own intensity, threshold instead of marathon pace; no MP km in the long runs; the footer marks the race `(A, hilly)`. Everything outside the specific block is unchanged (tested). Both reference seasons are unchanged (no hilly race).
 
-*S8 (13 Nov 2026):* PR #20 was stacked on #19 and merged 14 seconds after #19, so it went into `t-14-review-refactor` instead of `main`. The same commit is brought to `main` in a new pull request, unchanged; checked again there: lint, types, 331 tests, both reference seasons' `plan.json` identical to `main`. Checked on long hilly plans: with hills every other week, the uncapped hill progression peaks at 8 × 2′ in a hilly test-2027, 6 × 4′ in a 43-week and 9 × 4′ (36′ of hard climbing) in a 52-week hilly plan, the order of the 40′ threshold cap. No cap added; no realistic plan reaches the next step, 5 × 8′. The README was rewritten to explain the whole tool without the other documents.
+*S8 (13 Nov 2026):* PR #20 was stacked on #19 and merged 14 seconds after #19, so it went into `t-14-review-refactor` instead of `main`. The same commit is brought to `main` in a new pull request, unchanged; checked again there: lint, types, 331 tests, both reference seasons' `plan.json` identical to `main`. Checked on long hilly plans: with hills every other week, the uncapped hill progression peaks at 8 × 2′ in a hilly test-2027, 6 × 4′ in a 43-week and 9 × 4′ (36′ of hard climbing) in a 52-week hilly plan, the order of the 40′ threshold cap. *Owner, S8:* cap it, and label no race-specific block with a distance its race is not. Done in the same PR: hill repeats capped at 20′ of effort, held at 5 × 4′ (D-043); a 30 km race's block is labelled *specific* (D-042). Both reference seasons unchanged; a 30 km hilly sheet inspected. The README was rewritten to explain the whole tool without the other documents.
 
 ### Later (not scheduled)
 - **T-12** Elevation for mountain ultras (Q-5). *Evaluated in S7; parked by the owner (Q-7).* The race-type gap it found is covered by T-15 (`hilly`).

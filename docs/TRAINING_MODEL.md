@@ -80,7 +80,7 @@ The test allows 3 km and pins the estimate itself. The hill km are low because t
 ### build (general preparation)
 - **3:1 cycle:** three loading weeks (build or specific), then one deload week **[2026, source 6]**. Any taper, race or recovery week restarts the count, so the cycle runs on from the build into the specific block and starts afresh after a race (D-030).
 - **Quality rotation:** H → I → T **[2026]**. Each type progresses each time it occurs **[2026]**:
-  - H: 6×1′ → +1 rep each time; at 10 reps, halve the reps and double the duration. In 2026 the owner wrote 10×1′ for the 4th occurrence, where this rule gives 9×1′; that week is an override in the reference season.
+  - H: 6×1′ → +1 rep each time; at 10 reps, halve the reps and double the duration; held at 5×4′ by the cap of **20′ total hill effort** (VO₂max-type work: 2–4′ reps, 15–20′ in a session) **[source 31, 32]** (D-043). In 2026 the owner wrote 10×1′ for the 4th occurrence, where this rule gives 9×1′; that week is an override in the reference season.
   - I: 5×3′ → 6×3′ → 5×4′ → 6×4′ → 5×5′ …, held at the last step within Daniels' limit for the week: the lesser of 10 km and 8 % of the week at I pace, in whole km **[source 11]** (D-030).
   - T: 3×8′ → 3×10′ → 4×8′ → 4×10′ → 5×8′, held there by the cap of **40′ total at T** (tempo work is 15–40 min) **[source 5]**.
 - **LR:** +2 km per loading week **[2026: +2–3 km]**, up to the build cap (§6); the cap stops growth but never cuts a longer starting long run. Coaches usually add 1–2 miles a week to the long run **[source 22]**; the "10 % rule" is about weekly volume and has weak evidence **[source 21]**, so it is only a warning (C3). After a race the LR restarts at 75 % of the previous peak, at most the next race's build cap **[default, owner S5]**. A reduced LR (deload, taper, restart) is never shorter than an easy run **[default]**.
@@ -106,6 +106,8 @@ The long run grows to the full cap (§6) only here. Marathon-pace work is capped
 
 A flat race narrows to its own intensity here; the build weeks before it run H → I → T for every race. That is the principle of specificity: the final phase is the race-specific one **[source 16, 30]**.
 
+**Label:** the race type when the race is that distance (*10 km*, *half*, *marathon*, within 0.1 km) or longer than a marathon (*ultra*); *specific* otherwise, e.g. for a 30 km race, which trains as a marathon (D-042).
+
 **Hilly races (D-041).** A race marked `hilly` (a course where climbs, not a steady pace, decide the effort) keeps its type, phase lengths and caps, but its specific block leans into hills **[default, coach S7]**:
 
 | Race | Quality run, in rotation | Long run |
@@ -115,7 +117,7 @@ A flat race narrows to its own intensity here; the build weeks before it run H �
 
 - Hill repeats every other week: the course's own demand. Koop runs most interval work uphill **[source 27]**; coaches make hills a staple of the last 12 weeks before a hilly marathon **[source 29]**.
 - No MP work: a hilly course has no steady pace to rehearse (Q-8). Threshold keeps the aerobic work: uphill running is mainly an aerobic challenge, so that fitness carries over even when trained on the flat **[source 26]**.
-- The hill session itself is unchanged: its progression already lengthens the efforts (1′ → 2′ → 4′), and in the block it advances twice as fast. Its jog down is a small downhill dose; downhill running is mainly a muscular challenge, and a little of it goes a long way **[source 26, 28]**.
+- The hill session itself is unchanged: its progression already lengthens the efforts (1′ → 2′ → 4′), and in the block it advances twice as fast, up to its cap of 5 × 4′ (D-043). Its jog down is a small downhill dose; downhill running is mainly a muscular challenge, and a little of it goes a long way **[source 26, 28]**.
 - **Without hills nearby** (runner's advice, not a rule): the uphill effort works on an incline treadmill or any short rise. The descents are what flat training cannot give. Koop's options, best first: a 2–3 day camp in hilly terrain 4–6 weeks before the race; circuits of a short hill (about 15–90 m) 2–3 times a week for 4–6 weeks; a decline treadmill. He rates stairs and parking garages as weak substitutes **[source 26]**.
 
 Elevation (vertical metres) is out of scope in v1 (Q-5); it stays parked (Q-7).
@@ -270,5 +272,7 @@ The owner finished the season uninjured and ran the planned marathon pace. That 
 28. G. McMillan, *Racing a Better Boston Marathon*: a little downhill training protects the quads: <https://www.mcmillanrunning.com/racing-a-better-boston-marathon/>
 29. Canadian Running, *Downhill training: how to prepare for Boston's descents*: hills a staple within 12 weeks of the race: <https://runningmagazine.ca/?p=58517>
 30. UltraRunning Magazine, *Spring Forward: Applying the Principle of Specificity*: the final weeks prioritise race-specific work: <https://ultrarunning.com/featured/spring-forward-applying-the-principle-of-specificity/>
+31. J. Koop (CTS), *Decoding Interval Workouts*: 2–4′ intervals reach and hold VO₂max intensity; cumulative time at it in one session tops out around 15–20′: <https://trainright.com/decoding-interval-workouts-for-ultramarathon-training/>, <https://trainright.com/?p=27142>
+32. Long hill repeats of 2–4′, 4–6 reps, about 15–20′ of climbing in total: <https://www.trainingplan.dev/blog/posts/hill-workout-long-hills>, <https://www.trainingplan.dev/blog/posts/hill-repeats-guide>
 
 Sources 1, 10, 11, 12, 16, 20 and 25 are secondary summaries of Daniels; prefer the book when implementing. Source 22 is a newspaper interview, weak; the +2 km step itself is from 2026.
