@@ -43,7 +43,7 @@ Session codes:
 | `RACE 21 km` | A race in place of the session. |
 | `–` | No session. |
 
-The planned km assume a 10′ warm-up and a 10′ cool-down around every quality run. Below the table, the sheet prints the pace legend (e.g. `ER=5:37 [easy]; … I=4:18+2′ [hard]`, where `+2′` is the recovery jog), the races with their dates and priorities, and the "life happens" rules: *Short on time: drop an easy run → intensity → long run. Tired or ill: drop intensity first.*
+The planned km assume a 10′ warm-up and a 10′ cool-down around every quality run. Below the table, the sheet prints the pace legend (e.g. `ER=5:37 [easy]; … I=4:18+2′ [hard]`, where `+2′` is the recovery jog), the races with their dates and priorities (and `hilly`), and the "life happens" rules: *Short on time: drop an easy run → intensity → long run. Tired or ill: drop intensity first.*
 
 The sheet is black and white, and the colours are yours. The reference season used green for easy, yellow for quality and blue for long runs, with a red triangle in a corner for an unexpected event (illness, a trip).
 
@@ -137,7 +137,7 @@ The season file is a [TOML](https://toml.io) file. Required: at least one race, 
 | `taper_weeks` | whole number ≥ 1 | by race type | The taper, including the race week. |
 | `specific_weeks` | whole number ≥ 0 | by race type | The race-specific block. |
 | `recovery_weeks` | whole number ≥ 0 | by race type | Recovery after the race. |
-| `hilly` | `true`, `false` | `false` | The race-specific block leans into hill repeats. |
+| `hilly` | `true`, `false` | `false` | A course where climbs, not a steady pace, decide the effort (trail, mountain): its race-specific block leans into hill repeats. |
 | `[paces] race_result` | `{ distance_km, time }` | required | A recent race; `time` is `"h:mm:ss"` or `"m:ss"`. All paces derive from it. |
 | `[paces] easy`, `mp`, `threshold`, `interval` | `"m:ss"` per km | derived | Override a derived pace; `mp` is the place for a goal pace. |
 | `[load] easy_run_km` | whole number ≥ 1 | required | The length of an easy run. |
@@ -195,10 +195,10 @@ The long run grows by 2 km per loading week up to 75 % of the race's cap.
 |---|---|---|
 | up to 10 km | intervals and threshold alternating | H → I → H → T |
 | half marathon | threshold | H → T |
-| marathon | MP repeats, 3×3 km, one rep more each week; every other long run ends with MP km (6, 8, 10 …); at most 90′ at MP per session | H → MP |
+| marathon | MP repeats, 3×3 km, one rep more each week; every other long run ends with MP km (6, 8, 10 …); at most 90′ at MP per session | H → T, no MP km in the long runs |
 | ultra | the build rotation, H → I → T | H → I → H → T |
 
-A hilly race keeps its type, lengths and caps. Hill repeats alone don't prepare you for a hilly course, so the race's own sessions stay in between. Running the long runs on hilly routes is up to you.
+A hilly race keeps its type, phase lengths and caps, and the footer marks it `(A, hilly)`. Its block has hill repeats every other week, and a hilly course has no steady pace to rehearse, so threshold takes the place of marathon pace. Without hills nearby, an incline treadmill or any short rise works for the climbs. The descents are what flat training can't give: a few days in hilly terrain 4–6 weeks before the race helps most.
 
 **Taper.** In the weeks before the race week: threshold 6 × 1 km and a long run of 75 % of the peak since the last race, 60 % in the week just before the race week. **Race week:** strides; the race takes the long run's place and its km aren't counted. **Recovery:** easy runs only in the first week, then a long run of one easy-run length. After that the long run restarts at 75 % of the previous peak. A shortened long run is never shorter than an easy run.
 

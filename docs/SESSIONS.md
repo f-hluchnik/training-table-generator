@@ -11,6 +11,8 @@ How the tickets are grouped into working sessions, with the prompt that starts e
 | S4 | T-08 | S1 (can run in parallel with S2/S3) |
 | S5 | T-06, T-07 | S2, S3 |
 | S6 | T-09, T-10 | S4, S5 |
+| S7 | T-14 review, T-15; T-12 evaluated | S6 |
+| S8 | T-15 brought to `main`, README | S7 |
 
 ## Prompts
 

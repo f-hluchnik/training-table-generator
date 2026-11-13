@@ -308,7 +308,7 @@ test-2027 is frozen as the snapshot `tests/fixtures/plan-test-2027.json` with th
 
 ## Session S7: hilly races (T-15)
 
-### D-041 Hilly races lean their specific block into hills — Proposed (coach), for the owner in the T-15 pull request
+### D-041 Hilly races lean their specific block into hills — Agreed (owner merged PR #20)
 *Owner, S7 (Q-8):* keep the race type by distance; add a "hilly" marker that leans into hill repeats, adjusted as an experienced coach would.
 - **Input:** `[[race]] hilly = true`, default `false`, not on C races (they have no specific block). *Hilly* means climbs, not a steady pace, decide the effort, as on a trail or mountain course; a rolling road marathon is not hilly. A boolean and not an elevation in metres: elevation stays parked (Q-7), and a threshold in m/km would be a number without a source.
 - **Rule:** the race keeps its type, phase lengths, caps and taper. In its race-specific block every other quality run is hill repeats (H); the others are the race's own intensity with threshold instead of marathon pace: H → I → H → T for 10 km and ultra, H → T for half and marathon. No MP km in its long runs. Details and sources in `TRAINING_MODEL.md` §4.

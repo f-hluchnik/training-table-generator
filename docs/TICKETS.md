@@ -106,7 +106,7 @@ Delete the prototype files and Flask (D-014); update the README.
 
 *Done 13 Nov 2026 (S6):* deleted `config.py`, `generator.py`, `build.py`, `my_plan.py`, `plan_table.py`, `app.py` and `templates/index.html` (the Flask page; `plan.typ` had moved into the package in T-09). Flask was not declared in `pyproject.toml`, so no dependency needed removing. Nothing in `src/` or `tests/` referenced the prototype. The salvaged parts (`Pace`, the H/I/T progressions, the quality-km estimate) live on in `ttg.paces` and `ttg.sessions`. Both seasons build unchanged (the snapshots are identical).
 
-### T-14 Review and refactoring — in review (PR #19)
+### T-14 Review and refactoring — done
 A whole-project review by an architect and an engineer (S7, 13 Nov 2026), and the owner's answers to its questions (Q-7–Q-10).
 
 *Bugs fixed:*
@@ -120,10 +120,12 @@ A whole-project review by an architect and an engineer (S7, 13 Nov 2026), and th
 
 *Verified:* both reference seasons produce the same `plan.json` as before except for the contract change (`schema_version` 2, `weeks[].phase`, no `km_per_box`); their sheets are unchanged by eye; the 60-week plan has two pages with every week and every band labelled.
 
-### T-15 Hilly races — in review (PR stacked on T-14)
+### T-15 Hilly races — in review (PR #20 was merged into the T-14 branch, not `main`)
 Q-8 (b), owner S7: a `hilly` marker on a race leans its race-specific block into hill repeats, as an experienced coach would adjust it; the race type, phase lengths and caps stay by distance.
 
 *S7:* `[[race]] hilly = true` (D-041, proposed by the coach, for the owner in the PR). The specific block alternates hill repeats with the race's own intensity, threshold instead of marathon pace; no MP km in the long runs; the footer marks the race `(A, hilly)`. Everything outside the specific block is unchanged (tested). Both reference seasons are unchanged (no hilly race).
+
+*S8 (13 Nov 2026):* PR #20 was stacked on #19 and merged 14 seconds after #19, so it went into `t-14-review-refactor` instead of `main`. The same commit is brought to `main` in a new pull request, unchanged; checked again there: lint, types, 331 tests, both reference seasons' `plan.json` identical to `main`. Checked on long hilly plans: with hills every other week, the uncapped hill progression peaks at 8 × 2′ in a hilly test-2027, 6 × 4′ in a 43-week and 9 × 4′ (36′ of hard climbing) in a 52-week hilly plan, the order of the 40′ threshold cap. No cap added; no realistic plan reaches the next step, 5 × 8′. The README was rewritten to explain the whole tool without the other documents.
 
 ### Later (not scheduled)
 - **T-12** Elevation for mountain ultras (Q-5). *Evaluated in S7; parked by the owner (Q-7).* The race-type gap it found is covered by T-15 (`hilly`).
