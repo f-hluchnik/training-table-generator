@@ -1,0 +1,90 @@
+# Tickets
+
+Status: **todo**, **in progress**, **done**, **blocked (reason)**. One branch per ticket, named `t-NN-short-name`.
+
+Before T-01: the owner answers the open questions Q-1 to Q-4 and confirms or rejects the proposed decisions D-011 to D-020 (`DECISIONS.md`). Q-5 and Q-6 can wait.
+
+```
+T-01 ─▶ T-02 ─┬─▶ T-03 ─┐
+              ├─▶ T-04 ─┼─▶ T-06 ─▶ T-07 ─▶ T-09 ─▶ T-10
+              ├─▶ T-05 ─┘                  ▲
+              └─▶ T-08 (from a hand-written plan.json) ─┘
+```
+
+---
+
+### T-01 Project skeleton — todo
+- `pyproject.toml`: package `ttg`, Python version per Q-1, `typst` pinned, `pytest` as a dev dependency, console script `ttg`.
+- `src/ttg/` layout, `tests/`, `seasons/`, `templates/`.
+- `.gitignore` covers `__pycache__`, `.venv` and build output (`out/`).
+- GitHub Actions workflow running `pytest` on push.
+- The prototype stays untouched until T-10.
+
+**Done when:** `pip install -e .[dev] && pytest` passes on a clean checkout (with an empty test suite plus one smoke test) and CI is green.
+
+### T-02 Domain model and season file — todo
+- `model` dataclasses, `spec` loader and validation with clear error messages.
+- Fix the `season.toml` schema (PLAN §4).
+- Fix the `plan.json` schema and write a hand-made sample for the first 4 weeks of 2026, which T-08 uses.
+- Write `seasons/2026.toml` (from `docs/reference/`) and `seasons/test-2027.toml`.
+
+**Done when:** both seasons load; invalid files (bad date, start after the last race, unknown field) fail with a message naming the field; the schema is documented in PLAN §4.
+
+### T-03 Paces — todo
+- Salvage `Pace` from the prototype.
+- VDOT from a race result and derived easy / MP / T / I (D-015); overrides.
+- Verify against Daniels' published tables for at least three VDOT values.
+
+**Done when:** tests pass, including the 3:30:02 check in `TRAINING_MODEL.md` §2, with deviations from the table documented.
+
+### T-04 Calendar and phase layout — todo
+- Monday weeks; the month of a week; race weeks, multi-day races; plan length from `start` or `weeks`.
+- Backward layout and compression with warnings (`TRAINING_MODEL.md` §5).
+- Calibrate the default lengths table and record the sources.
+
+**Done when:** tests pass for:
+- the 2026 layout (with its overrides) matching the reference phases;
+- one race;
+- two A races 3 weeks apart;
+- a C race inside a build;
+- a 6-week plan for a marathon (warning);
+- start after the race (error).
+
+### T-05 Sessions and progressions — todo
+- Session catalogue (`TRAINING_MODEL.md` §1).
+- H/I/T progressions salvaged from the prototype, MP repeats, LR with MP km, strides.
+- Quality km estimate; T cap.
+
+**Done when:** tests reproduce the 2026 quality sessions and their km.
+
+### T-06 Week expansion and overrides — todo
+- Phase rules → weeks, the 3:1 cycle, LR progression and caps, deload, taper, race and recovery weeks.
+- `[overrides]`; `export` to `plan.json`.
+
+**Done when:** golden test: `seasons/2026.toml` produces the reference table week for week (intentional differences listed in the test). `test-2027` is reviewed by the owner and frozen as a snapshot.
+
+### T-07 Checks — todo
+Warnings C1–C8 (`TRAINING_MODEL.md` §7), each a small function with a named threshold constant.
+
+**Done when:** each check has a firing and a non-firing test; 2026 produces the expected warnings (C4, C8, shortened specific block).
+
+### T-08 Typst renderer — todo (can start after T-02)
+- `templates/plan.typ` reproducing the reference sheet from `plan.json` (PLAN §5); gauge per D-019.
+- Fonts: choose ones bundled or commonly available, and document the choice.
+
+**Done when:** the hand-made sample renders, and later the full 2026 plan. Compare a page image side by side with the reference PDF; the owner approves the look.
+
+### T-09 Command line — todo
+- `ttg build SEASON.toml [-o DIR]` writes `plan.json` and `plan.pdf` and prints warnings.
+- Exit code 0 when built (with or without warnings), non-zero on input errors.
+
+**Done when:** an end-to-end test builds both seasons.
+
+### T-10 Remove the prototype — todo
+Delete the prototype files and Flask (D-014); update the README.
+
+**Done when:** the repository contains only the new package; tests and both builds pass.
+
+### Later (not scheduled)
+- **T-11** Website feasibility spike (Q-6): Pyodide + Typst WebAssembly on a static page.
+- **T-12** Elevation for mountain ultras (Q-5).
