@@ -144,6 +144,9 @@ Q-8 (b), owner S7: a `hilly` marker on a race leans its race-specific block into
 ### T-20 Sheet redesign — in review
 *Owner, S8:* "what would an experienced designer change on our table?" Rendered variants; the owner chose the table in the mono with light fills and the footer's data in the mono (D-048). Built: the whole table in DejaVu Sans Mono, the note column 7 pt in a 1 mm wider column; `6×1′` notation; outline 1.2 pt for the frame only, group 0.6 pt; paler fills; regular day names and codes; week numbers grey; 14 pt title aligned with the table. In the mono a one-week band's short form was about 3 pt rotated, so a band label is now set rotated or horizontal, whichever is larger (5.6 pt). Branched from T-19 (#25). Checked: the snapshots change only in the notation; the golden test reads the reference in the new typography; 40 weeks on one page, 60 on two; sheets inspected: 2026, a 38-week plan with one-week bands, page 2 of a 60-week plan.
 
+### T-21 Smaller text for long plans — in review
+*Owner, S8:* the font should be a bit smaller for long plans (example: 40 weeks). The table's text shrinks in proportion to the row height, from 8 pt at full rows to 7 pt at the smallest (D-049); title and footer unchanged. Tested: 2026 (23 weeks) stays at 8 pt, 30 weeks between, 40 weeks at 7 pt; the 40-week plan still fits one page; sheet inspected. `plan.json` unchanged.
+
 ### Later (not scheduled)
 - **T-12** Elevation for mountain ultras (Q-5). *Evaluated in S7; parked by the owner (Q-7).* The race-type gap it found is covered by T-15 (`hilly`).
 

@@ -136,4 +136,23 @@ def test_longer_bands_keep_their_word_rotated():
     fits = _band_fits(_load(SAMPLES[1]))  # the 2026 plan: no band shorter than two weeks
     assert all(fit["rotated"] and fit["size-pt"] >= READABLE_PT for fit in fits)
     assert {fit["label"] for fit in fits} >= {"build", "ultra", "taper", "recovery", "marathon"}
-    assert {fit["size-pt"] for fit in fits if fit["label"] in ("build", "ultra", "taper")} == {8}
+    assert all(
+        fit["size-pt"] == pytest.approx(8, abs=0.05) for fit in fits if fit["label"] in ("build", "ultra", "taper")
+    )
+
+
+# --- the table's text shrinks with its rows (D-049) --------------------------------------------
+
+
+def _largest_band_label_pt(plan: dict) -> float:
+    """Band labels in long bands are set at the table's text size, so the largest shows it."""
+    return max(fit["size-pt"] for fit in _band_fits(plan))
+
+
+def test_the_table_text_is_full_size_at_full_rows():
+    assert _largest_band_label_pt(_load(SAMPLES[1])) == pytest.approx(8, abs=0.05)  # 2026: 23 weeks, rows 6.3 mm
+
+
+def test_the_table_text_shrinks_to_7_pt_at_the_smallest_rows():
+    assert _largest_band_label_pt(_plan_of_weeks(40)) == pytest.approx(7, abs=0.05)
+    assert 7 < _largest_band_label_pt(_plan_of_weeks(30)) < 8
