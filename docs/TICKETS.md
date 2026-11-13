@@ -33,7 +33,7 @@ T-01 ─▶ T-02 ─┬─▶ T-03 ─┐
 
 *Done 13 Nov 2026 (S1):* schemas D-025–D-027. The `Pace` type (parse and format) was salvaged here because the loader validates paces; T-03 adds the derivation. Only the input-side model exists; `Phase`, `Week` and `Plan` come with T-04 and T-06. Sample: `tests/fixtures/sample-plan-2026-weeks-1-4.json`.
 
-### T-03 Paces — todo
+### T-03 Paces — done (PR pending)
 - `Pace` (parse, format) exists since T-02; add what the derivation needs.
 - VDOT from a race result and derived easy / MP / T / I (D-015); overrides.
 - Verify against Daniels' published tables for at least three VDOT values.

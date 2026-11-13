@@ -79,7 +79,7 @@ Everything except loading (`spec`), the command line (`cli`) and rendering (`ren
 - **Hills:** effort-based, no pace.
 
 *Why Daniels and not McMillan:* the owner prefers McMillan or Galloway. McMillan's calculator, however, is not published as a formula as far as we know, so it cannot be reproduced exactly; Daniels' equations are published. Zone names on the sheet stay neutral (easy, threshold, interval, MP).
-*Check:* 3:30:02 marathon → VDOT 44.5, threshold ≈ 4:40/km, interval ≈ 4:17/km, MP 4:59/km. The owner's 2026 values were T 4:30 and I 4:15, so threshold was about 10 s/km fast (see `TRAINING_MODEL.md` §2).
+*Check:* 3:30:02 marathon → VDOT 44.5, threshold ≈ 4:40/km, interval ≈ 4:18/km, MP 4:59/km (T-03: interval changed from the first estimate of 4:17 after fitting it to the book, `TRAINING_MODEL.md` §2). The owner's 2026 values were T 4:30 and I 4:15, so threshold was about 10 s/km fast (see `TRAINING_MODEL.md` §2).
 
 ### D-016 Weekly structure: 3–6 runs, always one quality run and one long run
 - `runs_per_week` = 3–6, default 4. Every week has exactly one quality run and one long run; the rest are easy runs (1–4).
