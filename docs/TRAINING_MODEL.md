@@ -180,6 +180,8 @@ The taper stays ahead of the specific block: a week or two of race-specific work
 
 The cap is reached in the race-specific block. Build weeks stop at 75 % of it (marathon: 24 km), so long plans peak near the race instead of holding the full cap for months **[default, owner S5]**. The cap of a week is that of the next A or B race (after the last one: the last one).
 
+A long plan holds the build cap for weeks (test-2027: 24 km in weeks 9–24). That fits Daniels' advice to hold a load for about four weeks before raising it, and 24 km at easy pace (2 h 15 at 5:37) stays inside his 150-minute long-run limit **[source 25]**. With 4 runs a week the long run is 40–45 % of the week, above Daniels' 25–30 % **[source 25]**; C4 warns above 50 %, and `runs_per_week = 5` brings it near a third (D-016). The marathon's 32 km peak (3 h at 5:37) is at the upper end of the 2.5–3 h that summaries of Daniels give **[source 25]**.
+
 Overrides above the cap are allowed and produce a warning.
 
 ## 7. Checks (warnings only, D-001)
@@ -247,5 +249,6 @@ The owner finished the season uninjured and ran the planned marathon pace. That 
 
 23. Pfitzinger & Douglas, *Advanced Marathoning*, 12/55 schedule as transcribed at <https://fetcheveryone.com/training-plan-view.php?id=152>: MP long runs (16 mi with 10 at MP, 15 mi with 12 at MP) alternate with plain long runs; runs with 6–10 × 100 m strides.
 24. Alternate marathon-pace long runs with easier long runs to limit injury and overtraining risk: <https://blog.finalsurge.com/?p=293>
+25. Daniels' long-run limits (≤ 30 % of the week under 64 km, else ≤ 25 % or 150 min; hold the weekly load about four weeks before raising it), as summarised at <https://runningmagazine.ca/?p=99607> and <https://shuichi-running.com/en/long-run-training/>; 2.5–3 h cap: <https://www.snackinginsneakers.com/long-run-3-hours/>
 
-Sources 1, 10, 11, 12, 16 and 20 are secondary summaries of Daniels; prefer the book when implementing. Source 22 is a newspaper interview, weak; the +2 km step itself is from 2026.
+Sources 1, 10, 11, 12, 16, 20 and 25 are secondary summaries of Daniels; prefer the book when implementing. Source 22 is a newspaper interview, weak; the +2 km step itself is from 2026.

@@ -10,7 +10,7 @@ from datetime import date
 from typing import Any
 
 from ttg.model import LongRun, Phase, PhaseKind, Plan, PlanWarning, Race, Session, SessionType, Week, WeekKind
-from ttg.sessions import RECOVERY_JOG_MINUTES, round_km
+from ttg.sessions import RECOVERY_JOG_MINUTES, STRIDES_COUNT, STRIDES_SECONDS, half_easy_run_km, round_km
 
 SCHEMA_VERSION = 1
 
@@ -25,6 +25,8 @@ MONTHS = ("jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", 
 
 # The pace legend, in print order, labelled as in the reference.
 EASY_LABEL, INTERVAL_LABEL, THRESHOLD_LABEL = "easy", "hard", "comfortably hard"
+STRIDES_LABEL = "easy, with fast relaxed strides"
+HILLS_LABEL = "hard uphill effort, jog down"
 
 # D-018 notation.
 NO_SESSION = "–"
@@ -138,8 +140,11 @@ def _note(week: Week) -> str:
 def _pace_legend(plan: Plan) -> list[dict[str, str]]:
     paces = plan.paces
     recovery = f"+{RECOVERY_JOG_MINUTES}'"
+    strides = f"{half_easy_run_km(plan.season.load.easy_run_km)} km + {STRIDES_COUNT}×{STRIDES_SECONDS}″"
     return [
         {"code": "ER", "pace": paces.easy.format(), "label": EASY_LABEL},
+        {"code": "S", "pace": strides, "label": STRIDES_LABEL},
+        {"code": "H", "pace": "", "label": HILLS_LABEL},  # effort-based, no pace (D-015)
         {"code": "I", "pace": paces.interval.format() + recovery, "label": INTERVAL_LABEL},
         {"code": "T", "pace": paces.threshold.format() + recovery, "label": THRESHOLD_LABEL},
         {"code": "MP", "pace": paces.mp.format(), "label": ""},

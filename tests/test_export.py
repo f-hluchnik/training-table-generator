@@ -128,6 +128,8 @@ def test_gauge_covers_the_highest_week_and_the_80_percent_box(document_2026):
 def test_pace_legend_in_print_order(document_2026):
     assert document_2026["paces"] == [
         {"code": "ER", "pace": "5:30", "label": "easy"},
+        {"code": "S", "pace": "6 km + 6×20″", "label": "easy, with fast relaxed strides"},
+        {"code": "H", "pace": "", "label": "hard uphill effort, jog down"},
         {"code": "I", "pace": "4:15+2'", "label": "hard"},
         {"code": "T", "pace": "4:30+2'", "label": "comfortably hard"},
         {"code": "MP", "pace": "4:58", "label": ""},

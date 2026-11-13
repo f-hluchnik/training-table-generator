@@ -173,7 +173,7 @@ Column order as in the reference:
 9. Planned km (grey) or a note (e.g. *taper*, *race*)
 
 Below the table:
-- the pace legend (e.g. `ER=5:30 [easy]; I=4:15+2′ [hard]; …`)
+- the pace legend, one entry per session code in the table (e.g. `ER=5:30 [easy]; S=6 km + 6×20″ [easy, with fast relaxed strides]; H [hard uphill effort, jog down]; I=4:15+2′ [hard]; …`, D-034)
 - the life-happens rules and the 80 % rule (D-008, D-006)
 
 No colour legend: the sheet is black and white, and the colours the runner uses are his own (D-032).

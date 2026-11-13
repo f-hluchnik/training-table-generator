@@ -42,6 +42,10 @@ MAX_MARATHON_PACE_MINUTES = 90
 # T 6 × 1 km [2026; "intensity is kept short", source 8].
 TAPER_THRESHOLD_REPS, TAPER_THRESHOLD_REP_KM = 6, 1
 
+# A strides run (S): an easy run of e/2 km with short, fast, relaxed strides
+# (TRAINING_MODEL.md §1) [default]. Only printed in the legend; the km are e/2.
+STRIDES_COUNT, STRIDES_SECONDS = 6, 20
+
 # Quality rotation of the build phase [2026]: each type progresses each time it occurs.
 BUILD_ROTATION = (SessionType.HILLS, SessionType.INTERVALS, SessionType.THRESHOLD)
 
