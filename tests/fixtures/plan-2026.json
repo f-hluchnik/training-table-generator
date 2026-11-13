@@ -1092,17 +1092,17 @@
         "text": "12+6"
       },
       "quality": {
-        "type": "none",
-        "km": 0,
-        "text": "–"
+        "type": "S",
+        "km": 6,
+        "text": "S"
       },
       "long": {
         "km": 0,
         "mp_km": 0,
         "text": "RACE 101 km"
       },
-      "planned_km": 18,
-      "box_80pct": 15,
+      "planned_km": 24,
+      "box_80pct": 20,
       "note": "race"
     },
     {
@@ -1350,8 +1350,8 @@
       },
       "long": {
         "km": 26,
-        "mp_km": 8,
-        "text": "26 km (8 MP)"
+        "mp_km": 0,
+        "text": "26 km"
       },
       "planned_km": 67,
       "box_80pct": 54,
@@ -1466,17 +1466,17 @@
         "text": "12+6"
       },
       "quality": {
-        "type": "none",
-        "km": 0,
-        "text": "–"
+        "type": "S",
+        "km": 6,
+        "text": "S"
       },
       "long": {
         "km": 0,
         "mp_km": 0,
         "text": "RACE 42 km"
       },
-      "planned_km": 18,
-      "box_80pct": 15,
+      "planned_km": 24,
+      "box_80pct": 20,
       "note": "race"
     }
   ],
@@ -1492,6 +1492,26 @@
     "success": "A week counts at ≥ 80 % of the planned km."
   },
   "warnings": [
+    {
+      "code": "C8",
+      "week": null,
+      "message": "threshold pace 4:30 is 10.2 s/km faster than 4:40, derived from the race result (more than 10)"
+    },
+    {
+      "code": "C4",
+      "week": 13,
+      "message": "the long run is 52 % of the week's 64 km (more than 50 %)"
+    },
+    {
+      "code": "C3",
+      "week": 14,
+      "message": "easy runs and long run: 64 km, +12 % on week 13's 57 km (more than 10 %)"
+    },
+    {
+      "code": "C4",
+      "week": 14,
+      "message": "the long run is 53 % of the week's 75 km (more than 50 %)"
+    },
     {
       "code": "C1",
       "week": 23,

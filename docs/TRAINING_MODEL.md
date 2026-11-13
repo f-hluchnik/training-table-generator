@@ -99,7 +99,7 @@ The test allows 3 km and pins the estimate itself. The hill km are low because t
 |---|---|---|
 | ≤ 10 km | I and T alternating | capped lower (§6) |
 | half marathon | T | — |
-| marathon | MP repeats: 3×3 km, +1 rep a week **[2026]** | the last MP km grow 6 → 8 → 10 … **[default]** |
+| marathon | MP repeats: 3×3 km, +1 rep a week **[2026]** | every other LR ends with MP km, 6 → 8 → 10 … **[default; alternation: source 23, 24]** (D-033) |
 
 The long run grows to the full cap (§6) only here. Marathon-pace work is capped at 90 minutes per session, for the repeats and for the MP km of a long run: Daniels' limit is the lesser of 90 min and 16 miles **[source 20]**. With 2026's MP (4:58) that is 6 × 3 km and 18 km. Deloads inside the block are as in build.
 | ultra | build rotation H → I → T (D-023) | toward the ultra cap |
@@ -108,16 +108,16 @@ Elevation (vertical metres) is out of scope in v1 (Q-5).
 
 ### taper (ends with the race week)
 - **Marathon (2 weeks including race week):** about 70–75 % of peak volume, then 40–50 % in race week **[source 8]**. Intensity is kept short (e.g. T 6×1 km **[2026]**), and the last LR is about 60 % of the peak LR. 2026 did 69 % and 35 %: close to the guidance.
-- **Rule for every distance (D-030):** each taper week before the race week has T 6 × 1 km **[2026]** and a LR of 75 % of the peak since the last race **[default]**, 60 % in the week just before the race week **[source 8]**, without MP km. The race week has no quality run.
+- **Rule for every distance (D-030):** each taper week before the race week has T 6 × 1 km **[2026]** and a LR of 75 % of the peak since the last race **[default]**, 60 % in the week just before the race week **[source 8]**, without MP km. The race week keeps strides (S) **[source 23]** (D-033).
 - Lengths: see §5.
 
 Taper, race and recovery weeks all use the reduced easy pair (D-022).
 
 ### race week
-The race replaces the LR and prints its distance, `RACE 42 km`; the footer lists the races by name (D-030). The race day prints bold in the calendar, and the week's row ends on race day.
+The race replaces the LR and prints its distance, `RACE 42 km`; the footer lists the races by name (D-030). The quality run is strides (S) (D-033). The race day prints bold in the calendar, and the week's row ends on race day.
 
 ### C races (D-017, D-030)
-A C race up to 10 km replaces the week's quality run. From the half marathon up it replaces the long run, and the week has no quality run: one long, hard effort a week **[default, coach S5]**. Either way the replaced progression continues the next week as if nothing happened, and the race counts in the planned km.
+A C race up to 10 km replaces the week's quality run. From the half marathon up it replaces the long run, and the week has no quality run: one long, hard effort a week **[default, coach S5]**. Either way the replaced progression continues the next week as if nothing happened, and the race counts in the planned km. A short C race's week has a plain long run, without MP km (D-033).
 
 ### recovery (after a race)
 - **Week 1:** easy runs only, no LR.
@@ -188,14 +188,14 @@ Overrides above the cap are allowed and produce a warning.
 |---|---|---|---|
 | C1 | races too close | a block shortened because of the previous race, or two races in one week (§5); emitted by the layout | default |
 | C2 | plan too short | a block of the first A or B race shortened because the plan starts too late (§5); emitted by the layout | default |
-| C3 | weekly ramp | planned km +10 % over the previous build week (not after deload or recovery) | common heuristic, weak evidence |
+| C3 | weekly ramp | easy runs + long run +10 % over the previous week, both loading weeks (so not after a deload, taper, race or recovery). The quality km are left out: they are an estimate that swings with the session type (D-031) | common heuristic, weak evidence **[source 21]** |
 | C4 | long-run share | LR > 50 % of the planned week (40–50 % is normal with 4 runs a week; 2026 peaked at 54 %) | default |
 | C5 | LR above cap | §6 | §6 |
 | C6 | threshold volume | > 40′ at T in one session | **[source 5]** |
-| C7 | interval volume | > 10 km or > 8 % of the week at I in one session | **[source 11]** |
+| C7 | interval volume | > 10 km or > 8 % of the week at I in one session, compared in whole km (D-031) | **[source 11]** |
 | C8 | pace consistency | overridden T more than 10 s/km off the derived T | default |
 
-Warnings go to the command line, not on the sheet.
+Warnings go to the command line, not on the sheet. Implemented in `ttg.checks` (T-07); `check(plan)` merges C1 and C2 from the layout. The progressions stay within C6 and C7 (T at 40′, I within Daniels' limit, D-030), so those two fire only for overrides.
 
 ## 8. "Life happens" rules (D-008)
 
@@ -244,5 +244,8 @@ The owner finished the season uninjured and ran the planned marathon pace. That 
 20. Daniels, *Daniels' Running Formula*, table of training intensities: M-pace running up to the lesser of 90 min and 16 miles per session; quoted at <https://www.runningahead.com/forums/post/8acf6a4b0f634d4ebfb25f87b1304a6e> and <https://www.runningahead.com/forums/post/e989f57406784efdabd375505274c770>.
 21. Buist et al. (2008), *No effect of a graded training program on the number of running-related injuries in novice runners: a randomized controlled trial*, Am J Sports Med 36(1): 33–39 (10 % rule vs a faster programme: 20.8 % vs 20.3 % injured): <https://research.rug.nl/en/publications/no-effect-of-a-graded-training-program-on-the-number-of-running-r/>
 22. Long run extended by 1–2 miles a week in marathon preparation: <https://www.ajc.com/news/health-news/marathon-training-increase-the-miles-and-find-your-pace/ZRGCER7QV5HK3F4SSATF5MMKQ4/>
+
+23. Pfitzinger & Douglas, *Advanced Marathoning*, 12/55 schedule as transcribed at <https://fetcheveryone.com/training-plan-view.php?id=152>: MP long runs (16 mi with 10 at MP, 15 mi with 12 at MP) alternate with plain long runs; runs with 6–10 × 100 m strides.
+24. Alternate marathon-pace long runs with easier long runs to limit injury and overtraining risk: <https://blog.finalsurge.com/?p=293>
 
 Sources 1, 10, 11, 12, 16 and 20 are secondary summaries of Daniels; prefer the book when implementing. Source 22 is a newspaper interview, weak; the +2 km step itself is from 2026.
