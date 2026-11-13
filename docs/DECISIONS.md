@@ -193,7 +193,7 @@ The fields are documented in PLAN §4. Every value the sheet prints is computed 
 ### D-028 Sheet fonts and drawing values (T-08) — Proposed
 - **Fonts:** *Libertinus Serif* for the calendar, titles and footer; *DejaVu Sans Mono* for the prescriptions (ER, QR, LR). Both ship inside the `typst` package, so the sheet looks the same on every machine and in a future browser build (Q-6). The reference was made in Excel with a Garamond-like serif; its font is not redistributable and not present on every machine.
 - **Line weights (D-024):** outline 1.5 pt black; group 0.75 pt black; hairline 0.25 pt, 55 % grey. They are named constants at the top of `templates/plan.typ`. The 10 km marks, the month boundaries and the 80 % marker share the group weight; the phase boundaries use the group weight in the phase column only.
-- **Geometry:** the gauge box is 1.75 mm wide and shrinks until the table fits the page width (A4 landscape, 8 mm margins; 1.5 mm for 80 boxes). Rows are 6.4 mm and shrink so that long plans stay on one page.
+- **Geometry:** the gauge box is at most 1.2 mm wide (96 mm for 80 boxes; owner's request, 13 Nov 2026: smaller gauge, wider calendar) and shrinks further until the table fits the page width (A4 landscape, 8 mm margins). Day cells are 10 mm wide. Rows are 6.4 mm and shrink so that long plans stay on one page.
 
 *Open:* the owner approves the look, the grey values and the weights on a printed page (D-024). Phase boundaries in the group weight are an addition to D-024's list; say if they should be hairlines.
 
