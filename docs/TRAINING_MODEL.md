@@ -63,7 +63,17 @@ McMillan names the same intensities Endurance, Stamina and Speed, and also start
 
 ## 3. Week structure (D-016)
 
-3–6 runs, default 4: one quality run, one LR, the rest easy runs (D-016). Easy runs are *e* each; in reduced weeks the last one is *e*/2. They never grow and are not a lever for anything else (D-022). The weekly planned km is the sum of all runs (D-006). Quality-run km are estimated as follows **[2026, prototype]**: 10′ warm-up + reps × work + (reps − 1) × recovery + 10′ cool-down, everything at easy pace except the work itself (hill efforts also counted at easy pace). This reproduces the 2026 numbers (e.g. T 3 × 8′ ≈ 10 km).
+3–6 runs, default 4: one quality run, one LR, the rest easy runs (D-016). Easy runs are *e* each; in reduced weeks the last one is *e*/2. They never grow and are not a lever for anything else (D-022). The weekly planned km is the sum of all runs (D-006). Quality-run km are estimated as follows **[2026, prototype]**: 10′ warm-up + reps × work + (reps − 1) × recovery + 10′ cool-down, everything at easy pace except the work itself (hill efforts also counted at easy pace). Reps given in km (MP repeats, T 6 × 1 km) count the km themselves, with 2′ easy recoveries. A strides run (S) counts as half an easy run, rounded up. Implemented in `ttg.sessions` (T-05).
+
+**Against the 2026 reference.** The sessions (type, reps, minutes) are reproduced exactly for weeks 1–3, 5–7, 9–11 and 14–15; week 13 is the override (rule: 9 × 1′, owner: 10 × 1′). The owner's quality km (second page of the reference) are hand estimates and deviate from the estimate:
+
+| Session | Owner | Estimate |
+|---|---|---|
+| H 6–9 × 1′ | 8, 8, 9, 9 | 5.6, 6.0, 6.4, 6.7 (2.0–2.6 less) |
+| I 5×3′, 6×3′, 5×4′, 6×4′ | 8, 9, 9, 10 | 8.6, 9.7, 9.8, 11.1 (−0.6 to +1.1) |
+| T 3×8′, 3×10′, 4×8′, 4×10′ | 10, 11, 11, 11 | 9.7, 11.0, 11.8, 13.6 (−0.3 to +2.6) |
+
+The test allows 3 km and pins the estimate itself. The hill km are low because the estimate counts the effort at easy pace and cannot know the route to the hill; no rule is added to reproduce the owner's numbers (D-020).
 
 ## 4. Phase kinds
 
@@ -72,7 +82,7 @@ McMillan names the same intensities Endurance, Stamina and Speed, and also start
 - **Quality rotation:** H → I → T **[2026]**. Each type progresses each time it occurs **[2026]**:
   - H: 6×1′ → +1 rep each time; at 10 reps, halve the reps and double the duration. In 2026 the owner wrote 10×1′ for the 4th occurrence, where this rule gives 9×1′; that week is an override in the reference season.
   - I: 5×3′ → 6×3′ → 5×4′ → 6×4′ → 5×5′ …
-  - T: 3×8′ → 3×10′ → 4×8′ → 4×10′, capped at **40′ total at T** (tempo work is 15–40 min) **[source 5]**.
+  - T: 3×8′ → 3×10′ → 4×8′ → 4×10′ → 5×8′, held there by the cap of **40′ total at T** (tempo work is 15–40 min) **[source 5]**.
 - **LR:** +2 km per build week **[2026: +2–3 km]**, up to the cap (§6).
 - **Easy runs:** regular (D-022).
 - **Label:** *build*, for deloads too (D-026).

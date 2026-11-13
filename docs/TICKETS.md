@@ -54,12 +54,14 @@ T-01 ─▶ T-02 ─┬─▶ T-03 ─┐
 - a 6-week plan for a marathon (warning);
 - start after the race (error).
 
-### T-05 Sessions and progressions — todo
+### T-05 Sessions and progressions — done (PR pending; builds on T-03)
 - Session catalogue (`TRAINING_MODEL.md` §1); 3–6 runs per week (D-016); regular and reduced easy runs (D-022).
 - H/I/T progressions salvaged from the prototype, MP repeats, LR with MP km, strides.
 - Quality km estimate; T cap.
 
 **Done when:** tests reproduce the 2026 quality sessions and their km.
+
+*Note (T-05):* the session types and reps are reproduced exactly; the km only within 3 km, because the owner's km are hand estimates (`TRAINING_MODEL.md` §3). Left for T-06: LR progression and caps, `LongRun` printing (`28 km (10 MP)`), which week gets which session. The hill rule keeps doubling the duration every 4th occurrence (5×2′, 5×4′, …); not capped, since 2026-length plans never reach it.
 
 ### T-06 Week expansion and overrides — todo
 - Phase rules → weeks, the 3:1 cycle, phase labels (D-026), LR progression and caps, deload, taper, race and recovery weeks.

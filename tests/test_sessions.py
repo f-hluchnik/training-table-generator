@@ -1,0 +1,142 @@
+import pytest
+
+from ttg.model import EasyRuns, Session, SessionType
+from ttg.paces import Pace, TrainingPaces
+from ttg.sessions import (
+    MAX_THRESHOLD_MINUTES,
+    build_session,
+    easy_run_kms,
+    hill_session,
+    interval_session,
+    marathon_long_run_mp_km,
+    marathon_pace_session,
+    no_session,
+    session_km,
+    strides_session,
+    threshold_session,
+)
+
+H, I, T, MP = (SessionType.HILLS, SessionType.INTERVALS, SessionType.THRESHOLD, SessionType.MARATHON_PACE)
+
+# The paces of the 2026 season (seasons/2026.toml).
+PACES_2026 = TrainingPaces(
+    easy=Pace.parse("5:30"), mp=Pace.parse("4:58"), threshold=Pace.parse("4:30"), interval=Pace.parse("4:15")
+)
+EASY_RUN_KM_2026 = 12
+
+
+def shape(session: Session) -> tuple[int, float]:
+    return session.reps, session.minutes
+
+
+def test_hills_add_a_rep_then_halve_the_reps_and_double_the_duration():
+    assert [shape(hill_session(n)) for n in range(7)] == [
+        (6, 1), (7, 1), (8, 1), (9, 1), (5, 2), (6, 2), (7, 2),
+    ]
+
+
+def test_intervals_alternate_a_rep_and_a_minute():
+    assert [shape(interval_session(n)) for n in range(5)] == [(5, 3), (6, 3), (5, 4), (6, 4), (5, 5)]
+
+
+def test_threshold_alternates_longer_reps_and_an_extra_rep():
+    assert [shape(threshold_session(n)) for n in range(4)] == [(3, 8), (3, 10), (4, 8), (4, 10)]
+
+
+@pytest.mark.parametrize("occurrence", range(20))
+def test_threshold_never_exceeds_the_cap(occurrence):
+    session = threshold_session(occurrence)
+    assert session.reps * session.minutes <= MAX_THRESHOLD_MINUTES
+
+
+def test_threshold_holds_at_the_last_step_under_the_cap():
+    assert shape(threshold_session(4)) == (5, 8)  # 40′ exactly
+    assert threshold_session(5) == threshold_session(4) == threshold_session(30)
+
+
+def test_marathon_pace_repeats_add_a_rep_a_week():
+    sessions = [marathon_pace_session(n) for n in range(3)]
+    assert [(s.reps, s.km) for s in sessions] == [(3, 3), (4, 3), (5, 3)]
+    assert all(s.type is MP for s in sessions)
+
+
+def test_long_run_mp_km_grows_by_two():
+    assert [marathon_long_run_mp_km(n) for n in range(4)] == [6, 8, 10, 12]
+
+
+def test_build_rotation_cycles_through_h_i_t_and_each_type_progresses():
+    sessions = [build_session(k) for k in range(7)]
+    assert [s.type for s in sessions] == [H, I, T, H, I, T, H]
+    assert sessions[3] == hill_session(1)
+    assert sessions[4] == interval_session(1)
+
+
+# (type, reps, minutes) of the quality runs of the 2026 plan, weeks 1–3, 5–7, 9–11, 13–15,
+# and the km the owner wrote for them (second page of docs/reference/2026-marathon-training.pdf).
+# Week 13 is an override in seasons/2026.toml: the rule gives 9 × 1′, the owner wrote 10 × 1′.
+REFERENCE_2026 = [
+    (H, 6, 1, 8), (I, 5, 3, 8), (T, 3, 8, 10),
+    (H, 7, 1, 8), (I, 6, 3, 9), (T, 3, 10, 11),
+    (H, 8, 1, 9), (I, 5, 4, 9), (T, 4, 8, 11),
+    (H, 9, 1, 9), (I, 6, 4, 10), (T, 4, 10, 11),
+]
+# The owner's km are hand estimates: they are not derivable from any one formula (hill runs are
+# 2–3 km above the estimate, T 4 × 10′ is 2.6 km below). The estimate stays within this much.
+REFERENCE_KM_TOLERANCE = 3.0
+# What the estimate gives (the prototype's formula), pinned so a change is noticed.
+ESTIMATED_KM_2026 = [5.64, 8.62, 9.70, 6.00, 9.69, 11.03, 6.36, 9.80, 11.84, 6.73, 11.10, 13.62]
+
+
+@pytest.mark.parametrize(
+    ("index", "reference", "estimated"), list(zip(range(12), REFERENCE_2026, ESTIMATED_KM_2026, strict=True))
+)
+def test_reproduces_the_2026_quality_sessions(index, reference, estimated):
+    session_type, reps, minutes, reference_km = reference
+    session = build_session(index)
+    assert (session.type, session.reps, session.minutes) == (session_type, reps, minutes)
+    km = session_km(session, PACES_2026, EASY_RUN_KM_2026)
+    assert km == pytest.approx(estimated, abs=0.01)
+    assert km == pytest.approx(reference_km, abs=REFERENCE_KM_TOLERANCE)
+
+
+def test_km_of_minute_based_session_by_hand():
+    # T 3 × 8′: 10′ + 10′ easy, 2 recoveries of 2′ easy = 24′ at 5:30; 24′ at 4:30.
+    expected = (10 + 10 + 2 * 2) / 5.5 + 24 / 4.5
+    assert session_km(threshold_session(0), PACES_2026, EASY_RUN_KM_2026) == pytest.approx(expected)
+
+
+def test_km_of_km_based_session_by_hand():
+    # MP 3 × 3 km: 9 km at pace, plus 20′ + 2 recoveries of 2′ easy.
+    expected = 9 + (10 + 10 + 2 * 2) / 5.5
+    assert session_km(marathon_pace_session(0), PACES_2026, EASY_RUN_KM_2026) == pytest.approx(expected)
+
+
+def test_taper_threshold_in_km():
+    session = Session(T, reps=6, km=1)
+    assert session_km(session, PACES_2026, EASY_RUN_KM_2026) == pytest.approx(6 + (20 + 5 * 2) / 5.5)
+
+
+def test_strides_run_is_half_an_easy_run_and_no_session_is_zero():
+    assert session_km(strides_session(), PACES_2026, 12) == 6
+    assert session_km(strides_session(), PACES_2026, 15) == 8
+    assert session_km(no_session(), PACES_2026, 12) == 0
+
+
+@pytest.mark.parametrize(
+    ("runs", "pattern", "expected"),
+    [
+        (4, EasyRuns.REGULAR, (12, 12)),
+        (4, EasyRuns.REDUCED, (12, 6)),
+        (3, EasyRuns.REGULAR, (12,)),
+        (3, EasyRuns.REDUCED, (6,)),
+        (6, EasyRuns.REGULAR, (12, 12, 12, 12)),
+        (6, EasyRuns.REDUCED, (12, 12, 12, 6)),
+    ],
+)
+def test_easy_runs(runs, pattern, expected):
+    assert easy_run_kms(12, runs, pattern) == expected
+
+
+def test_reduced_easy_run_rounds_up_to_whole_km():
+    assert easy_run_kms(15, 4, EasyRuns.REDUCED) == (15, 8)
+    assert easy_run_kms(1, 4, EasyRuns.REDUCED) == (1, 1)
