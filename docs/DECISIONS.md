@@ -101,7 +101,7 @@ Default: A.
 
 *Owner:* agreed.
 
-### D-018 Unambiguous notation
+### D-018 Unambiguous notation (typographic signs since D-048: `6×1′`)
 - `–` means no session.
 - `RACE` means the race.
 - `R` is no longer used (in 2026 it meant both "rest" and "race").
@@ -158,7 +158,7 @@ Easy runs never grow; volume growth comes from the long run and the quality sess
 ### D-023 Ultra quality sessions keep the full rotation
 The ultra's race-specific block keeps the build rotation H → I → T; it is not limited to hills. What changes for an ultra is the long-run cap (`TRAINING_MODEL.md` §6). Elevation stays out of v1 (Q-5).
 
-### D-024 Line hierarchy: the sheet must look good
+### D-024 Line hierarchy: the sheet must look good (weights and fills revised by D-048)
 The sheet is printed and kept on the wall for months, so it must look aesthetically pleasing, not just correct. All rules come from a small set of named line weights, used consistently across the whole table:
 
 1. **Outline:** the table border, the header separator, and the boundaries between column groups (week | calendar | gauge | phase | prescriptions).
@@ -197,8 +197,8 @@ The fields are documented in PLAN §4. Every value the sheet prints is computed 
 ## Proposed in session S4, agreed in S5 (13 Nov 2026)
 
 ### D-028 Sheet fonts and drawing values (T-08) — Agreed
-- **Fonts:** *Libertinus Serif* for the calendar, titles and footer; *DejaVu Sans Mono* for the prescriptions (ER, QR, LR). Both ship inside the `typst` package, so the sheet looks the same on every machine. The reference was made in Excel with a Garamond-like serif; its font is not redistributable and not present on every machine.
-- **Line weights (D-024):** outline 1.5 pt black; group 0.75 pt black; hairline 0.25 pt, 55 % grey. They are named constants at the top of `src/ttg/plan.typ` (moved there in T-09, D-035). The 10 km marks, the month boundaries and the 80 % marker (removed by D-045) share the group weight; the phase boundaries use the group weight in the phase column only.
+- **Fonts:** *Libertinus Serif* for the calendar, titles and footer; *DejaVu Sans Mono* for the prescriptions (ER, QR, LR). *Changed by D-048:* the whole table in the mono, the serif for words. Both ship inside the `typst` package, so the sheet looks the same on every machine. The reference was made in Excel with a Garamond-like serif; its font is not redistributable and not present on every machine.
+- **Line weights (D-024):** outline 1.5 pt black; group 0.75 pt black (*D-048:* 1.2 and 0.6 pt); hairline 0.25 pt, 55 % grey. They are named constants at the top of `src/ttg/plan.typ` (moved there in T-09, D-035). The 10 km marks, the month boundaries and the 80 % marker (removed by D-045) share the group weight; the phase boundaries use the group weight in the phase column only.
 - **Geometry:** the gauge box is at most 1.2 mm wide (96 mm for 80 boxes; owner's request, 13 Nov 2026: smaller gauge, wider calendar) and shrinks further until the table fits the page width (A4 landscape, 8 mm margins). Day cells are 10 mm wide. Rows are 6.4 mm and shrink so that long plans stay on one page.
 
 *Owner, S5:* agrees with the printed look, the greys and the weights, and with this decision as written. Phase boundaries keep the group weight (an addition to D-024's list).
@@ -351,3 +351,13 @@ test-2027 is frozen as the snapshot `tests/fixtures/plan-test-2027.json` with th
 - **Races:** the dates first, bold, like the codes (owner: "do something about the dates"), the name roman, the priority italic: **28–29 aug**: Beskydská sedmička *(B)*. The dates make the line self-explanatory, so it has no *races* label. `footer.races` entries are `{dates, name, details}`: `plan.json` 5.
 - **Separators:** a thin black vertical rule (0.4 pt, 2 mm each side) between the entries of every footer line. Tried and dropped on the way: wide spaces (too roomy), grey dots (invisible), a grey `|` (blended with the grey text), a map-like key with a column per session (owner: messy).
 - **Two texts in `plan.json`:** the recovery is written `4:15 + 2′ jog` (it was `4:15+2'`, a straight quote next to the strides' `″`), and the strides' description is *fast, relaxed strides*: the S code and *6 km* already say it is an easy run. The snapshots change only in these values and in the race entries.
+
+### D-048 Sheet redesign: the table in the mono, lighter structure — Agreed (owner, S8)
+*Owner, S8:* asked what an experienced designer would change; chose among rendered variants (a light all-white "designer pass" was too subtle; a black header bar lost to light fills).
+- **Data in the mono, words in the serif.** The whole table is *DejaVu Sans Mono* (the only bundled mono): calendar, week numbers, bands, prescriptions, the note column (7 pt, in a column 1 mm wider, so `recovery` fits). Every character has one width, so `H`, `I`, `T`, `S` line up like the figures (owner: the serif aligned the figures, not the letters). The title and the footer's words stay in *Libertinus Serif*; the footer's codes, paces and race dates are in the mono at 88 % of the text size, matching the serif's x-height, so they read as the table's. *Amends* D-028.
+- **Notation:** `H: 6×1′`, `MP: 3×3 km`, `6×20″`, `+ 2′ jog`: the multiplication sign and primes, in the table and the legend alike (named constants in `ttg.export`). The golden test reads the reference's `6x1'` in this typography. *Amends* D-018.
+- **Lighter structure:** the outline 1.2 pt (was 1.5) for the frame and the header separator only; the group weight 0.6 pt (was 0.75) for the boundaries between column groups, months, phases and the 10 km marks. Paler fills: the header row 90 % grey (was 85 %), the bands 94 % (was 88 %). Day names and the column codes regular, no longer bold. *Amends* D-024 and D-028.
+- **Quieter week numbers:** 40 % grey, regular; the dates are what is coloured.
+- **The title** is 14 pt (was 20 pt) and starts at the table's left edge.
+- **Band labels in the direction that fits best:** a label is set rotated along its band, or horizontally across it, whichever gives the larger size. In the mono a short form rotated in a one-week band would be about 3 pt; horizontal it is 5.6 pt (owner's suggestion). Longer bands stay rotated. *Amends* D-044.
+- 40 weeks still fit one page, 60 weeks two. The snapshots change only in the session notation.

@@ -49,6 +49,8 @@ HILLS_LABEL = "hard uphill effort, jog down"
 
 # D-018 notation.
 NO_SESSION = "–"
+# Typographic signs, in the table and the legend alike: `H: 6×1′`, `6×20″` (D-048).
+TIMES, MINUTES, SECONDS = "×", "′", "″"
 RACE_TEXT = "RACE"
 STRIDES_TEXT = "S"
 HILLY_TEXT = "hilly"  # in the footer's race list, so the hill repeats of its block make sense (D-041)
@@ -116,9 +118,9 @@ def quality_text(quality: Session | Race) -> str:
         case SessionType.STRIDES:
             return STRIDES_TEXT
     if quality.km is not None:
-        return f"{quality.type}: {quality.reps}x{_number(quality.km)} km"
+        return f"{quality.type}: {quality.reps}{TIMES}{_number(quality.km)} km"
     if quality.minutes is not None:
-        return f"{quality.type}: {quality.reps}x{_number(quality.minutes)}'"
+        return f"{quality.type}: {quality.reps}{TIMES}{_number(quality.minutes)}{MINUTES}"
     raise ValueError(f"a {quality.type} session needs minutes or km")
 
 
@@ -179,8 +181,8 @@ def _note(week: Week) -> str:
 
 def _pace_legend(plan: Plan) -> list[dict[str, str]]:
     paces = plan.paces
-    recovery = f" + {RECOVERY_JOG_MINUTES}′ jog"
-    strides = f"{half_easy_run_km(plan.season.load.easy_run_km)} km + {STRIDES_COUNT}×{STRIDES_SECONDS}″"
+    recovery = f" + {RECOVERY_JOG_MINUTES}{MINUTES} jog"
+    strides = f"{half_easy_run_km(plan.season.load.easy_run_km)} km + {STRIDES_COUNT}{TIMES}{STRIDES_SECONDS}{SECONDS}"
     return [
         {"code": "ER", "pace": paces.easy.format(), "label": EASY_LABEL},
         {"code": "S", "pace": strides, "label": STRIDES_LABEL},

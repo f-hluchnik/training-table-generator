@@ -97,7 +97,7 @@
       "quality": {
         "type": "H",
         "km": 6,
-        "text": "H: 6x1'"
+        "text": "H: 6×1′"
       },
       "long": {
         "km": 15,
@@ -161,7 +161,7 @@
       "quality": {
         "type": "I",
         "km": 9,
-        "text": "I: 5x3'"
+        "text": "I: 5×3′"
       },
       "long": {
         "km": 17,
@@ -225,7 +225,7 @@
       "quality": {
         "type": "T",
         "km": 10,
-        "text": "T: 3x8'"
+        "text": "T: 3×8′"
       },
       "long": {
         "km": 19,
@@ -353,7 +353,7 @@
       "quality": {
         "type": "H",
         "km": 6,
-        "text": "H: 7x1'"
+        "text": "H: 7×1′"
       },
       "long": {
         "km": 21,
@@ -417,7 +417,7 @@
       "quality": {
         "type": "I",
         "km": 10,
-        "text": "I: 6x3'"
+        "text": "I: 6×3′"
       },
       "long": {
         "km": 23,
@@ -481,7 +481,7 @@
       "quality": {
         "type": "T",
         "km": 11,
-        "text": "T: 3x10'"
+        "text": "T: 3×10′"
       },
       "long": {
         "km": 25,
@@ -609,7 +609,7 @@
       "quality": {
         "type": "H",
         "km": 6,
-        "text": "H: 8x1'"
+        "text": "H: 8×1′"
       },
       "long": {
         "km": 27,
@@ -673,7 +673,7 @@
       "quality": {
         "type": "I",
         "km": 10,
-        "text": "I: 5x4'"
+        "text": "I: 5×4′"
       },
       "long": {
         "km": 29,
@@ -737,7 +737,7 @@
       "quality": {
         "type": "T",
         "km": 12,
-        "text": "T: 4x8'"
+        "text": "T: 4×8′"
       },
       "long": {
         "km": 31,
@@ -865,7 +865,7 @@
       "quality": {
         "type": "H",
         "km": 7,
-        "text": "H: 10x1'"
+        "text": "H: 10×1′"
       },
       "long": {
         "km": 33,
@@ -929,7 +929,7 @@
       "quality": {
         "type": "I",
         "km": 11,
-        "text": "I: 6x4'"
+        "text": "I: 6×4′"
       },
       "long": {
         "km": 40,
@@ -993,7 +993,7 @@
       "quality": {
         "type": "T",
         "km": 11,
-        "text": "T: 6x1 km"
+        "text": "T: 6×1 km"
       },
       "long": {
         "km": 26,
@@ -1057,7 +1057,7 @@
       "quality": {
         "type": "T",
         "km": 11,
-        "text": "T: 6x1 km"
+        "text": "T: 6×1 km"
       },
       "long": {
         "km": 21,
@@ -1313,7 +1313,7 @@
       "quality": {
         "type": "MP",
         "km": 13,
-        "text": "MP: 3x3 km"
+        "text": "MP: 3×3 km"
       },
       "long": {
         "km": 24,
@@ -1377,7 +1377,7 @@
       "quality": {
         "type": "MP",
         "km": 17,
-        "text": "MP: 4x3 km"
+        "text": "MP: 4×3 km"
       },
       "long": {
         "km": 26,
@@ -1441,7 +1441,7 @@
       "quality": {
         "type": "T",
         "km": 11,
-        "text": "T: 6x1 km"
+        "text": "T: 6×1 km"
       },
       "long": {
         "km": 16,

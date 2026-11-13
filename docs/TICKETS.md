@@ -141,6 +141,9 @@ Q-8 (b), owner S7: a `hilly` marker on a race leans its race-specific block into
 ### T-19 A quiet footer — in review
 *Owner, S8:* the legend should look minimalistic. The footer's typography is quieter (D-047): code bold, pace plain, description grey, no punctuation clutter; races and rules separated by grey dots. Two legend texts tidied in `plan.json` (`4:15 + 2′ jog`, *fast, relaxed strides*). Snapshots regenerated, diff reviewed; 2026 and a hilly test-2027 sheet inspected. *Owner's review:* a colon after each code; the race dates set apart (bold, first; `footer.races` structured, `plan.json` 5); then, after trying a grey `|` and a map-like key, hierarchy by type alone: descriptions italic instead of grey, a thin black rule between entries. Sheet inspected again (full page).
 
+### T-20 Sheet redesign — in review
+*Owner, S8:* "what would an experienced designer change on our table?" Rendered variants; the owner chose the table in the mono with light fills and the footer's data in the mono (D-048). Built: the whole table in DejaVu Sans Mono, the note column 7 pt in a 1 mm wider column; `6×1′` notation; outline 1.2 pt for the frame only, group 0.6 pt; paler fills; regular day names and codes; week numbers grey; 14 pt title aligned with the table. In the mono a one-week band's short form was about 3 pt rotated, so a band label is now set rotated or horizontal, whichever is larger (5.6 pt). Branched from T-19 (#25). Checked: the snapshots change only in the notation; the golden test reads the reference in the new typography; 40 weeks on one page, 60 on two; sheets inspected: 2026, a 38-week plan with one-week bands, page 2 of a 60-week plan.
+
 ### Later (not scheduled)
 - **T-12** Elevation for mountain ultras (Q-5). *Evaluated in S7; parked by the owner (Q-7).* The race-type gap it found is covered by T-15 (`hilly`).
 

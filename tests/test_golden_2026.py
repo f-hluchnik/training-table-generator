@@ -5,6 +5,7 @@ The season uses only general features; no override was added just to copy the re
 (owner, S5). Every remaining difference is a rule of the new defaults or of the notation.
 """
 
+import re
 from collections import Counter
 from collections.abc import Mapping
 from dataclasses import dataclass
@@ -101,7 +102,7 @@ DIFFERENCES = (
     ),
     Difference(
         "quality",
-        {15: "T: 6x1 km", 16: "T: 6x1 km"},
+        {15: "T: 6×1 km", 16: "T: 6×1 km"},
         "Taper weeks before the race week get short T work (D-030); 2026 continued the rotation, "
         "then rested.",
     ),
@@ -118,7 +119,7 @@ DIFFERENCES = (
     ),
     Difference(
         "quality",
-        {20: "MP: 3x3 km", 21: "MP: 4x3 km"},
+        {20: "MP: 3×3 km", 21: "MP: 4×3 km"},
         "Notation: a colon after the type, as for every other session (D-018).",
     ),
     Difference(
@@ -142,8 +143,13 @@ DIFFERENCES = (
 # fmt: on
 
 
+def typeset(reference_text: str) -> str:
+    """The reference's `6x1'` in the sheet's typography, `6×1′` (D-048): a notation, not a difference."""
+    return re.sub(r"(\d)x(\d)", r"\1×\2", reference_text).replace("'", "′")
+
+
 def expected() -> dict[int, dict[str, str]]:
-    rows = {week: dict(zip(COLUMNS, row, strict=True)) for week, row in REFERENCE.items()}
+    rows = {week: dict(zip(COLUMNS, map(typeset, row), strict=True)) for week, row in REFERENCE.items()}
     for difference in DIFFERENCES:
         for week, text in difference.generated.items():
             rows[week][difference.column] = text

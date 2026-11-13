@@ -6,24 +6,30 @@
 #let plan = json(bytes(sys.inputs.plan))
 
 // ---------------------------------------------------------------- style
-// Fonts ship with the `typst` package, so the sheet looks the same on every machine.
+// Fonts ship with the `typst` package, so the sheet looks the same on every machine. Data is set
+// in the mono (the whole table, and the codes, paces and dates in the footer), words in the serif
+// (the title and the footer's text) (D-048).
 #let serif = "Libertinus Serif"
 #let mono = "DejaVu Sans Mono"
 
-// Line hierarchy (D-024): exactly three weights. Values to be approved on a printed page.
-#let outline = 1.5pt + black
-#let group = 0.75pt + black
+// Line hierarchy (D-024): exactly three weights (D-048: lighter than the first approved values).
+#let outline = 1.2pt + black
+#let group = 0.6pt + black
 #let hairline = 0.25pt + luma(55%)
 
-#let header-fill = luma(85%)
-#let band-fill = luma(88%)
+#let header-fill = luma(90%)
+#let band-fill = luma(94%)
 #let note-ink = luma(60%)
+#let week-number-ink = luma(40%) // the week numbers step back behind the dates (D-048)
 
 // ---------------------------------------------------------------- geometry
 #let page-margin = 8mm
 #let page-width = 297mm
-#let title-size = 20pt
+#let title-size = 14pt
 #let text-size = 8pt
+#let note-size = 7pt // the mono `recovery` fits the note column
+// The footer's data in the mono at this share of the text size, so its x-height matches the serif's.
+#let footer-data-scale = 0.88
 #let table-height = 152mm // budget for all rows on one page; rows shrink for long plans
 #let max-row-height = 6.4mm
 // Rows never get smaller than this, so the text clears the lines and the cells can still be
@@ -40,7 +46,7 @@
 #let easy-width = 24mm
 #let quality-width = 24mm
 #let long-width = 27mm
-#let note-width = 13mm
+#let note-width = 14mm
 
 #let days-per-week = 7
 #let weeks = plan.weeks
@@ -89,40 +95,49 @@
 #let month-runs = runs(month-of)
 #let phase-runs = runs(phase-of)
 
-// A rotated band label keeps this clearance from the lines at both ends of its band.
+// A band label keeps this clearance from the band's lines on every side.
 #let band-label-clearance = 0.6mm
 // Below this size a label is hard to read on the printed sheet; a phase band shows its short form
 // instead (D-044).
 #let min-band-label-size = 5pt
 
-// The size at which `label` fits `available`: the text size, or smaller for a short band.
-#let fitting-size(label, available) = {
-  let natural = measure(text(font: serif, size: text-size, label)).width
-  if natural > available { text-size * (available / natural) } else { text-size }
+// A label set along `along` and across `across`: the largest size up to the text size at which it
+// fits, and the content to place.
+#let fitting(label, along, across) = {
+  let natural = measure(text(font: mono, size: text-size, label))
+  let size = text-size * calc.min(1, along / natural.width, across / natural.height)
+  (size: size, label: label, body: text(font: mono, size: size, label))
 }
 
-// A band's label, shrunk to fit its band so it never runs over the band's lines (a two-week
-// recovery in a long plan). When the word would fall below the readable size, the band shows
-// `short` instead (a one-week recovery: `rec.`); months have no short form (D-044).
-#let band-label(label, short, rows) = context {
-  let available = rows * row-height - 2 * band-label-clearance
-  let size = fitting-size(label, available)
-  let (shown, shown-size) = if short == none or size >= min-band-label-size {
-    (label, size)
-  } else {
-    (short, fitting-size(short, available))
+// The label of a band of `rows` weeks and `width`, set in whichever direction gives it the larger
+// size: rotated along the band, or horizontal across a band too short for its word (a one-week
+// recovery). It never runs over the band's lines. When the word would fall below the readable size
+// either way, the band shows `short` instead (`rec.`); months have no short form (D-044, D-048).
+#let band-label(label, short, rows, width) = context {
+  let length = rows * row-height - 2 * band-label-clearance
+  let breadth = width - 2 * band-label-clearance
+  let best(text-content) = {
+    let rotated = fitting(text-content, length, breadth)
+    let horizontal = fitting(text-content, breadth, length)
+    if horizontal.size > rotated.size { (..horizontal, rotated: false) } else { (..rotated, rotated: true) }
   }
-  let width = measure(text(font: serif, size: shown-size, shown)).width
+  let word = best(label)
+  let shown = if short == none or word.size >= min-band-label-size { word } else { best(short) }
+  let extent = measure(shown.body)
   // The marker lets tests check the fit (`typst.query(..., "<ttg-band-fit>")`).
-  [#text(font: serif, size: shown-size, shown)#metadata((
-    label: shown,
-    size-pt: shown-size.pt(),
-    width-mm: width.mm(),
-    available-mm: available.mm(),
-  ))<ttg-band-fit>]
+  let fit = metadata((
+    label: shown.label,
+    size-pt: shown.size.pt(),
+    rotated: shown.rotated,
+    along-mm: extent.width.mm(),
+    along-available-mm: (if shown.rotated { length } else { breadth }).mm(),
+    across-mm: extent.height.mm(),
+    across-available-mm: (if shown.rotated { breadth } else { length }).mm(),
+  ))
+  [#if shown.rotated { rotate(-90deg, reflow: true, shown.body) } else { shown.body }#fit<ttg-band-fit>]
 }
 
-#let band(label, rows, short: none) = table.cell(
+#let band(label, rows, width, short: none) = table.cell(
   rowspan: rows,
   // Cells spanning fixed-height rows are unbreakable by default; a band longer than a page
   // would push the whole table to the next page and overflow it.
@@ -131,15 +146,13 @@
   align: center + horizon,
   inset: 0pt,
   // The marker lets tests query the bands (`typst.query(..., "<ttg-band>")`).
-  [#rotate(-90deg, reflow: true, band-label(label, short, rows))#metadata(label)<ttg-band>],
+  [#band-label(label, short, rows, width)#metadata(label)<ttg-band>],
 )
-
-#let prescription(text-content) = text(font: mono, text-content)
 
 // ---------------------------------------------------------------- table
 #let header-cells = (
   table.cell(fill: header-fill, colspan: col-days, []),
-  ..day-names.map(name => table.cell(fill: header-fill, align: center + horizon, strong(name))),
+  ..day-names.map(name => table.cell(fill: header-fill, align: center + horizon, name)),
   ..range(calc.quo(box-count, label-every)).map(block => table.cell(
     colspan: label-every,
     align: right + horizon,
@@ -147,30 +160,28 @@
     text(size: 0.9 * text-size, weight: "regular", str((block + 1) * label-every)),
   )),
   table.cell(fill: header-fill, []),
-  table.cell(fill: header-fill, align: center + horizon, text(font: mono, weight: "bold", "ER")),
-  table.cell(fill: header-fill, align: center + horizon, text(font: mono, weight: "bold", "QR")),
-  table.cell(fill: header-fill, align: center + horizon, text(font: mono, weight: "bold", "LR")),
-  table.cell(align: center + horizon, text(fill: note-ink, "note")),
+  ..("ER", "QR", "LR").map(code => table.cell(fill: header-fill, align: center + horizon, code)),
+  table.cell(align: center + horizon, text(size: note-size, fill: note-ink, "note")),
 )
 
 // The cells of one week row. `month-bands` and `phase-bands` are runs, cut at page breaks.
 #let week-cells(index, week, month-bands, phase-bands) = {
   let cells = ()
   let month-band = month-bands.find(run => run.at(0) == index)
-  if month-band != none { cells.push(band(week.month, month-band.at(1))) }
+  if month-band != none { cells.push(band(week.month, month-band.at(1), month-width)) }
   // The marker tells the next layout pass which page this week's row is on.
-  cells.push(table.cell(align: center + horizon, [#strong(str(week.number))#metadata(index)<ttg-week>]))
+  cells.push(table.cell(align: center + horizon, [#text(fill: week-number-ink, str(week.number))#metadata(index)<ttg-week>]))
   for day in week.days {
     let label = if day == none { [] } else if day.race { strong(day.text) } else { day.text }
     cells.push(table.cell(align: center + horizon, label))
   }
   cells += range(box-count).map(_ => [])
   let phase-band = phase-bands.find(run => run.at(0) == index)
-  if phase-band != none { cells.push(band(week.phase_label, phase-band.at(1), short: week.phase_short)) }
-  cells.push(prescription(week.easy.text))
-  cells.push(prescription(week.quality.text))
-  cells.push(prescription(week.long.text))
-  cells.push(table.cell(align: center + horizon, text(fill: note-ink, week.note)))
+  if phase-band != none { cells.push(band(week.phase_label, phase-band.at(1), phase-width, short: week.phase_short)) }
+  cells.push(week.easy.text)
+  cells.push(week.quality.text)
+  cells.push(week.long.text)
+  cells.push(table.cell(align: center + horizon, text(size: note-size, fill: note-ink, week.note)))
   cells
 }
 
@@ -198,11 +209,16 @@
     all.push(table.vline(x: x, end: row-count, stroke: group))
   }
 
-  // Outline: the frame, the header separator, the boundaries between column groups.
+  // Group weight also between the column groups (D-048).
+  for x in (col-days, col-gauge, col-phase, col-easy) {
+    all.push(table.vline(x: x, end: row-count, stroke: group))
+  }
+
+  // Outline: the frame and the header separator.
   all.push(table.hline(y: 0, end: framed, stroke: outline))
   all.push(table.hline(y: 1, end: framed, stroke: outline))
   all.push(table.hline(y: row-count, end: framed, stroke: outline))
-  for x in (0, col-days, col-gauge, col-phase, col-easy, framed) {
+  for x in (0, framed) {
     all.push(table.vline(x: x, end: row-count, stroke: outline))
   }
   all
@@ -244,16 +260,18 @@
 #let separator-rule-weight = 0.4pt
 #let list-separator = [#h(2mm)#box(height: 0.75em, stroke: (left: separator-rule-weight + black))#h(2mm)]
 
+#let data(body) = text(font: mono, size: footer-data-scale * text-size, body)
+
 #let pace-entry(entry) = {
-  [#strong(entry.code):]
-  if entry.pace != "" [ #entry.pace]
+  [#data(strong(entry.code)):]
+  if entry.pace != "" [ #data(entry.pace)]
   if entry.label != "" [ #emph(entry.label)]
 }
 #let pace-legend = plan.paces.map(pace-entry).join(list-separator)
 
 // The races of the season, so a "RACE" cell can be told apart (owner, S5): the dates set apart
 // like the session codes above them.
-#let race-entry(race) = [#strong(race.dates): #race.name #emph[(#race.details)]]
+#let race-entry(race) = [#data(strong(race.dates)): #race.name #emph[(#race.details)]]
 #let race-list = plan.footer.races.map(race-entry).join(list-separator)
 
 #let footer-rules = (..plan.footer.rules, plan.footer.success).join(list-separator)
@@ -262,12 +280,13 @@
 #set page(paper: "a4", flipped: true, margin: page-margin)
 #set text(font: serif, size: text-size, lang: "en")
 
-#align(center)[
+// The title starts at the table's left edge (D-048).
+#align(center, block(width: fixed-width + box-count * box-width, align(left)[
   #text(size: title-size, weight: "bold")[#plan.title]
-  #v(2mm)
-]
+  #v(1mm)
+]))
 
-#align(center, sheet)
+#align(center, text(font: mono, sheet))
 
 #v(2mm)
 #align(center)[

@@ -183,7 +183,7 @@ Below the table:
 
 No colour legend: the sheet is black and white, and the colours the runner uses are his own (D-032).
 
-Typography follows the reference: a serif face for the calendar, monospace for the prescriptions. Line weights follow D-024.
+Typography (D-048): the whole table in a monospace face, so letters and figures line up; the title and the footer's words in a serif, the footer's codes, paces and dates in the table's monospace. Line weights follow D-024 with the values of D-048. A band label is set rotated or horizontal, whichever gives it the larger size.
 
 ## 6. Acceptance (D-020)
 

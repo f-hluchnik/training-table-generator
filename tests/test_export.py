@@ -44,10 +44,10 @@ def week(document, number):
 @pytest.mark.parametrize(
     ("quality", "text"),
     [
-        (Session(SessionType.HILLS, reps=6, minutes=1), "H: 6x1'"),
-        (Session(SessionType.HILLS, reps=5, minutes=1.5), "H: 5x1.5'"),
-        (Session(SessionType.THRESHOLD, reps=6, km=1), "T: 6x1 km"),
-        (Session(SessionType.MARATHON_PACE, reps=3, km=3), "MP: 3x3 km"),
+        (Session(SessionType.HILLS, reps=6, minutes=1), "H: 6×1′"),
+        (Session(SessionType.HILLS, reps=5, minutes=1.5), "H: 5×1.5′"),
+        (Session(SessionType.THRESHOLD, reps=6, km=1), "T: 6×1 km"),
+        (Session(SessionType.MARATHON_PACE, reps=3, km=3), "MP: 3×3 km"),
         (Session(SessionType.STRIDES), "S"),
         (Session(SessionType.NONE), "–"),
         (Race("Tune-up", date(2027, 4, 4), 10, Priority.C), "RACE 10 km"),
