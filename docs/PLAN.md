@@ -183,7 +183,7 @@ Below the table:
 
 No colour legend: the sheet is black and white, and the colours the runner uses are his own (D-032).
 
-Typography (D-048): the whole table in a monospace face, so letters and figures line up; the title and the footer's words in a serif, the footer's codes, paces and dates in the table's monospace. Line weights follow D-024 with the values of D-048. A band label is set rotated or horizontal, whichever gives it the larger size.
+Typography (D-048): the whole table in a monospace face, so letters and figures line up; the title and the footer's words in a serif, the footer's codes, paces and dates in the table's monospace. Line weights follow D-024 with the values of D-048. A band label is set rotated or horizontal, whichever gives it the larger size. The table's text shrinks with the rows of long plans, from 8 pt to 7 pt at the smallest rows (D-049).
 
 ## 6. Acceptance (D-020)
 

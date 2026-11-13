@@ -361,3 +361,6 @@ test-2027 is frozen as the snapshot `tests/fixtures/plan-test-2027.json` with th
 - **The title** is 14 pt (was 20 pt) and starts at the table's left edge.
 - **Band labels in the direction that fits best:** a label is set rotated along its band, or horizontally across it, whichever gives the larger size. In the mono a short form rotated in a one-week band would be about 3 pt; horizontal it is 5.6 pt (owner's suggestion). Longer bands stay rotated. *Amends* D-044.
 - 40 weeks still fit one page, 60 weeks two. The snapshots change only in the session notation.
+
+### D-049 The table's text shrinks with its rows — Agreed (owner, S8)
+*Owner, S8:* the font should be a bit smaller for long plans, a 40-week plan as the example. Rows shrink from 6.4 mm (up to about 22 weeks) to 3.7 mm (about 40 weeks, D-028); at 3.7 mm the 8 pt mono's descenders touched the lines. The table's text now shrinks in proportion to the row height: 8 pt at full rows, 7 pt at the smallest (a 30-week plan: about 7.4 pt). Compared on the 40-week plan at 8, 7, 6.5 and 6 pt: 7 pt clears the lines and still reads easily. The note column, the gauge labels and the band labels' largest size follow it; the title and the footer keep their sizes. `plan.json` is unchanged.

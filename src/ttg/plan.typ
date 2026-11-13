@@ -27,7 +27,6 @@
 #let page-width = 297mm
 #let title-size = 14pt
 #let text-size = 8pt
-#let note-size = 7pt // the mono `recovery` fits the note column
 // The footer's data in the mono at this share of the text size, so its x-height matches the serif's.
 #let footer-data-scale = 0.88
 #let table-height = 152mm // budget for all rows on one page; rows shrink for long plans
@@ -62,6 +61,12 @@
   (page-width - 2 * page-margin - fixed-width) / box-count,
 )
 #let row-height = calc.max(min-row-height, calc.min(max-row-height, table-height / (weeks.len() + 1)))
+// Long plans have shorter rows, so the table's text shrinks with them, in proportion: the text size
+// at full rows, down to this at the smallest rows (a 40-week plan) (owner, S8; D-049).
+#let min-table-text-size = 7pt
+#let row-share = (row-height - min-row-height) / (max-row-height - min-row-height) // 0 at the smallest rows, 1 at full
+#let table-text-size = min-table-text-size + row-share * (text-size - min-table-text-size)
+#let note-size = table-text-size * 7 / 8 // the mono `recovery` fits the note column
 
 // Column indices (x of the first column of each group).
 #let col-days = 2
@@ -104,8 +109,8 @@
 // A label set along `along` and across `across`: the largest size up to the text size at which it
 // fits, and the content to place.
 #let fitting(label, along, across) = {
-  let natural = measure(text(font: mono, size: text-size, label))
-  let size = text-size * calc.min(1, along / natural.width, across / natural.height)
+  let natural = measure(text(font: mono, size: table-text-size, label))
+  let size = table-text-size * calc.min(1, along / natural.width, across / natural.height)
   (size: size, label: label, body: text(font: mono, size: size, label))
 }
 
@@ -157,7 +162,7 @@
     colspan: label-every,
     align: right + horizon,
     inset: (right: 0.6mm),
-    text(size: 0.9 * text-size, weight: "regular", str((block + 1) * label-every)),
+    text(size: 0.9 * table-text-size, weight: "regular", str((block + 1) * label-every)),
   )),
   table.cell(fill: header-fill, []),
   ..("ER", "QR", "LR").map(code => table.cell(fill: header-fill, align: center + horizon, code)),
@@ -286,7 +291,7 @@
   #v(1mm)
 ]))
 
-#align(center, text(font: mono, sheet))
+#align(center, text(font: mono, size: table-text-size, sheet))
 
 #v(2mm)
 #align(center)[

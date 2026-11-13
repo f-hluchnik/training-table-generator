@@ -17,7 +17,7 @@ The table is an **outline, not a prescription**. You print it, put it on the wal
 
 ## The sheet
 
-One row per week (plans longer than about 40 weeks continue on a second page), with these columns:
+One row per week, with these columns. Rows get shorter in long plans and the table's text shrinks a little with them (from 8 to 7 pt at about 40 weeks); plans longer than that continue on a second page.
 
 | Column | Shows |
 |---|---|
