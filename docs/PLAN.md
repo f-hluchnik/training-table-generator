@@ -71,12 +71,12 @@ All fields:
 
 | Field | Type | Default | Meaning |
 |---|---|---|---|
-| `start` | date | — | Week 1 is the Monday-based week containing it. At most one of `start` and `weeks`; neither → the next Monday, today if it is a Monday (D-004, D-028). |
+| `start` | date | — | Week 1 is the Monday-based week containing it. At most one of `start` and `weeks`; neither → the next Monday, today if it is a Monday (D-004, D-029). |
 | `weeks` | integer ≥ 1 | — | Plan length: the plan ends with the week of the last race day and has this many weeks. |
 | `[sheet] title` | text | `"training plan"` | Title printed on the sheet. |
 | `[sheet] rules` | list of texts | TRAINING_MODEL §8 | "Life happens" rules in the footer (D-008). |
 | `[[race]] name` | text | required | Unique. |
-| `[[race]] date` | date | required | First race day; its week is the race week (D-028). |
+| `[[race]] date` | date | required | First race day; its week is the race week (D-029). |
 | `[[race]] end` | date ≥ `date` | — | Last day of a multi-day race. |
 | `[[race]] distance_km` | number > 0 | required | Decides the race type (TRAINING_MODEL §5). |
 | `[[race]] priority` | `"A"`, `"B"`, `"C"` | `"A"` | D-017. |

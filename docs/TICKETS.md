@@ -2,7 +2,7 @@
 
 Status: **todo**, **in progress**, **done**, **blocked (reason)**. One branch per ticket, named `t-NN-short-name`.
 
-All decisions needed for T-01–T-10 are made (D-001–D-028). Q-5 and Q-6 are for the later tickets.
+All decisions needed for T-01–T-10 are made (D-001–D-029). Q-5 and Q-6 are for the later tickets.
 
 ```
 T-01 ─▶ T-02 ─┬─▶ T-03 ─┐
@@ -33,7 +33,7 @@ T-01 ─▶ T-02 ─┬─▶ T-03 ─┐
 
 *Done 13 Nov 2026 (S1):* schemas D-025–D-027. The `Pace` type (parse and format) was salvaged here because the loader validates paces; T-03 adds the derivation. Only the input-side model exists; `Phase`, `Week` and `Plan` come with T-04 and T-06. Sample: `tests/fixtures/sample-plan-2026-weeks-1-4.json`.
 
-### T-03 Paces — todo
+### T-03 Paces — done
 - `Pace` (parse, format) exists since T-02; add what the derivation needs.
 - VDOT from a race result and derived easy / MP / T / I (D-015); overrides.
 - Verify against Daniels' published tables for at least three VDOT values.
@@ -54,14 +54,16 @@ T-01 ─▶ T-02 ─┬─▶ T-03 ─┐
 - a 6-week plan for a marathon (warning);
 - start after the race (error).
 
-*Done 13 Nov 2026 (S3):* `ttg.calendar` and `ttg.layout`; the layout rules, the calibrated lengths and the calendar edge cases are D-028. The test cases and their expected layouts were confirmed by the owner before implementation (`tests/test_layout.py`). The layout returns phases (`build`, `specific`, `taper` ending with the race week, `recovery`); deload and race weeks are week kinds that T-06 sets inside them. C races get no phase; T-06 finds their week with `Calendar.week_of`. Warnings C1 and C2 come from the layout. `SeasonError` moved to `ttg.model`, so the pure core doesn't import the loader.
+*Done 13 Nov 2026 (S3):* `ttg.calendar` and `ttg.layout`; the layout rules, the calibrated lengths and the calendar edge cases are D-029. The test cases and their expected layouts were confirmed by the owner before implementation (`tests/test_layout.py`). The layout returns phases (`build`, `specific`, `taper` ending with the race week, `recovery`); deload and race weeks are week kinds that T-06 sets inside them. C races get no phase; T-06 finds their week with `Calendar.week_of`. Warnings C1 and C2 come from the layout. `SeasonError` moved to `ttg.model`, so the pure core doesn't import the loader.
 
-### T-05 Sessions and progressions — todo
+### T-05 Sessions and progressions — done
 - Session catalogue (`TRAINING_MODEL.md` §1); 3–6 runs per week (D-016); regular and reduced easy runs (D-022).
 - H/I/T progressions salvaged from the prototype, MP repeats, LR with MP km, strides.
 - Quality km estimate; T cap.
 
 **Done when:** tests reproduce the 2026 quality sessions and their km.
+
+*Note (T-05):* the session types and reps are reproduced exactly; the km only within 3 km, because the owner's km are hand estimates (`TRAINING_MODEL.md` §3). Left for T-06: LR progression and caps, `LongRun` printing (`28 km (10 MP)`), which week gets which session. The hill rule keeps doubling the duration every 4th occurrence (5×2′, 5×4′, …); not capped, since 2026-length plans never reach it.
 
 ### T-06 Week expansion and overrides — todo
 - Phase rules → weeks, the 3:1 cycle, phase labels (D-026), LR progression and caps, deload, taper, race and recovery weeks.
@@ -71,13 +73,15 @@ T-01 ─▶ T-02 ─┬─▶ T-03 ─┐
 **Done when:** golden test: `seasons/2026.toml` produces the reference table week for week (intentional differences listed in the test). `test-2027` is reviewed by the owner and frozen as a snapshot.
 
 ### T-07 Checks — todo
-Warnings C3–C8 (`TRAINING_MODEL.md` §7), each a small function with a named threshold constant. C1 and C2 come from the layout since T-04 (D-028); T-07 only merges them.
+Warnings C3–C8 (`TRAINING_MODEL.md` §7), each a small function with a named threshold constant. C1 and C2 come from the layout since T-04 (D-029); T-07 only merges them.
 
 **Done when:** each check has a firing and a non-firing test; 2026 produces the expected warnings (C4, C8, shortened specific block).
 
-### T-08 Typst renderer — todo (can start after T-02)
+### T-08 Typst renderer — in progress (awaiting the owner's approval of the printed look)
 - `templates/plan.typ` reproducing the reference sheet from `plan.json` (PLAN §5), starting from `tests/fixtures/sample-plan-2026-weeks-1-4.json`; gauge per D-019 (1 km per box, 80 % marker); line hierarchy per D-024; an ER column wide enough for 4 easy runs.
-- Fonts: choose ones bundled or commonly available, and document the choice.
+- Fonts: choose ones bundled or commonly available, and document the choice (D-028).
+- Added: `ttg.render` (`render_pdf`, `render_file`; the plan reaches Typst as the `plan` input), and `tests/fixtures/sample-plan-2026-full.json`, the whole 2026 table transcribed for layout tests (MP km in long runs are placeholders). T-06 replaces it with the generated plan.
+- Packaging: `render.TEMPLATE` points into the repository, so it works from a checkout or an editable install. Shipping the template inside a wheel is left to T-09.
 
 **Done when:** the hand-made sample renders, and later the full 2026 plan. Compare a page image side by side with the reference PDF; the owner approves the look on a printed page (D-024).
 

@@ -10,7 +10,7 @@ from dataclasses import dataclass
 from datetime import date, timedelta
 from enum import StrEnum
 
-from ttg.paces import Pace
+from ttg.paces import Pace, TrainingPaces, derive_paces
 
 # D-016: 3–6 runs a week, default 4 (one quality run, one long run, the rest easy).
 MIN_RUNS_PER_WEEK = 3
@@ -134,6 +134,16 @@ class Paces:
     mp: Pace | None = None
     threshold: Pace | None = None
     interval: Pace | None = None
+
+    def resolve(self) -> TrainingPaces:
+        """The paces to use: each override where given, otherwise the derived default (D-005, D-015)."""
+        derived = derive_paces(self.race_result.distance_km, self.race_result.time)
+        return TrainingPaces(
+            easy=derived.easy if self.easy is None else self.easy,
+            mp=derived.mp if self.mp is None else self.mp,
+            threshold=derived.threshold if self.threshold is None else self.threshold,
+            interval=derived.interval if self.interval is None else self.interval,
+        )
 
 
 @dataclass(frozen=True)

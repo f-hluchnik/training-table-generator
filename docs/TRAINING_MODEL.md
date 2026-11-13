@@ -26,14 +26,36 @@ Every number here becomes a named constant in code, with the same tag (CLAUDE.md
 - **Input:** one recent race result. Defaults are derived with Daniels' VDOT model **[source 1, 2]**; any pace can be overridden.
 - **MP:** defaults to the race-equivalent marathon pace; a goal pace overrides it.
 
-Check against the owner's real result (marathon 3:30:02 → VDOT 44.5). Computed with the fixed-percentage approximation of the VDOT model **[source 2]**; T-03 must verify against Daniels' published tables, which may differ by a few s/km.
+Implemented in `ttg.paces` (T-03). The fractions of VDOT are named constants:
+
+| Pace | Rule | Basis |
+|---|---|---|
+| Threshold | pace at 88 % of VDOT | **[source 1, 2]** |
+| Interval | pace at 97.5 % of VDOT | **[default]**, fitted to the book (Daniels gives 95–100 %) |
+| Easy | pace at 70 % of VDOT | **[default]**; Daniels' range is 59–74 % **[source 2]**, the book's range at VDOT 51 is 63–73 % |
+| MP | pace of the race-equivalent marathon time | **[source 1, 2]**, D-015 |
+
+**Verification against Daniels' tables (T-03).** I did not have the book. The values below are transcribed from secondary sources (sources 1 and 12); tests in `tests/test_paces.py`. Table values are whole seconds (per mile in the 2nd edition, per 400 m for I), so the comparison allows for rounding.
+
+| Check | Table | Computed | Deviation |
+|---|---|---|---|
+| VDOT of the 5 km, 10 km and marathon times for VDOT 50, 55, 58 (2nd ed. table 3.1) | 50 / 55 / 58 | within 0.1 | none beyond the rounding of the times |
+| M, VDOT 50 / 55 / 57 (2nd ed. table 3.2) | 4:31 / 4:10 / 4:03 per km | ≤ 1 s/km | none |
+| T, VDOT 50 / 55 / 57 (2nd ed.) | 4:15 / 3:56 / 3:49 per km | ≤ 0.3 s/km | none |
+| I, VDOT 50 / 55 / 57 (2nd ed., 93 / 87 / 85 s per 400 m) | 3:52.5 / 3:37.5 / 3:32.5 | +2.4 / −0.1 / −1.3 s/km | up to 2.4 s/km, the table's resolution (1 s per 400 m = 2.5 s/km) |
+| M / T / I, VDOT 51 (4th ed. table 5.2, per km) | 4:27 / 4:11 / 3:51 | −0.4 / +0.1 / +0.1 s | none |
+| E, VDOT 51 | 4:52–5:29 per km | default 5:02 | inside the range |
+
+Not verified: the E pace beyond VDOT 51, the R pace (not used), and VDOT values outside 50–58. The formulas are the published Daniels–Gilbert equations, so the values should hold elsewhere in the usual range, but I have not checked them there.
+
+Result for the owner's marathon, 3:30:02 → VDOT 44.5:
 
 | Pace | Derived | 2026 plan | Comment |
 |---|---|---|---|
-| Easy | 5:22–6:26 | 5:30 | inside the range |
+| Easy | 5:37 (range 5:22–6:26) | 5:30 | inside the range |
 | MP | 4:59 | 4:58 | spot on (raced 4:59) |
-| Threshold | ≈ 4:40 | 4:30 | ≈ 10 s/km fast; it implies VDOT ≈ 46.6 |
-| Interval | ≈ 4:17 | 4:15 | consistent |
+| Threshold | 4:40 | 4:30 | ≈ 10 s/km fast; it implies VDOT ≈ 46.6 |
+| Interval | 4:18 | 4:15 | consistent; the first estimate here (≈ 4:17) used 98 % |
 
 For comparison, Daniels' table for VDOT 51 gives M 4:27, T 4:11, I 3:51 per km **[source 1]**: T ≈ M − 16 s, I ≈ T − 20 s.
 
@@ -41,7 +63,17 @@ McMillan names the same intensities Endurance, Stamina and Speed, and also start
 
 ## 3. Week structure (D-016)
 
-3–6 runs, default 4: one quality run, one LR, the rest easy runs (D-016). Easy runs are *e* each; in reduced weeks the last one is *e*/2. They never grow and are not a lever for anything else (D-022). The weekly planned km is the sum of all runs (D-006). Quality-run km are estimated as follows **[2026, prototype]**: 10′ warm-up + reps × work + (reps − 1) × recovery + 10′ cool-down, everything at easy pace except the work itself (hill efforts also counted at easy pace). This reproduces the 2026 numbers (e.g. T 3 × 8′ ≈ 10 km).
+3–6 runs, default 4: one quality run, one LR, the rest easy runs (D-016). Easy runs are *e* each; in reduced weeks the last one is *e*/2. They never grow and are not a lever for anything else (D-022). The weekly planned km is the sum of all runs (D-006). Quality-run km are estimated as follows **[2026, prototype]**: 10′ warm-up + reps × work + (reps − 1) × recovery + 10′ cool-down, everything at easy pace except the work itself (hill efforts also counted at easy pace). Reps given in km (MP repeats, T 6 × 1 km) count the km themselves, with 2′ easy recoveries. A strides run (S) counts as half an easy run, rounded up. Implemented in `ttg.sessions` (T-05).
+
+**Against the 2026 reference.** The sessions (type, reps, minutes) are reproduced exactly for weeks 1–3, 5–7, 9–11 and 14–15; week 13 is the override (rule: 9 × 1′, owner: 10 × 1′). The owner's quality km (second page of the reference) are hand estimates and deviate from the estimate:
+
+| Session | Owner | Estimate |
+|---|---|---|
+| H 6–9 × 1′ | 8, 8, 9, 9 | 5.6, 6.0, 6.4, 6.7 (2.0–2.6 less) |
+| I 5×3′, 6×3′, 5×4′, 6×4′ | 8, 9, 9, 10 | 8.6, 9.7, 9.8, 11.1 (−0.6 to +1.1) |
+| T 3×8′, 3×10′, 4×8′, 4×10′ | 10, 11, 11, 11 | 9.7, 11.0, 11.8, 13.6 (−0.3 to +2.6) |
+
+The test allows 3 km and pins the estimate itself. The hill km are low because the estimate counts the effort at easy pace and cannot know the route to the hill; no rule is added to reproduce the owner's numbers (D-020).
 
 ## 4. Phase kinds
 
@@ -50,7 +82,7 @@ McMillan names the same intensities Endurance, Stamina and Speed, and also start
 - **Quality rotation:** H → I → T **[2026]**. Each type progresses each time it occurs **[2026]**:
   - H: 6×1′ → +1 rep each time; at 10 reps, halve the reps and double the duration. In 2026 the owner wrote 10×1′ for the 4th occurrence, where this rule gives 9×1′; that week is an override in the reference season.
   - I: 5×3′ → 6×3′ → 5×4′ → 6×4′ → 5×5′ …
-  - T: 3×8′ → 3×10′ → 4×8′ → 4×10′, capped at **40′ total at T** (tempo work is 15–40 min) **[source 5]**.
+  - T: 3×8′ → 3×10′ → 4×8′ → 4×10′ → 5×8′, held there by the cap of **40′ total at T** (tempo work is 15–40 min) **[source 5]**.
 - **LR:** +2 km per build week **[2026: +2–3 km]**, up to the cap (§6).
 - **Easy runs:** regular (D-022).
 - **Label:** *build*, for deloads too (D-026).
@@ -87,7 +119,7 @@ The race replaces the LR. The race day prints bold in the calendar, and the week
 - After that, the next phase starts.
 - Pfitzinger uses a 5-week return-to-running schedule after a marathon **[source 9]**. Our recovery block is shorter because the next phase starts gently anyway; a warning fires if quality returns sooner than the defaults below.
 
-## 5. Phase layout (D-009, D-028)
+## 5. Phase layout (D-009, D-029)
 
 The compiler works **backward from each race** (A and B; C races only replace one quality run, D-017).
 
@@ -95,15 +127,15 @@ Default lengths in weeks, calibrated in T-04. A "2-week taper" in the sources is
 
 | Race type | Distance | Taper incl. race week | Specific | Recovery after |
 |---|---|---|---|---|
-| 10 km | ≤ 10 km | 1 **[source 13]** | 3 **[default]** | 1 **[source 14]** |
-| half | ≤ half marathon | 2 **[source 13]** | 4 **[default]** | 2 **[source 14]** |
-| marathon | ≤ marathon | 2 **[source 12, 8; 2026]** | 6 **[source 15]** | 2 **[2026; source 9 is longer, see §4 recovery]** |
-| ultra | longer | 3 **[source 16, 17; 2026]** | 6 **[source 17]** | 3 **[source 18]** |
+| 10 km | ≤ 10 km | 1 **[source 14]** | 3 **[default]** | 1 **[source 15]** |
+| half | ≤ half marathon | 2 **[source 14]** | 4 **[default]** | 2 **[source 15]** |
+| marathon | ≤ marathon | 2 **[source 13, 8; 2026]** | 6 **[source 16]** | 2 **[2026; source 9 is longer, see §4 recovery]** |
+| ultra | longer | 3 **[source 17, 18; 2026]** | 6 **[source 18]** | 3 **[source 19]** |
 
 - **Race type** from the distance, with 0.1 km slack so that 21.1 or 42.2 count as a half or a full marathon **[default]**.
-- **Taper:** the meta-analysis of Bosquet et al. found a two-week taper optimal **[source 12]**; coaching guides give 7–10 days for 10 km and 10–14 days for a half **[source 13]**. For ultras, coach-written 100 km plans use two taper weeks plus the race week **[source 16]**; Koop places the biggest training block 6–9 weeks before the race **[source 17]**, which leaves 3 weeks.
-- **Specific:** Daniels' phases are 6 weeks each, at least 3 when time is short **[source 15]**. For 10 km and the half no source gives a separate length: our default.
-- **Recovery:** Pfitzinger plans one recovery week after a key race and notes that 15 km or longer may need another week **[source 14]**. After a 100-mile race, at least 3–4 weeks **[source 18]**. After a marathon Pfitzinger uses 5 weeks **[source 9]**; ours is 2 because the following build starts gently (§4 recovery).
+- **Taper:** the meta-analysis of Bosquet et al. found a two-week taper optimal **[source 13]**; coaching guides give 7–10 days for 10 km and 10–14 days for a half **[source 14]**. For ultras, coach-written 100 km plans use two taper weeks plus the race week **[source 17]**; Koop places the biggest training block 6–9 weeks before the race **[source 18]**, which leaves 3 weeks.
+- **Specific:** Daniels' phases are 6 weeks each, at least 3 when time is short **[source 16]**. For 10 km and the half no source gives a separate length: our default.
+- **Recovery:** Pfitzinger plans one recovery week after a key race and notes that 15 km or longer may need another week **[source 15]**. After a 100-mile race, at least 3–4 weeks **[source 19]**. After a marathon Pfitzinger uses 5 weeks **[source 9]**; ours is 2 because the following build starts gently (§4 recovery).
 - **B races:** the default taper is one week shorter, never below the race week (D-017). An explicit `taper_weeks` is taken as is.
 
 Placing the phases:
@@ -125,7 +157,7 @@ Between two races:
 
 Before the first race: build weeks, then the specific block down to 0, then the taper down to the race week.
 
-The taper stays ahead of the specific block: a week or two of race-specific work between two races builds little (Daniels wants at least 3 weeks per phase, **[source 15]**), while a taper week clearly pays **[source 12]**. When time is short, Daniels likewise keeps the final, race-specific phase ahead of the middle ones **[source 15]**.
+The taper stays ahead of the specific block: a week or two of race-specific work between two races builds little (Daniels wants at least 3 weeks per phase, **[source 16]**), while a taper week clearly pays **[source 13]**. When time is short, Daniels likewise keeps the final, race-specific phase ahead of the middle ones **[source 16]**.
 
 2026 check: ultra (week 17) → marathon (week 23) leaves 5 weeks in between.
 - **Defaults:** ultra B taper 2, recovery 3; the marathon's specific block becomes 1 week (step 2), with a warning.
@@ -193,13 +225,13 @@ The owner finished the season uninjured and ran the planned marathon pace. That 
 9. Pfitzinger 5-week post-marathon recovery: <https://runningwithrock.com/pfitzinger-marathon-plan/>
 10. Daniels long-run cap 32 km: <https://ctyeh.com/running/vdot?lang=en>
 11. Interval session ≤ 10 km or 8 % of weekly mileage: <https://ctyeh.com/running/interval?lang=en>
+12. Daniels, *Daniels' Running Formula*, 2nd ed., tables 3.1 and 3.2 (VDOT 50, 55–58), transcribed at <https://www.runningahead.com/groups/the_league/forum/0a085839fcc9423887c0bae90092e299>
+13. Bosquet, Montpetit, Arvisais, Mujika (2007), *Effects of tapering on performance: a meta-analysis*, Med Sci Sports Exerc 39(8): 1358–1365; summary: <https://coachsci.sdsu.edu/csa/vol131/bosquet.htm>
+14. Taper length by distance (10 km 7–10 days, half 10–14 days): <https://www.runnersblueprint.com/the-tapering-manual-2-weeks-3-weeks-or-none-at-all-how-to-taper-like-a-pro-from-5k-to-100k/>
+15. Pfitzinger & Latter, *Faster Road Racing*, "After the race" (one recovery week; 15 km or longer may need another): <https://canada.humankinetics.com/blogs/excerpt/after-the-race-hellip>
+16. Daniels, *Daniels' Running Formula*, ch. 10: four 6-week phases; with less time at least 3 weeks per phase, Phase IV (final quality) prioritised over II and III. Summaries: <https://voicetest.knowt.com/note/facf31df-2dca-4c4a-b8fc-4b7bfcd54266/part-3-Jack-Daniels-Running-Formula--->, <https://cdbaca.github.io/ssg/reading-daniels-running-formula-chapter-10.html>
+17. Coach-written 100 km plan: race-specific weeks 13–17, taper weeks 18–19, race week 20: <https://www.trainingpeaks.com/training-plans/running/trail/tp-680386/20-week-100k-ultramarathon-training-plan-intermediate-4-days-per-week>
+18. J. Koop, highest-volume block 6–9 weeks before an ultra: <https://trainright.com/how-much-time-do-you-really-need-to-train-for-an-ultramarathon/>
+19. At least 3–4 weeks of recovery after a 100-mile race: <https://vert.run/100-miles-training-guide/>
 
-12. Bosquet, Montpetit, Arvisais, Mujika (2007), *Effects of tapering on performance: a meta-analysis*, Med Sci Sports Exerc 39(8): 1358–1365; summary: <https://coachsci.sdsu.edu/csa/vol131/bosquet.htm>
-13. Taper length by distance (10 km 7–10 days, half 10–14 days): <https://www.runnersblueprint.com/the-tapering-manual-2-weeks-3-weeks-or-none-at-all-how-to-taper-like-a-pro-from-5k-to-100k/>
-14. Pfitzinger & Latter, *Faster Road Racing*, "After the race" (one recovery week; 15 km or longer may need another): <https://canada.humankinetics.com/blogs/excerpt/after-the-race-hellip>
-15. Daniels, *Daniels' Running Formula*, ch. 10: four 6-week phases; with less time at least 3 weeks per phase, Phase IV (final quality) prioritised over II and III. Summaries: <https://voicetest.knowt.com/note/facf31df-2dca-4c4a-b8fc-4b7bfcd54266/part-3-Jack-Daniels-Running-Formula--->, <https://cdbaca.github.io/ssg/reading-daniels-running-formula-chapter-10.html>
-16. Coach-written 100 km plan: race-specific weeks 13–17, taper weeks 18–19, race week 20: <https://www.trainingpeaks.com/training-plans/running/trail/tp-680386/20-week-100k-ultramarathon-training-plan-intermediate-4-days-per-week>
-17. J. Koop, highest-volume block 6–9 weeks before an ultra: <https://trainright.com/how-much-time-do-you-really-need-to-train-for-an-ultramarathon/>
-18. At least 3–4 weeks of recovery after a 100-mile race: <https://vert.run/100-miles-training-guide/>
-
-Sources 1, 10, 11 and 15 are secondary summaries of Daniels; prefer the book when implementing.
+Sources 1, 10, 11, 12 and 16 are secondary summaries of Daniels; prefer the book when implementing.

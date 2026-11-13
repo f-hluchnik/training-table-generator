@@ -79,7 +79,7 @@ Everything except loading (`spec`), the command line (`cli`) and rendering (`ren
 - **Hills:** effort-based, no pace.
 
 *Why Daniels and not McMillan:* the owner prefers McMillan or Galloway. McMillan's calculator, however, is not published as a formula as far as we know, so it cannot be reproduced exactly; Daniels' equations are published. Zone names on the sheet stay neutral (easy, threshold, interval, MP).
-*Check:* 3:30:02 marathon → VDOT 44.5, threshold ≈ 4:40/km, interval ≈ 4:17/km, MP 4:59/km. The owner's 2026 values were T 4:30 and I 4:15, so threshold was about 10 s/km fast (see `TRAINING_MODEL.md` §2).
+*Check:* 3:30:02 marathon → VDOT 44.5, threshold ≈ 4:40/km, interval ≈ 4:18/km, MP 4:59/km (T-03: interval changed from the first estimate of 4:17 after fitting it to the book, `TRAINING_MODEL.md` §2). The owner's 2026 values were T 4:30 and I 4:15, so threshold was about 10 s/km fast (see `TRAINING_MODEL.md` §2).
 
 ### D-016 Weekly structure: 3–6 runs, always one quality run and one long run
 - `runs_per_week` = 3–6, default 4. Every week has exactly one quality run and one long run; the rest are easy runs (1–4).
@@ -188,9 +188,20 @@ The fields are documented in PLAN §4. Every value the sheet prints is computed 
 
 ---
 
+## Proposed in session S4 (13 Nov 2026)
+
+### D-028 Sheet fonts and drawing values (T-08) — Proposed
+- **Fonts:** *Libertinus Serif* for the calendar, titles and footer; *DejaVu Sans Mono* for the prescriptions (ER, QR, LR). Both ship inside the `typst` package, so the sheet looks the same on every machine and in a future browser build (Q-6). The reference was made in Excel with a Garamond-like serif; its font is not redistributable and not present on every machine.
+- **Line weights (D-024):** outline 1.5 pt black; group 0.75 pt black; hairline 0.25 pt, 55 % grey. They are named constants at the top of `templates/plan.typ`. The 10 km marks, the month boundaries and the 80 % marker share the group weight; the phase boundaries use the group weight in the phase column only.
+- **Geometry:** the gauge box is 1.75 mm wide and shrinks until the table fits the page width (A4 landscape, 8 mm margins; 1.5 mm for 80 boxes). Rows are 6.4 mm and shrink so that long plans stay on one page.
+
+*Open:* the owner approves the look, the grey values and the weights on a printed page (D-024). Phase boundaries in the group weight are an addition to D-024's list; say if they should be hairlines.
+
+---
+
 ## Agreed in session S3 (13 Nov 2026)
 
-### D-028 Phase layout: what gives way, calibrated lengths, calendar edge cases
+### D-029 Phase layout: what gives way, calibrated lengths, calendar edge cases
 Proposed by the architect, agreed by the owner. Details and sources in `TRAINING_MODEL.md` §5.
 - **Compression order between two races:** build weeks → the later race's specific block, down to 0 → the earlier race's recovery, down to 1 week → the later race's taper, down to the race week → the earlier race's recovery, down to 0. Each block is shortened only as far as needed. *Changed from the first draft*, which stopped the specific block at 1 week and cut the taper first: a single week of race-specific work between two races builds little, a taper week clearly pays.
 - **Short plan before the first race:** the same priority. The taper is kept first, then the specific block; build weeks get what is left.
