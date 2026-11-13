@@ -60,6 +60,18 @@ SPECIFIC_ROTATION: Mapping[RaceType, tuple[SessionType, ...]] = MappingProxyType
     }
 )
 
+# [default, D-041] A hilly race's race-specific block: every other quality run is hill repeats, the
+# others are the race's own intensity, threshold instead of marathon pace (hills, not a steady pace,
+# decide the effort on its course). Sources in TRAINING_MODEL.md §4.
+HILLY_SPECIFIC_ROTATION: Mapping[RaceType, tuple[SessionType, ...]] = MappingProxyType(
+    {
+        RaceType.TEN_K: (SessionType.HILLS, SessionType.INTERVALS, SessionType.HILLS, SessionType.THRESHOLD),
+        RaceType.HALF: (SessionType.HILLS, SessionType.THRESHOLD),
+        RaceType.MARATHON: (SessionType.HILLS, SessionType.THRESHOLD),
+        RaceType.ULTRA: (SessionType.HILLS, SessionType.INTERVALS, SessionType.HILLS, SessionType.THRESHOLD),
+    }
+)
+
 # [default, owner S5] A C race up to 10 km replaces the quality run (D-017). From the half
 # marathon up it is the week's long, hard effort: it replaces the long run, and the week has
 # no other quality run.
@@ -190,7 +202,7 @@ class _Expander:
             case WeekKind.BUILD:
                 return self._next_quality(BUILD_ROTATION, other_week_km)
             case WeekKind.SPECIFIC:
-                return self._next_quality(SPECIFIC_ROTATION[target.type], other_week_km)
+                return self._next_quality(_specific_rotation(target), other_week_km)
             case WeekKind.DELOAD:
                 return strides_session()
             case WeekKind.TAPER:
@@ -232,7 +244,7 @@ class _Expander:
 
     def _long_run_mp_km(self, kind: WeekKind, target: Race, km: int, tune_up_week: bool) -> int:
         """MP km in every other marathon-specific long run, none in a tune-up race's week (D-033)."""
-        if kind is not WeekKind.SPECIFIC or target.type is not RaceType.MARATHON:
+        if kind is not WeekKind.SPECIFIC or target.type is not RaceType.MARATHON or target.hilly:
             return 0
         progress = self._progress
         with_mp = not progress.last_specific_long_run_had_mp and not tune_up_week
@@ -347,6 +359,12 @@ def _check_no_race_overridden(week: Week, override: WeekOverride) -> None:
                 f"overrides.{week.number}.{field_name}: the {cell} of week {week.number} is the race "
                 f'"{computed.name}", which cannot be overridden'
             )
+
+
+def _specific_rotation(race: Race) -> tuple[SessionType, ...]:
+    """The quality runs of the race's specific block (TRAINING_MODEL.md §4, D-041)."""
+    rotations = HILLY_SPECIFIC_ROTATION if race.hilly else SPECIFIC_ROTATION
+    return rotations[race.type]
 
 
 def _replaces_long_run(c_race: Race) -> bool:

@@ -7,6 +7,7 @@ from datetime import date, timedelta
 import pytest
 
 from ttg.expand import expand
+from ttg.export import long_run_text, quality_text
 from ttg.model import (
     EasyRuns,
     LongRun,
@@ -112,6 +113,37 @@ def test_specific_block_quality_by_race_type(distance_km, expected):
     plan = plan_of(replace(MARATHON, distance_km=distance_km))
     specific = [week for week in plan.weeks if week.kind is SPECIFIC]
     assert quality_types(specific[:2]) == expected
+
+
+@pytest.mark.parametrize(
+    ("distance_km", "expected"),
+    # The loading weeks of each block: 6 weeks with a deload, the half's 4 with a deload, the 10 km's 3
+    # with a deload (the 3:1 cycle runs on from the build).
+    [(42.195, [H, T, H, T]), (30, [H, T, H, T]), (21.0975, [H, T, H]), (10, [H, I]), (101, [H, I, H, T])],
+)
+def test_a_hilly_races_specific_block_alternates_hill_repeats_with_its_own_intensity(distance_km, expected):
+    """D-041: hills every other quality run; threshold instead of marathon pace."""
+    plan = plan_of(replace(MARATHON, distance_km=distance_km, hilly=True))
+    assert quality_types([week for week in plan.weeks if week.kind is SPECIFIC]) == expected
+
+
+def test_a_hilly_marathon_has_no_mp_km_in_its_long_runs():
+    hilly = plan_of(replace(MARATHON, hilly=True)).weeks
+    flat = plan_of(MARATHON).weeks
+    assert all(not isinstance(w.long_run, LongRun) or w.long_run.mp_km == 0 for w in hilly)
+    # Only the MP km go: the long runs themselves are the flat marathon's.
+    assert long_run_kms(hilly) == long_run_kms(flat)
+
+
+def test_hilly_changes_only_the_specific_block():
+    hilly, flat = plan_of(replace(MARATHON, hilly=True)).weeks, plan_of(MARATHON).weeks
+
+    def sheet_row(week: Week) -> tuple:
+        """What the sheet prints of the week."""
+        return week.kind, week.easy, quality_text(week.quality), long_run_text(week.long_run)
+
+    changed = {h.kind for h, f in zip(hilly, flat, strict=True) if sheet_row(h) != sheet_row(f)}
+    assert changed == {SPECIFIC}
 
 
 def test_specific_10k_alternation_continues_each_types_progression():

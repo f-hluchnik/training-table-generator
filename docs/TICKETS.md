@@ -120,8 +120,10 @@ A whole-project review by an architect and an engineer (S7, 13 Nov 2026), and th
 
 *Verified:* both reference seasons produce the same `plan.json` as before except for the contract change (`schema_version` 2, `weeks[].phase`, no `km_per_box`); their sheets are unchanged by eye; the 60-week plan has two pages with every week and every band labelled.
 
-### T-15 Hilly races — todo
-Q-8 (b), owner S7: a `hilly` marker on a race leans its race-specific block into hill repeats, as an experienced coach would adjust it; the race type, phase lengths and caps stay by distance. Needs a decision for the new field (CLAUDE.md §3).
+### T-15 Hilly races — in review (PR stacked on T-14)
+Q-8 (b), owner S7: a `hilly` marker on a race leans its race-specific block into hill repeats, as an experienced coach would adjust it; the race type, phase lengths and caps stay by distance.
+
+*S7:* `[[race]] hilly = true` (D-041, proposed by the coach, for the owner in the PR). The specific block alternates hill repeats with the race's own intensity, threshold instead of marathon pace; no MP km in the long runs; the footer marks the race `(A, hilly)`. Everything outside the specific block is unchanged (tested). Both reference seasons are unchanged (no hilly race).
 
 ### Later (not scheduled)
 - **T-12** Elevation for mountain ultras (Q-5). *Evaluated in S7; parked by the owner (Q-7).* The race-type gap it found is covered by T-15 (`hilly`).
