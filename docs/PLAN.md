@@ -11,7 +11,7 @@ Automate building a printable training-table outline like `docs/reference/2026-m
 - **R-3** The plan is an outline: weekly planned km is an approximation; a week is a success at ≥ 80 % (D-006).
 - **R-4** Unrealistic or risky input gives warnings, never a refusal (D-001).
 - **R-5** "Just the right amount of simple": few required inputs, everything else defaulted and overridable.
-- **R-6** Personal tool first; publishing a website later is nice-to-have (D-002).
+- **R-6** A personal command-line tool; no website (D-002, D-036).
 
 **Non-goals:** recording or analysing actual runs, adapting the plan to past performance, assigning sessions to days, multi-sport training.
 
@@ -189,6 +189,5 @@ Typography follows the reference: a serif face for the calendar, monospace for t
 
 ## 7. Later
 
-- Website (Q-6). D-013 keeps the browser route open.
 - Elevation for mountain ultras (Q-5).
 - Localisation of the sheet labels (Czech), if wanted.

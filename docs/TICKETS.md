@@ -2,7 +2,7 @@
 
 Status: **todo**, **in progress**, **done**, **blocked (reason)**. One branch per ticket, named `t-NN-short-name`.
 
-All decisions needed for T-01–T-10 are made (D-001–D-029). Q-5 and Q-6 are for the later tickets.
+All decisions needed for T-01–T-10 are made (D-001–D-029). Q-5 is for the later ticket (T-12). The website (T-11) and coloured print (T-13) were dropped in S6 (D-036).
 
 ```
 T-01 ─▶ T-02 ─┬─▶ T-03 ─┐
@@ -99,12 +99,12 @@ Warnings C3–C8 (`TRAINING_MODEL.md` §7), each a small function with a named t
 
 *Done 13 Nov 2026 (S6):* `ttg.cli` (`build`), `render.write_outputs`; `tests/test_cli.py` builds both seasons and compares `plan.json` with the snapshots. Warnings go to stderr as `warning C4 (week 13): …`, the written paths to stdout; an input error (invalid season, unreadable file) prints `ttg: error: …` to stderr, exits 1 and writes nothing. Without `-o` the output goes to `out/<season file name>/`, so two seasons never overwrite each other. The Typst template moved into the package (`src/ttg/plan.typ`) and is declared as package data, so an installed wheel renders too (D-035). CI builds both seasons and keeps the PDFs as a build artefact.
 
-### T-10 Remove the prototype — todo
+### T-10 Remove the prototype — done
 Delete the prototype files and Flask (D-014); update the README.
 
 **Done when:** the repository contains only the new package; tests and both builds pass.
 
+*Done 13 Nov 2026 (S6):* deleted `config.py`, `generator.py`, `build.py`, `my_plan.py`, `plan_table.py`, `app.py` and `templates/index.html` (the Flask page; `plan.typ` had moved into the package in T-09). Flask was not declared in `pyproject.toml`, so no dependency needed removing. Nothing in `src/` or `tests/` referenced the prototype. The salvaged parts (`Pace`, the H/I/T progressions, the quality-km estimate) live on in `ttg.paces` and `ttg.sessions`. Both seasons build unchanged (the snapshots are identical).
+
 ### Later (not scheduled)
-- **T-11** Website feasibility spike (Q-6): Pyodide + Typst WebAssembly on a static page.
 - **T-12** Elevation for mountain ultras (Q-5).
-- **T-13** Coloured print, optional (D-032): the colour scheme shown in the table itself, e.g. the ER, QR and LR columns tinted green, yellow and blue, instead of a separate legend.
