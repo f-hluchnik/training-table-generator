@@ -1511,6 +1511,26 @@
   },
   "warnings": [
     {
+      "code": "C8",
+      "week": null,
+      "message": "threshold pace 4:30 is 10.2 s/km faster than 4:40, derived from the race result (more than 10)"
+    },
+    {
+      "code": "C4",
+      "week": 13,
+      "message": "the long run is 52 % of the week's 64 km (more than 50 %)"
+    },
+    {
+      "code": "C3",
+      "week": 14,
+      "message": "easy runs and long run: 64 km, +12 % on week 13's 57 km (more than 10 %)"
+    },
+    {
+      "code": "C4",
+      "week": 14,
+      "message": "the long run is 53 % of the week's 75 km (more than 50 %)"
+    },
+    {
       "code": "C1",
       "week": 23,
       "message": "\"Běhej Lesy Lednice\": specific block shortened from 6 to 2 weeks (\"Beskydská sedmička\" and \"Běhej Lesy Lednice\" are too close)"

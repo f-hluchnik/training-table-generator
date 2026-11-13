@@ -74,10 +74,12 @@ T-01 ─▶ T-02 ─┬─▶ T-03 ─┐
 
 *S5 (13 Nov 2026):* `ttg.expand` (phases → weeks, overrides), `ttg.long_run` (growth, caps, deload, taper, restart), `ttg.export` (plan.json); the rules are D-030. Golden test `tests/test_golden_2026.py`: no overrides were added to copy the reference (owner); every difference is listed with its reason. Snapshots of both seasons in `tests/fixtures/plan-*.json` (`tests/test_snapshots.py`); the generated 2026 plan replaced the hand-transcribed `sample-plan-2026-full.json`. `build_session` gave way to per-type progressions (`progression_session`), so a rotation can continue across phases and past a C race. **Left:** the owner reviews `plan-test-2027.json` (PDF in the PR) and the *Proposed* part of D-030; then T-06 is done.
 
-### T-07 Checks — todo
+### T-07 Checks — done
 Warnings C3–C8 (`TRAINING_MODEL.md` §7), each a small function with a named threshold constant. C1 and C2 come from the layout since T-04 (D-029); T-07 only merges them.
 
 **Done when:** each check has a firing and a non-firing test; 2026 produces the expected warnings (C4, C8, shortened specific block).
+
+*Done 13 Nov 2026 (S5):* `ttg.checks` (`check(plan)` returns every warning, ordered by week); D-031. 2026 warns C8, C4 (weeks 13, 14), C3 (week 14, the 40 km override) and C1. The snapshots now carry the warnings. Open for later: the I progression has no cap, so long plans reach C7 (test-2027 weeks 15, 19, 23).
 
 ### T-08 Typst renderer — in progress (awaiting the owner's approval of the printed look)
 - `templates/plan.typ` reproducing the reference sheet from `plan.json` (PLAN §5), starting from `tests/fixtures/sample-plan-2026-weeks-1-4.json`; gauge per D-019 (1 km per box, 80 % marker); line hierarchy per D-024; an ER column wide enough for 4 easy runs.

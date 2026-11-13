@@ -277,6 +277,12 @@ class WarningCode(StrEnum):
 
     RACES_TOO_CLOSE = "C1"
     PLAN_TOO_SHORT = "C2"
+    WEEKLY_RAMP = "C3"
+    LONG_RUN_SHARE = "C4"
+    LONG_RUN_ABOVE_CAP = "C5"
+    THRESHOLD_VOLUME = "C6"
+    INTERVAL_VOLUME = "C7"
+    PACE_CONSISTENCY = "C8"
 
 
 @dataclass(frozen=True)
