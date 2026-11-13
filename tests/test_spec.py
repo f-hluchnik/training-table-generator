@@ -102,6 +102,11 @@ def test_races_and_overrides_are_sorted():
     assert [override.week for override in season.overrides] == [2, 10]
 
 
+def test_a_race_is_flat_unless_marked_hilly():
+    races = parse_season(season_with(race=[race(), race(name="Trail", hilly=True)])).races
+    assert [race.hilly for race in races] == [False, True]
+
+
 def test_override_fields():
     data = season_with(
         overrides={
@@ -172,6 +177,8 @@ def test_a_file_that_is_not_utf_8_is_an_input_error(tmp_path):
         (season_with(race=[race(distance_km=0)]), "race[1].distance_km", "greater than 0"),
         (season_with(race=[race(priority="D")]), "race[1].priority", 'one of "A", "B", "C"'),
         (season_with(race=[race(priority="C", taper_weeks=1)]), "race[1].taper_weeks", "C race"),
+        (season_with(race=[race(priority="C", hilly=True)]), "race[1].hilly", "C race"),
+        (season_with(race=[race(hilly="yes")]), "race[1].hilly", "true or false"),
         (season_with(race=[race(taper_weeks=0)]), "race[1].taper_weeks", "at least 1"),
         (season_with(race=[race(recovery_weeks=-1)]), "race[1].recovery_weeks", "at least 0"),
         (season_with(paces={}), "paces.race_result", "missing"),

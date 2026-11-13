@@ -110,19 +110,22 @@ def _parse_race(table: "_Table") -> Race:
         taper_weeks=table.integer("taper_weeks", minimum=1),
         specific_weeks=table.integer("specific_weeks", minimum=0),
         recovery_weeks=table.integer("recovery_weeks", minimum=0),
+        hilly=table.boolean("hilly", False),
     )
     table.close()
-    _check_phase_lengths_allowed(race, table)
+    _check_c_race_fields(race, table)
     return race
 
 
-def _check_phase_lengths_allowed(race: Race, table: "_Table") -> None:
-    """C races get no taper, specific or recovery block (D-017)."""
+def _check_c_race_fields(race: Race, table: "_Table") -> None:
+    """C races get no taper, specific or recovery block (D-017), so nothing to make hilly (D-041)."""
     if race.is_key:
         return
     for key in _PHASE_LENGTH_FIELDS:
         if getattr(race, key) is not None:
             _fail(table.path_of(key), "a C race has no taper, specific or recovery block (D-017)")
+    if race.hilly:
+        _fail(table.path_of("hilly"), "a C race has no race-specific block to lean into hills (D-041)")
 
 
 def _check_unique_names(races: list[Race], tables: list["_Table"]) -> None:
@@ -344,6 +347,14 @@ class _Table:
             return self._missing(key, default)
         if not isinstance(value, dt.date) or isinstance(value, dt.datetime):
             self._wrong_type(key, "a date like 2026-05-04 (without quotes)", value)
+        return value
+
+    def boolean(self, key: str, default: bool) -> bool:
+        value = self._value(key)
+        if value is None:
+            return default
+        if not isinstance(value, bool):
+            self._wrong_type(key, "true or false (without quotes)", value)
         return value
 
     def pace(self, key: str) -> Pace | None:

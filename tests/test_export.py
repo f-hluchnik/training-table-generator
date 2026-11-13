@@ -166,3 +166,7 @@ def test_the_2026_phases_are_numbered_in_order(document_2026):
     phases = [week["phase"] for week in document_2026["weeks"]]
     assert phases == sorted(phases)
     assert phases[0] == 1 and len(set(phases)) == phases[-1]
+
+
+def test_the_footer_marks_a_hilly_race():
+    assert race_text(Race("Trail", date(2027, 10, 10), 30, hilly=True)) == "Trail 10 oct (A, hilly)"

@@ -100,11 +100,25 @@ The test allows 3 km and pins the estimate itself. The hill km are low because t
 | ≤ 10 km | I and T alternating | capped lower (§6) |
 | half marathon | T | — |
 | marathon | MP repeats: 3×3 km, +1 rep a week **[2026]** | every other LR ends with MP km, 6 → 8 → 10 … **[default; alternation: source 23, 24]** (D-033) |
-
-The long run grows to the full cap (§6) only here. Marathon-pace work is capped at 90 minutes per session, for the repeats and for the MP km of a long run: Daniels' limit is the lesser of 90 min and 16 miles **[source 20]**. With 2026's MP (4:58) that is 6 × 3 km and 18 km. Deloads inside the block are as in build.
 | ultra | build rotation H → I → T (D-023) | toward the ultra cap |
 
-Elevation (vertical metres) is out of scope in v1 (Q-5).
+The long run grows to the full cap (§6) only here. Marathon-pace work is capped at 90 minutes per session, for the repeats and for the MP km of a long run: Daniels' limit is the lesser of 90 min and 16 miles **[source 20]**. With 2026's MP (4:58) that is 6 × 3 km and 18 km. Deloads inside the block are as in build.
+
+A flat race narrows to its own intensity here; the build weeks before it run H → I → T for every race. That is the principle of specificity: the final phase is the race-specific one **[source 16, 30]**.
+
+**Hilly races (D-041).** A race marked `hilly` (a course where climbs, not a steady pace, decide the effort) keeps its type, phase lengths and caps, but its specific block leans into hills **[default, coach S7]**:
+
+| Race | Quality run, in rotation | Long run |
+|---|---|---|
+| ≤ 10 km, ultra | H → I → H → T | as for the type |
+| half, marathon | H → T | no MP km |
+
+- Hill repeats every other week: the course's own demand. Koop runs most interval work uphill **[source 27]**; coaches make hills a staple of the last 12 weeks before a hilly marathon **[source 29]**.
+- No MP work: a hilly course has no steady pace to rehearse (Q-8). Threshold keeps the aerobic work: uphill running is mainly an aerobic challenge, so that fitness carries over even when trained on the flat **[source 26]**.
+- The hill session itself is unchanged: its progression already lengthens the efforts (1′ → 2′ → 4′), and in the block it advances twice as fast. Its jog down is a small downhill dose; downhill running is mainly a muscular challenge, and a little of it goes a long way **[source 26, 28]**.
+- **Without hills nearby** (runner's advice, not a rule): the uphill effort works on an incline treadmill or any short rise. The descents are what flat training cannot give. Koop's options, best first: a 2–3 day camp in hilly terrain 4–6 weeks before the race; circuits of a short hill (about 15–90 m) 2–3 times a week for 4–6 weeks; a decline treadmill. He rates stairs and parking garages as weak substitutes **[source 26]**.
+
+Elevation (vertical metres) is out of scope in v1 (Q-5); it stays parked (Q-7).
 
 ### taper (ends with the race week)
 - **Marathon (2 weeks including race week):** about 70–75 % of peak volume, then 40–50 % in race week **[source 8]**. Intensity is kept short (e.g. T 6×1 km **[2026]**), and the last LR is about 60 % of the peak LR. 2026 did 69 % and 35 %: close to the guidance.
@@ -250,5 +264,11 @@ The owner finished the season uninjured and ran the planned marathon pace. That 
 23. Pfitzinger & Douglas, *Advanced Marathoning*, 12/55 schedule as transcribed at <https://fetcheveryone.com/training-plan-view.php?id=152>: MP long runs (16 mi with 10 at MP, 15 mi with 12 at MP) alternate with plain long runs; runs with 6–10 × 100 m strides.
 24. Alternate marathon-pace long runs with easier long runs to limit injury and overtraining risk: <https://blog.finalsurge.com/?p=293>
 25. Daniels' long-run limits (≤ 30 % of the week under 64 km, else ≤ 25 % or 150 min; hold the weekly load about four weeks before raising it), as summarised at <https://runningmagazine.ca/?p=99607> and <https://shuichi-running.com/en/long-run-training/>; 2.5–3 h cap: <https://www.snackinginsneakers.com/long-run-3-hours/>
+
+26. J. Koop (CTS), *Ultrarunners: How to Train for Mountains When You Live in a Flat Area*: uphill mainly aerobic, downhill mainly muscular, a little downhill goes a long way; camp, short-hill circuits, decline treadmill: <https://trainright.com/train-for-mountainous-ultramarathon-live-in-flat-area/>
+27. CTS, *Training to Run Uphill Faster*: Koop prescribes about 80 % of interval workouts on uphill grades: <https://trainright.com/training-to-run-uphill-faster/>
+28. G. McMillan, *Racing a Better Boston Marathon*: a little downhill training protects the quads: <https://www.mcmillanrunning.com/racing-a-better-boston-marathon/>
+29. Canadian Running, *Downhill training: how to prepare for Boston's descents*: hills a staple within 12 weeks of the race: <https://runningmagazine.ca/?p=58517>
+30. UltraRunning Magazine, *Spring Forward: Applying the Principle of Specificity*: the final weeks prioritise race-specific work: <https://ultrarunning.com/featured/spring-forward-applying-the-principle-of-specificity/>
 
 Sources 1, 10, 11, 12, 16, 20 and 25 are secondary summaries of Daniels; prefer the book when implementing. Source 22 is a newspaper interview, weak; the +2 km step itself is from 2026.

@@ -303,3 +303,19 @@ test-2027 is frozen as the snapshot `tests/fixtures/plan-test-2027.json` with th
 
 ### D-040 Lint and type checks in CI — Agreed
 *Owner, S7: asked for the review's findings to be fixed.* `ruff check`, `ruff format --check` (120 columns) and `mypy --strict` on `src` run in CI before the tests. `ruff` and `mypy` are pinned development dependencies, like `typst`: a new release can add rules and break CI unannounced. The checks found no bugs, but required fields in `spec` and the optional repetitions of `Session` were typed as optional; both are now narrowed explicitly.
+
+---
+
+## Session S7: hilly races (T-15)
+
+### D-041 Hilly races lean their specific block into hills — Proposed (coach), for the owner in the T-15 pull request
+*Owner, S7 (Q-8):* keep the race type by distance; add a "hilly" marker that leans into hill repeats, adjusted as an experienced coach would.
+- **Input:** `[[race]] hilly = true`, default `false`, not on C races (they have no specific block). *Hilly* means climbs, not a steady pace, decide the effort, as on a trail or mountain course; a rolling road marathon is not hilly. A boolean and not an elevation in metres: elevation stays parked (Q-7), and a threshold in m/km would be a number without a source.
+- **Rule:** the race keeps its type, phase lengths, caps and taper. In its race-specific block every other quality run is hill repeats (H); the others are the race's own intensity with threshold instead of marathon pace: H → I → H → T for 10 km and ultra, H → T for half and marathon. No MP km in its long runs. Details and sources in `TRAINING_MODEL.md` §4.
+- **The hill session itself is unchanged.** Its progression lengthens the efforts (1′ → 2′ → 4′) and runs twice as fast in the block; its jog down gives the small downhill dose that is enough (source 26).
+- **The footer marks the race:** `Trail 10 oct (A, hilly)`, so the block's hills are explained on the sheet.
+
+*Owner's question: should every race have the H → I → T progression?* *Coach:* every plan already runs it through its build weeks. In the race-specific block a flat race narrows to its own intensity: specificity, the final phase is the race-specific one (sources 16, 30). Hills there would take the place of the flat race's most specific session, marathon pace above all. So no; `hilly` is the switch for races where hills are the specific demand.
+
+*Owner's question: how wrong is it to train for a hilly race without hills?* *Coach:* less wrong than it looks for the climbs: uphill running is mainly aerobic, and Koop's last word is that fitness matters most (source 26). The descents are the gap: they are muscular, so the quads need some downhill running, but a little goes a long way. A 30 km long run with 1,600 m of climbing is not needed; see `TRAINING_MODEL.md` §4 for what to do without hills.
+

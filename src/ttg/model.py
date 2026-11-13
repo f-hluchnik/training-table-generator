@@ -101,6 +101,9 @@ class Race:
     taper_weeks: int | None = None  # includes the race week
     specific_weeks: int | None = None
     recovery_weeks: int | None = None
+    # A course where climbs, not a steady pace, decide the effort: its race-specific block
+    # leans into hill repeats and has no marathon-pace work (D-041).
+    hilly: bool = False
 
     @property
     def last_day(self) -> dt.date:
