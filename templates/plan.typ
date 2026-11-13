@@ -32,8 +32,12 @@
 #let page-width = 297mm
 #let title-size = 20pt
 #let text-size = 8pt
-#let table-height = 152mm // budget for all rows; rows shrink for long plans
+#let table-height = 152mm // budget for all rows on one page; rows shrink for long plans
 #let max-row-height = 6.4mm
+// Rows never get smaller than this, so the text clears the lines and the cells can still be
+// coloured by hand (owner, S5). Longer plans (above about 40 weeks) continue on a second page,
+// with the header repeated.
+#let min-row-height = 3.7mm
 #let max-box-width = 1.2mm // D-019: 1 km per box; shrinks if the gauge would not fit
 
 // Fixed columns. ER holds up to four easy runs (D-016), QR and LR the longest prescriptions.
@@ -59,7 +63,7 @@
   max-box-width,
   (page-width - 2 * page-margin - fixed-width) / box-count,
 )
-#let row-height = calc.min(max-row-height, table-height / (weeks.len() + 1))
+#let row-height = calc.max(min-row-height, calc.min(max-row-height, table-height / (weeks.len() + 1)))
 
 // Column indices (x of the first column of each group).
 #let col-days = 2
@@ -197,7 +201,7 @@
   inset: (x: 1mm, y: 0pt),
   align: left + horizon,
   stroke: none,
-  ..header-cells,
+  table.header(..header-cells),
   ..weeks.enumerate().map(((index, week)) => week-cells(index, week)).flatten(),
   ..lines,
 )

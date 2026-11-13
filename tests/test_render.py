@@ -5,6 +5,7 @@ only guard that the template accepts the plan.json contract and does not crash.
 """
 
 import copy
+import re
 import json
 from pathlib import Path
 
@@ -55,3 +56,22 @@ def test_render_file_writes_the_pdf(tmp_path):
 
 def test_template_exists():
     assert TEMPLATE.is_file()
+
+
+def _page_count(pdf: bytes) -> int:
+    return len(re.findall(rb"/Type\s*/Page(?![s\w])", pdf))
+
+
+def _plan_of_weeks(count: int) -> dict:
+    """The full 2026 sample stretched to `count` weeks (repeated rows suffice for the layout)."""
+    plan = _load(SAMPLES[1])
+    plan["weeks"] = (plan["weeks"] * (count // len(plan["weeks"]) + 1))[:count]
+    return plan
+
+
+def test_a_40_week_plan_fits_one_page():
+    assert _page_count(render_pdf(_plan_of_weeks(40))) == 1
+
+
+def test_a_longer_plan_continues_on_a_second_page_at_the_minimum_row_height():
+    assert _page_count(render_pdf(_plan_of_weeks(52))) == 2
