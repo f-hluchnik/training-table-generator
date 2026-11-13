@@ -5,21 +5,38 @@ Typst template only lays them out. Pure (D-013).
 """
 
 import math
-from collections.abc import Iterable, Sequence
+from collections.abc import Iterable, Mapping, Sequence
 from datetime import date
+from types import MappingProxyType
 from typing import Any
 
-from ttg.model import LongRun, Phase, PhaseKind, Plan, Race, Session, SessionType, Week, WeekKind
+from ttg.model import LongRun, Phase, PhaseKind, Plan, Race, RaceType, Session, SessionType, Week, WeekKind
 from ttg.sessions import RECOVERY_JOG_MINUTES, STRIDES_COUNT, STRIDES_SECONDS, half_easy_run_km, round_km
 
 # 2: `weeks[].phase` added, `gauge.km_per_box` dropped (D-037).
-SCHEMA_VERSION = 2
+# 3: `weeks[].phase_short` added (D-044).
+SCHEMA_VERSION = 3
 
 # D-019: one box per km (not configurable), labels every 10 km; the gauge covers the highest planned week.
 GAUGE_LABEL_EVERY_KM = 10
 # D-006: a week counts at ≥ 80 % of its planned km.
 SUCCESS_SHARE = 0.8
 SUCCESS_TEXT = "A week counts at ≥ 80 % of the planned km."
+
+# D-044: the phase column's short forms, for a band too short to show the word at a readable size
+# (a one-week recovery). Race types by distance, not `mar.`, which would read as March.
+PHASE_SHORT_LABELS: Mapping[str, str] = MappingProxyType(
+    {
+        PhaseKind.BUILD: "bld.",
+        PhaseKind.SPECIFIC: "spec.",
+        PhaseKind.TAPER: "tap.",
+        PhaseKind.RECOVERY: "rec.",
+        RaceType.TEN_K: "10k",
+        RaceType.HALF: "half",
+        RaceType.MARATHON: "42k",
+        RaceType.ULTRA: "ult.",
+    }
+)
 
 MONTHS = ("jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec")
 
@@ -116,13 +133,15 @@ def _phase_numbers(weeks: Iterable[Week]) -> dict[Phase, int]:
 
 
 def _week(week: Week, phase_number: int, races: Sequence[Race]) -> dict[str, Any]:
+    label = phase_label(week.phase)
     return {
         "number": week.number,
         "days": [_day(day, races) for day in week.days],
         "month": MONTHS[week.month - 1],
         "kind": str(week.kind),
         "phase": phase_number,
-        "phase_label": phase_label(week.phase),
+        "phase_label": label,
+        "phase_short": PHASE_SHORT_LABELS[label],
         "easy": {"km": list(week.easy), "text": "+".join(str(km) for km in week.easy)},
         "quality": {
             "type": "race" if isinstance(week.quality, Race) else str(week.quality.type),

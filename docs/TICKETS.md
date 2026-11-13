@@ -120,12 +120,17 @@ A whole-project review by an architect and an engineer (S7, 13 Nov 2026), and th
 
 *Verified:* both reference seasons produce the same `plan.json` as before except for the contract change (`schema_version` 2, `weeks[].phase`, no `km_per_box`); their sheets are unchanged by eye; the 60-week plan has two pages with every week and every band labelled.
 
-### T-15 Hilly races — in review (PR #20 was merged into the T-14 branch, not `main`)
+### T-15 Hilly races — done (merged in #21; #20 had gone into the T-14 branch)
 Q-8 (b), owner S7: a `hilly` marker on a race leans its race-specific block into hill repeats, as an experienced coach would adjust it; the race type, phase lengths and caps stay by distance.
 
 *S7:* `[[race]] hilly = true` (D-041, proposed by the coach, for the owner in the PR). The specific block alternates hill repeats with the race's own intensity, threshold instead of marathon pace; no MP km in the long runs; the footer marks the race `(A, hilly)`. Everything outside the specific block is unchanged (tested). Both reference seasons are unchanged (no hilly race).
 
 *S8 (13 Nov 2026):* PR #20 was stacked on #19 and merged 14 seconds after #19, so it went into `t-14-review-refactor` instead of `main`. The same commit is brought to `main` in a new pull request, unchanged; checked again there: lint, types, 331 tests, both reference seasons' `plan.json` identical to `main`. Checked on long hilly plans: with hills every other week, the uncapped hill progression peaks at 8 × 2′ in a hilly test-2027, 6 × 4′ in a 43-week and 9 × 4′ (36′ of hard climbing) in a 52-week hilly plan, the order of the 40′ threshold cap. *Owner, S8:* cap it, and label no race-specific block with a distance its race is not. Then (owner): never more than 2′ of uphill running in one rep, and a warning for overrides. Done in the same PR: hill reps of at most 2′ and at most 20′ of effort, the progression held at 9 × 2′, warning C9 for overrides (D-043); a 30 km race's block is labelled *specific* (D-042). Both reference seasons unchanged; a 30 km hilly sheet inspected. The README was rewritten to explain the whole tool without the other documents.
+
+### T-16 Band labels fit their bands — in review
+*Owner, S8:* *recovery* overlapped its band on a generated sheet. Every month and phase label now shrinks to fit its band; a phase band too short for its word at 5 pt shows a short form from `plan.json` (`phase_short`, schema 3), e.g. *rec.* for a one-week recovery (D-044). Tested: on a 38-week plan with one-week taper and recovery bands every label fits, the short forms print at ≥ 5 pt; the 2026 sheet keeps every label at 8 pt, test-2027 all but its one-week *oct* (7.7 pt); the reference seasons' `plan.json` differ only by `phase_short` and the version. Sheet inspected.
+
+*Also reported (S8):* an 18 km race's block printed *half*. On `main` (D-042, merged in #21) it prints *specific*, checked with an 18 km season; the sheet was most likely built from a checkout before #21 (`git pull`).
 
 ### Later (not scheduled)
 - **T-12** Elevation for mountain ultras (Q-5). *Evaluated in S7; parked by the owner (Q-7).* The race-type gap it found is covered by T-15 (`hilly`).
