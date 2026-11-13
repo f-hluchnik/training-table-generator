@@ -1,5 +1,8 @@
-"""The hand-made sample plan.json (input of the renderer in T-08) follows the
-plan.json contract in docs/PLAN.md §4 and is internally consistent."""
+"""The hand-made sample plans (input of the renderer in T-08) follow the plan.json contract in
+docs/PLAN.md §4 and are internally consistent.
+
+`weeks-1-4` is the first month of 2026. `full` is the whole 2026 reference table, transcribed
+for layout tests only: the MP km inside its long runs are placeholders."""
 
 import json
 import math
@@ -8,7 +11,8 @@ from pathlib import Path
 
 import pytest
 
-SAMPLE = Path(__file__).parent / "fixtures" / "sample-plan-2026-weeks-1-4.json"
+FIXTURES = Path(__file__).parent / "fixtures"
+SAMPLES = [FIXTURES / "sample-plan-2026-weeks-1-4.json", FIXTURES / "sample-plan-2026-full.json"]
 DAYS_PER_WEEK = 7
 SUCCESS_SHARE = 0.8  # D-006
 
@@ -19,9 +23,9 @@ WEEK_KEYS = {
 }  # fmt: skip
 
 
-@pytest.fixture(scope="module")
-def plan():
-    return json.loads(SAMPLE.read_text(encoding="utf-8"))
+@pytest.fixture(scope="module", params=SAMPLES, ids=lambda path: path.stem)
+def plan(request):
+    return json.loads(request.param.read_text(encoding="utf-8"))
 
 
 def test_top_level_keys(plan):
@@ -38,11 +42,20 @@ def test_days_are_a_monday_based_week(plan):
     for week in plan["weeks"]:
         days = week["days"]
         assert len(days) == DAYS_PER_WEEK
-        monday = date.fromisoformat(days[0]["date"])
+        first_index, first = next((i, day) for i, day in enumerate(days) if day)
+        monday = date.fromisoformat(first["date"]) - timedelta(days=first_index)
         assert monday.weekday() == 0
         for offset, day in enumerate(days):
-            expected = monday + timedelta(days=offset)
-            assert day == {"date": expected.isoformat(), "text": str(expected.day), "race": False}
+            if day is not None:
+                expected = monday + timedelta(days=offset)
+                assert day["date"] == expected.isoformat()
+                assert day["text"] == str(expected.day)
+
+
+def test_days_after_the_last_race_are_null(plan):
+    days = [day for week in plan["weeks"] for day in week["days"]]
+    first_null = days.index(None) if None in days else len(days)
+    assert all(day is None for day in days[first_null:])
 
 
 def test_planned_km_is_the_sum_of_the_sessions(plan):

@@ -75,9 +75,11 @@ Warnings C1–C8 (`TRAINING_MODEL.md` §7), each a small function with a named t
 
 **Done when:** each check has a firing and a non-firing test; 2026 produces the expected warnings (C4, C8, shortened specific block).
 
-### T-08 Typst renderer — todo (can start after T-02)
+### T-08 Typst renderer — in progress (awaiting the owner's approval of the printed look)
 - `templates/plan.typ` reproducing the reference sheet from `plan.json` (PLAN §5), starting from `tests/fixtures/sample-plan-2026-weeks-1-4.json`; gauge per D-019 (1 km per box, 80 % marker); line hierarchy per D-024; an ER column wide enough for 4 easy runs.
-- Fonts: choose ones bundled or commonly available, and document the choice.
+- Fonts: choose ones bundled or commonly available, and document the choice (D-028).
+- Added: `ttg.render` (`render_pdf`, `render_file`; the plan reaches Typst as the `plan` input), and `tests/fixtures/sample-plan-2026-full.json`, the whole 2026 table transcribed for layout tests (MP km in long runs are placeholders). T-06 replaces it with the generated plan.
+- Packaging: `render.TEMPLATE` points into the repository, so it works from a checkout or an editable install. Shipping the template inside a wheel is left to T-09.
 
 **Done when:** the hand-made sample renders, and later the full 2026 plan. Compare a page image side by side with the reference PDF; the owner approves the look on a printed page (D-024).
 
