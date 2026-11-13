@@ -87,7 +87,7 @@
       "quality": {
         "type": "H",
         "km": 8,
-        "text": "H: 6x1'"
+        "text": "H: 6×1′"
       },
       "long": {
         "km": 15,
@@ -151,7 +151,7 @@
       "quality": {
         "type": "I",
         "km": 8,
-        "text": "I: 5x3'"
+        "text": "I: 5×3′"
       },
       "long": {
         "km": 18,
@@ -215,7 +215,7 @@
       "quality": {
         "type": "T",
         "km": 10,
-        "text": "T: 3x8'"
+        "text": "T: 3×8′"
       },
       "long": {
         "km": 20,

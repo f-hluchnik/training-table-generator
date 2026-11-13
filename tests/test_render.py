@@ -119,17 +119,21 @@ def _tight_plan() -> dict:
 
 
 def test_every_band_label_fits_inside_its_band():
-    fits = _band_fits(_tight_plan())
-    assert all(fit["width-mm"] <= fit["available-mm"] + 1e-6 for fit in fits)
+    for fit in _band_fits(_tight_plan()):
+        assert fit["along-mm"] <= fit["along-available-mm"] + 1e-6
+        assert fit["across-mm"] <= fit["across-available-mm"] + 1e-6
 
 
-def test_a_band_too_short_for_its_word_shows_the_short_form_at_a_readable_size():
-    labels = {fit["label"]: fit["size-pt"] for fit in _band_fits(_tight_plan())}
-    assert "recovery" not in labels and labels["rec."] >= READABLE_PT
-    assert labels["tap."] >= READABLE_PT
+def test_a_one_week_band_shows_its_short_form_horizontally_at_a_readable_size():
+    """D-048: in the mono, `rec.` rotated in a one-week band would be about 3 pt; across, 5.6 pt."""
+    fits = {fit["label"]: fit for fit in _band_fits(_tight_plan())}
+    assert "recovery" not in fits
+    for short in ("rec.", "tap."):
+        assert fits[short]["size-pt"] >= READABLE_PT and not fits[short]["rotated"]
 
 
-def test_a_word_that_fits_is_printed_whole_at_full_size():
-    fits = _band_fits(_load(SAMPLES[1]))  # the 2026 plan: 23 weeks, no band shorter than its word
-    assert {fit["size-pt"] for fit in fits} == {8}
-    assert "recovery" in {fit["label"] for fit in fits}
+def test_longer_bands_keep_their_word_rotated():
+    fits = _band_fits(_load(SAMPLES[1]))  # the 2026 plan: no band shorter than two weeks
+    assert all(fit["rotated"] and fit["size-pt"] >= READABLE_PT for fit in fits)
+    assert {fit["label"] for fit in fits} >= {"build", "ultra", "taper", "recovery", "marathon"}
+    assert {fit["size-pt"] for fit in fits if fit["label"] in ("build", "ultra", "taper")} == {8}

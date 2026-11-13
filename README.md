@@ -25,7 +25,7 @@ One row per week (plans longer than about 40 weeks continue on a second page), w
 | Week | The week number, from 1. |
 | Mon–Sun | The day of the month: **one cell per day to colour after each run.** Race days are bold; the last week ends on the last race day. |
 | Gauge | One narrow box per km, labelled every 10 km. At the end of the week, colour as many boxes as km you ran. **A week counts as fully done at 80 % of its planned km.** |
-| Phase | Where you are in the season: *build*, the race-specific block (*10 km*, *half*, *marathon*, *ultra*, or *specific* for a race of another distance, e.g. 30 km), *taper*, *recovery*. A label shrinks to fit a short band; a band too short for the word, such as a one-week recovery, shows a short form: *bld.*, *spec.*, *tap.*, *rec.*, *10k*, *half*, *42k*, *ult.* |
+| Phase | Where you are in the season: *build*, the race-specific block (*10 km*, *half*, *marathon*, *ultra*, or *specific* for a race of another distance, e.g. 30 km), *taper*, *recovery*. A label shrinks to fit a short band; a band too short for the word, such as a one-week recovery, shows a short form, set horizontally: *bld.*, *spec.*, *tap.*, *rec.*, *10k*, *half*, *42k*, *ult.* |
 | ER | The easy runs, km each: `12+12`, or `12+6` in a lighter week. |
 | QR | The quality run (codes below). |
 | LR | The long run: `24 km`, or `28 km (10 MP)` with the last 10 km at marathon pace. |
@@ -35,10 +35,10 @@ Session codes:
 
 | Code | Meaning |
 |---|---|
-| `H: 6x1'` | Hill repeats: 6 × 1 minute hard uphill effort, jog down. By effort, no pace. |
-| `I: 5x3'` | Intervals: 5 × 3 minutes at interval pace, 2′ jog between. |
-| `T: 3x8'`, `T: 6x1 km` | Threshold: repeats at threshold pace, 2′ jog between. |
-| `MP: 3x3 km` | Marathon-pace repeats, 2′ jog between. |
+| `H: 6×1′` | Hill repeats: 6 × 1 minute hard uphill effort, jog down. By effort, no pace. |
+| `I: 5×3′` | Intervals: 5 × 3 minutes at interval pace, 2′ jog between. |
+| `T: 3×8′`, `T: 6×1 km` | Threshold: repeats at threshold pace, 2′ jog between. |
+| `MP: 3×3 km` | Marathon-pace repeats, 2′ jog between. |
 | `S` | An easy run of half the easy-run length with 6 × 20″ fast, relaxed strides. |
 | `RACE 21 km` | A race in place of the session. |
 | `–` | No session. |
