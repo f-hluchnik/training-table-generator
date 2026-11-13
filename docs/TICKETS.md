@@ -70,10 +70,10 @@ Warnings C1–C8 (`TRAINING_MODEL.md` §7), each a small function with a named t
 **Done when:** each check has a firing and a non-firing test; 2026 produces the expected warnings (C4, C8, shortened specific block).
 
 ### T-08 Typst renderer — todo (can start after T-02)
-- `templates/plan.typ` reproducing the reference sheet from `plan.json` (PLAN §5); gauge per D-019 (1 or 2 km per box, the thicker 80 % border); an ER column wide enough for 4 easy runs.
+- `templates/plan.typ` reproducing the reference sheet from `plan.json` (PLAN §5); gauge per D-019 (1 km per box, 80 % marker); line hierarchy per D-024; an ER column wide enough for 4 easy runs.
 - Fonts: choose ones bundled or commonly available, and document the choice.
 
-**Done when:** the hand-made sample renders, and later the full 2026 plan. Compare a page image side by side with the reference PDF; the owner approves the look.
+**Done when:** the hand-made sample renders, and later the full 2026 plan. Compare a page image side by side with the reference PDF; the owner approves the look on a printed page (D-024).
 
 ### T-09 Command line — todo
 - `ttg build SEASON.toml [-o DIR]` writes `plan.json` and `plan.pdf` and prints warnings.

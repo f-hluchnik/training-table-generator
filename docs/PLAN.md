@@ -93,7 +93,6 @@ long_run_km = 40
 
 [sheet]
 phase_labels = ["base", "strength", "volume"]
-km_per_box = 2                 # 1 or 2 (D-019)
 ```
 
 The exact schema is fixed in T-02. Every field beyond the minimal example needs a decision (CLAUDE.md §3).
@@ -104,7 +103,7 @@ The exact schema is fixed in T-02. Every field beyond the minimal example needs 
 {
   "title": "marathon training plan",
   "paces": [{"code": "ER", "pace": "5:30", "label": "easy"}, ...],
-  "gauge": {"km_per_box": 2, "boxes": 35, "label_every_km": 10},
+  "gauge": {"km_per_box": 1, "boxes": 80, "label_every_km": 10},
   "weeks": [{
     "number": 1, "start": "2026-05-04", "days": [4,5,6,7,8,9,10],
     "bold_days": [], "last_day_index": 6,
@@ -112,7 +111,7 @@ The exact schema is fixed in T-02. Every field beyond the minimal example needs 
     "easy": {"km": [12, 6], "text": "12+6"},
     "quality": {"code": "H", "km": 8, "text": "H: 6x1'"},
     "long": {"km": 15, "mp_km": 0, "text": "15 km"},
-    "planned_km": 41, "box_80pct": 17, "note": ""
+    "planned_km": 41, "box_80pct": 33, "note": ""
   }],
   "footer": {"legend": "...", "rules": ["..."], "success": "≥ 80 % of planned km"},
   "warnings": ["..."]
@@ -140,7 +139,7 @@ Below the table:
 - the colour legend (D-007)
 - the life-happens rules and the 80 % rule (D-008, D-006)
 
-Typography follows the reference: a serif face for the calendar, monospace for the prescriptions.
+Typography follows the reference: a serif face for the calendar, monospace for the prescriptions. Line weights follow D-024.
 
 ## 6. Acceptance (D-020)
 

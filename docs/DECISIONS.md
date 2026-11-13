@@ -3,7 +3,7 @@
 Status values: **Agreed** (confirmed by the owner), **Proposed** (architect's recommendation, waiting for the owner's yes/no), **Superseded**.
 Record new decisions at the end. Never renumber.
 
-Origin of D-001 to D-023: architecture review session, 13 Nov 2026. The owner reviewed D-011 to D-020 in this file the same day; his comments are recorded in the decisions.
+Origin of D-001 to D-024: architecture review session, 13 Nov 2026. The owner reviewed D-011 to D-020 in this file the same day; his comments are recorded in the decisions.
 
 ---
 
@@ -87,30 +87,7 @@ Everything except loading (`spec`), the command line (`cli`) and rendering (`ren
 
 *Owner's question:* would 3, 5 or 6 days be an unnecessary complication? *Answer:* no, as long as only the number of easy runs changes. That touches only the easy-run list (D-022) and the width of the ER column. A second quality session or a mid-week medium-long run (Pfitzinger style) would change the training model, so it would need a new decision.
 
-### D-018 Unambiguous notation
-- `–` means no session.
-- `RACE` means the race.
-- `R` is no longer used (in 2026 it meant both "rest" and "race").
-- A long run with marathon-pace km prints as `28 km (10 MP)`.
-- Strides print as `S`.
-
-### D-019 Gauge geometry
-- 2 km per box.
-- The width covers the plan's highest planned week, rounded up to the next 10 km, with labels every 10 km.
-- Box width shrinks if the gauge would not fit the page.
-
-- The 80 % rule is shown minimally (Q-4): in each row, the border after the box where 80 % of that week's planned km is reached is drawn thicker. No other marks.
-- `km_per_box` (1 or 2) is a sheet setting; the default is 2.
-
-*Owner's question:* how would 1 km per box look? *Answer:* mocked up on 13 Nov 2026 with a 140 mm gauge. 80 km takes 80 boxes of 1.75 mm, about as narrow as the reference's boxes, which were 2 km each. It fits, but the gauge then needs most of the page width, and you colour up to ~70 boxes a week instead of ~35. The 80 % rule doesn't need 1 km resolution.
-
-### D-020 Reference seasons as acceptance tests
-- `seasons/2026.toml` must reproduce the reference table, using overrides where 2026 differs from the new defaults. This tests expressiveness.
-- `seasons/test-2027.toml` is an arbitrary season (the owner has no 2027 races yet) whose output the owner reviews once and which is then frozen. This tests the defaults. Proposal: half marathon (C) in April, 10 km (C) in early September, marathon (A) in October.
-
----
-
-## Proposed (waiting for the owner)
+*Coach:* extra days as easy runs is the standard, safe way to add frequency. Most of a runner's volume should be easy, and spreading it over more runs lowers the long run's share of the week (with 6 runs, 2026's peak week would be 4 × 12 + 10 + 40 = 98 km, so the 40 km long run is 41 % of the week instead of 54 %). Fewer runs (3) keep the quality run and the long run and drop easy runs, consistent with D-008.
 
 ### D-017 Race priority A / B / C
 - **A:** full taper and recovery.
@@ -120,7 +97,26 @@ Everything except loading (`spec`), the command line (`cli`) and rendering (`ren
 Default: A.
 *Why:* without C, any tune-up 10 km in a marathon build would get a full taper and recovery.
 
-*Owner:* not answered yet.
+*Owner:* agreed.
+
+### D-018 Unambiguous notation
+- `–` means no session.
+- `RACE` means the race.
+- `R` is no longer used (in 2026 it meant both "rest" and "race").
+- A long run with marathon-pace km prints as `28 km (10 MP)`.
+- Strides print as `S`.
+
+### D-019 Gauge geometry
+- **1 km per box** (owner, 13 Nov 2026: more boxes to colour, but the coloured area is the same). Not configurable.
+- The width covers the plan's highest planned week, rounded up to the next 10 km, with labels every 10 km.
+- Box width shrinks if the gauge would not fit the page.
+- The 80 % rule is shown minimally (Q-4): in each row, the border after the box where 80 % of that week's planned km is reached is one step heavier in the line hierarchy (D-024). No other marks.
+
+*History:* a 1 km and a 2 km mock-up were compared on 13 Nov 2026 (140 mm gauge, 80 boxes of 1.75 mm). The owner chose 1 km. In the mock-up the 80 % line was too heavy, which led to D-024.
+
+### D-020 Reference seasons as acceptance tests
+- `seasons/2026.toml` must reproduce the reference table, using overrides where 2026 differs from the new defaults. This tests expressiveness.
+- `seasons/test-2027.toml` is an arbitrary season (the owner has no 2027 races yet) whose output the owner reviews once and which is then frozen. This tests the defaults. Proposal: half marathon (C) in April, 10 km (C) in early September, marathon (A) in October.
 
 ---
 
@@ -151,4 +147,13 @@ Easy runs never grow; volume growth comes from the long run and the quality sess
 
 ### D-023 Ultra quality sessions keep the full rotation
 The ultra's race-specific block keeps the build rotation H → I → T; it is not limited to hills. What changes for an ultra is the long-run cap (`TRAINING_MODEL.md` §6). Elevation stays out of v1 (Q-5).
+
+### D-024 Line hierarchy: the sheet must look good
+The sheet is printed and kept on the wall for months, so it must look aesthetically pleasing, not just correct. All rules come from a small set of named line weights, used consistently across the whole table:
+
+1. **Outline:** the table border, the header separator, and the boundaries between column groups (week | calendar | gauge | phase | prescriptions).
+2. **Group:** month boundaries, the 10 km marks in the gauge, and the 80 % marker (D-019).
+3. **Hairline:** everything else (day cells, 1 km boxes, rows).
+
+No other weights. The exact values (e.g. 1.5 / 0.75 / 0.25 pt) and greys are chosen in T-08 and approved by the owner on a printed page.
 
