@@ -1,6 +1,7 @@
 """Render a `plan.json` document to the printable PDF with the Typst template.
 
-The template (`templates/plan.typ`) only lays out what the plan contains (D-012).
+The template (`plan.typ`, shipped inside the package) only lays out what the plan contains
+(D-012).
 """
 
 import json
@@ -8,10 +9,11 @@ from pathlib import Path
 
 import typst
 
-# The template sits in the repository next to the package sources (PLAN §3). Installing the
-# package as a wheel would need it moved into the package; that is a T-09 concern.
-TEMPLATE = Path(__file__).resolve().parents[2] / "templates" / "plan.typ"
+TEMPLATE = Path(__file__).with_name("plan.typ")
 PLAN_INPUT = "plan"  # name of the Typst input that carries the plan's JSON text
+PLAN_JSON = "plan.json"
+PLAN_PDF = "plan.pdf"
+JSON_INDENT = 2
 
 
 def render_pdf(plan: dict) -> bytes:
@@ -24,3 +26,18 @@ def render_file(plan_path: Path, pdf_path: Path) -> None:
     """Read `plan_path` (JSON) and write the PDF to `pdf_path`."""
     plan = json.loads(plan_path.read_text(encoding="utf-8"))
     pdf_path.write_bytes(render_pdf(plan))
+
+
+def write_outputs(plan: dict, directory: Path) -> tuple[Path, Path]:
+    """Write `plan.json` and `plan.pdf` of `plan` into `directory`, created if missing.
+
+    Returns the two paths. The PDF is rendered first, so a failed render leaves no half-written
+    output behind.
+    """
+    pdf = render_pdf(plan)
+    directory.mkdir(parents=True, exist_ok=True)
+    json_path = directory / PLAN_JSON
+    pdf_path = directory / PLAN_PDF
+    json_path.write_text(json.dumps(plan, ensure_ascii=False, indent=JSON_INDENT) + "\n", encoding="utf-8")
+    pdf_path.write_bytes(pdf)
+    return json_path, pdf_path

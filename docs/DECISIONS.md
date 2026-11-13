@@ -192,7 +192,7 @@ The fields are documented in PLAN §4. Every value the sheet prints is computed 
 
 ### D-028 Sheet fonts and drawing values (T-08) — Agreed
 - **Fonts:** *Libertinus Serif* for the calendar, titles and footer; *DejaVu Sans Mono* for the prescriptions (ER, QR, LR). Both ship inside the `typst` package, so the sheet looks the same on every machine and in a future browser build (Q-6). The reference was made in Excel with a Garamond-like serif; its font is not redistributable and not present on every machine.
-- **Line weights (D-024):** outline 1.5 pt black; group 0.75 pt black; hairline 0.25 pt, 55 % grey. They are named constants at the top of `templates/plan.typ`. The 10 km marks, the month boundaries and the 80 % marker share the group weight; the phase boundaries use the group weight in the phase column only.
+- **Line weights (D-024):** outline 1.5 pt black; group 0.75 pt black; hairline 0.25 pt, 55 % grey. They are named constants at the top of `src/ttg/plan.typ` (moved there in T-09, D-035). The 10 km marks, the month boundaries and the 80 % marker share the group weight; the phase boundaries use the group weight in the phase column only.
 - **Geometry:** the gauge box is at most 1.2 mm wide (96 mm for 80 boxes; owner's request, 13 Nov 2026: smaller gauge, wider calendar) and shrinks further until the table fits the page width (A4 landscape, 8 mm margins). Day cells are 10 mm wide. Rows are 6.4 mm and shrink so that long plans stay on one page.
 
 *Owner, S5:* agrees with the printed look, the greys and the weights, and with this decision as written. Phase boundaries keep the group weight (an addition to D-024's list).
@@ -260,3 +260,12 @@ test-2027 is frozen as the snapshot `tests/fixtures/plan-test-2027.json` with th
 
 ### D-034 Pace legend lists S and H
 *Owner, S5:* the legend missed the strides run. The legend now lists every session code printed in the table: `ER`, `S` (e/2 km easy with 6 × 20″ fast, relaxed strides, TRAINING_MODEL §1), `H` (hard uphill effort, jog down; effort-based, no pace, D-015), `I`, `T`, `MP`, `LR`.
+
+---
+
+## Session S6 (13 Nov 2026)
+
+### D-035 Command line output and template location (T-09) — Proposed
+- **Output folder:** `ttg build SEASON.toml` writes `plan.json` and `plan.pdf` into `out/<season file name>/` (git-ignored); `-o DIR` writes them straight into `DIR`. *Why:* a fixed `out/` would let a second season silently overwrite the first.
+- **Exit codes:** 0 when built, with or without warnings; 1 for an input error (invalid season file or an unreadable one), with nothing written; 2 for a command-line usage error (argparse). Warnings and errors go to stderr, the written paths to stdout.
+- **The Typst template lives in the package:** `templates/plan.typ` became `src/ttg/plan.typ`, declared as package data, so a wheel or a non-editable install renders as well. The `templates/` folder held only the prototype's page afterwards (removed in T-10).
