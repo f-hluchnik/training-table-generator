@@ -81,13 +81,15 @@ Warnings C3–C8 (`TRAINING_MODEL.md` §7), each a small function with a named t
 
 *Done 13 Nov 2026 (S5):* `ttg.checks` (`check(plan)` returns every warning, ordered by week); D-031. 2026 warns C8, C4 (weeks 13, 14), C3 (week 14, the 40 km override) and C1. The snapshots now carry the warnings. Since the I progression is capped (D-030), C6 and C7 fire only for overrides; test-2027 has none.
 
-### T-08 Typst renderer — in progress (awaiting the owner's approval of the printed look)
+### T-08 Typst renderer — done
 - `templates/plan.typ` reproducing the reference sheet from `plan.json` (PLAN §5), starting from `tests/fixtures/sample-plan-2026-weeks-1-4.json`; gauge per D-019 (1 km per box, 80 % marker); line hierarchy per D-024; an ER column wide enough for 4 easy runs.
 - Fonts: choose ones bundled or commonly available, and document the choice (D-028).
 - Added: `ttg.render` (`render_pdf`, `render_file`; the plan reaches Typst as the `plan` input), and `tests/fixtures/sample-plan-2026-full.json`, the whole 2026 table transcribed for layout tests (MP km in long runs are placeholders). T-06 replaced it with the generated snapshots `plan-2026.json` and `plan-test-2027.json`.
 - Packaging: `render.TEMPLATE` points into the repository, so it works from a checkout or an editable install. Shipping the template inside a wheel is left to T-09.
 
 **Done when:** the hand-made sample renders, and later the full 2026 plan. Compare a page image side by side with the reference PDF; the owner approves the look on a printed page (D-024).
+
+*Done 13 Nov 2026 (S5):* the owner approved the printed look and D-028. Added: a minimum row height of 3.7 mm; plans above about 40 weeks continue on a second page with the header repeated (D-028).
 
 ### T-09 Command line — todo
 - `ttg build SEASON.toml [-o DIR]` writes `plan.json` and `plan.pdf` and prints warnings.

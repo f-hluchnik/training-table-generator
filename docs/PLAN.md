@@ -6,7 +6,7 @@ Automate building a printable training-table outline like `docs/reference/2026-m
 
 ## 2. Requirements (owner, 13 Nov 2026)
 
-- **R-1** One A4 landscape page per plan, laid out as in the reference (§5).
+- **R-1** One A4 landscape page per plan, laid out as in the reference (§5). Plans above about 40 weeks continue on a second page, so the cells stay large enough to colour (D-028).
 - **R-2** Inputs: any number of races on any dates; plan start as a date or as a number of weeks; paces with defaults and overrides; starting load (D-004, D-005).
 - **R-3** The plan is an outline: weekly planned km is an approximation; a week is a success at ≥ 80 % (D-006).
 - **R-4** Unrealistic or risky input gives warnings, never a refusal (D-001).

@@ -188,14 +188,15 @@ The fields are documented in PLAN §4. Every value the sheet prints is computed 
 
 ---
 
-## Proposed in session S4 (13 Nov 2026)
+## Proposed in session S4, agreed in S5 (13 Nov 2026)
 
-### D-028 Sheet fonts and drawing values (T-08) — Proposed
+### D-028 Sheet fonts and drawing values (T-08) — Agreed
 - **Fonts:** *Libertinus Serif* for the calendar, titles and footer; *DejaVu Sans Mono* for the prescriptions (ER, QR, LR). Both ship inside the `typst` package, so the sheet looks the same on every machine and in a future browser build (Q-6). The reference was made in Excel with a Garamond-like serif; its font is not redistributable and not present on every machine.
 - **Line weights (D-024):** outline 1.5 pt black; group 0.75 pt black; hairline 0.25 pt, 55 % grey. They are named constants at the top of `templates/plan.typ`. The 10 km marks, the month boundaries and the 80 % marker share the group weight; the phase boundaries use the group weight in the phase column only.
 - **Geometry:** the gauge box is at most 1.2 mm wide (96 mm for 80 boxes; owner's request, 13 Nov 2026: smaller gauge, wider calendar) and shrinks further until the table fits the page width (A4 landscape, 8 mm margins). Day cells are 10 mm wide. Rows are 6.4 mm and shrink so that long plans stay on one page.
 
-*Open:* the owner approves the look, the grey values and the weights on a printed page (D-024). Phase boundaries in the group weight are an addition to D-024's list; say if they should be hairlines.
+*Owner, S5:* agrees with the printed look, the greys and the weights, and with this decision as written. Phase boundaries keep the group weight (an addition to D-024's list).
+- **Long plans (owner, S5):** rows never shrink below 3.7 mm, so the text clears the lines and the cells can still be coloured by hand. Up to about 40 weeks the sheet stays on one page; longer plans continue on a second page with the header repeated (amends R-1 for those plans). At 52 weeks the rows would otherwise be 2.9 mm.
 
 ---
 
