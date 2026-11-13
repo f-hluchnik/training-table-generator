@@ -238,21 +238,25 @@
 }
 
 // ---------------------------------------------------------------- footer
-// Quiet typography (D-047): no `=`, brackets or semicolons. The code is bold, its pace plain, its
-// description grey like the note column; space separates the entries, a grey dot the list items.
+// Quiet typography (D-047): no `=`, brackets or semicolons. Each entry is a bold key and a colon,
+// its value plain, its details grey like the note column; space separates the pace entries, a
+// bullet the items of the race and rule lines.
 #let legend-entry-gap = h(5mm)
 #let quiet(body) = text(fill: note-ink, body)
-#let list-separator = quiet[#h(2mm)·#h(2mm)]
+#let separator-ink = luma(40%)
+#let list-separator = [#h(2.5mm)#text(fill: separator-ink, size: 0.7 * text-size, baseline: -0.1em)[•]#h(2.5mm)]
 
 #let pace-entry(entry) = {
-  strong(entry.code)
+  [#strong(entry.code):]
   if entry.pace != "" [ #entry.pace]
   if entry.label != "" [ #quiet(entry.label)]
 }
 #let pace-legend = plan.paces.map(pace-entry).join(legend-entry-gap)
 
-// The races of the season, so a "RACE" cell can be told apart (owner, S5).
-#let race-list = [#quiet[races]#h(2mm)#plan.footer.races.join(list-separator)]
+// The races of the season, so a "RACE" cell can be told apart (owner, S5): the dates set apart
+// like the session codes above them.
+#let race-entry(race) = [#strong(race.dates): #race.name #quiet[(#race.details)]]
+#let race-list = plan.footer.races.map(race-entry).join(list-separator)
 
 #let footer-rules = (..plan.footer.rules, plan.footer.success).join(list-separator)
 

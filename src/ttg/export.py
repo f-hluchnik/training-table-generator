@@ -16,7 +16,8 @@ from ttg.sessions import RECOVERY_JOG_MINUTES, STRIDES_COUNT, STRIDES_SECONDS, h
 # 2: `weeks[].phase` added, `gauge.km_per_box` dropped (D-037).
 # 3: `weeks[].phase_short` added (D-044).
 # 4: `weeks[].box_80pct` dropped: the gauge has no 80 % marker (D-045).
-SCHEMA_VERSION = 4
+# 5: `footer.races` entries are `{dates, name, details}`, so the sheet can set the dates apart (D-047).
+SCHEMA_VERSION = 5
 
 # D-019: one box per km (not configurable), labels every 10 km; the gauge covers the highest planned week.
 GAUGE_LABEL_EVERY_KM = 10
@@ -70,7 +71,7 @@ def export(plan: Plan) -> dict[str, Any]:
         },
         "weeks": [_week(week, phase_numbers[week.phase], plan.season.races) for week in plan.weeks],
         "footer": {
-            "races": [race_text(race) for race in plan.season.races],
+            "races": [race_entry(race) for race in plan.season.races],
             "rules": list(sheet.rules),
             "success": SUCCESS_TEXT,
         },
@@ -96,10 +97,14 @@ def race_cell_text(race: Race) -> str:
     return f"{RACE_TEXT} {round_km(race.distance_km)} km"
 
 
-def race_text(race: Race) -> str:
-    """The footer's entry: `Prague Marathon 10 oct (A)`, `Beskydská sedmička 28–29 aug (B, hilly)`."""
+def race_entry(race: Race) -> dict[str, str]:
+    """The footer's entry, printed `28–29 aug: Beskydská sedmička (B, hilly)` (D-047)."""
     hilly = f", {HILLY_TEXT}" if race.hilly else ""
-    return f"{race.name} {_date_range(race.date, race.last_day)} ({race.priority}{hilly})"
+    return {
+        "dates": _date_range(race.date, race.last_day),
+        "name": race.name,
+        "details": f"{race.priority}{hilly}",
+    }
 
 
 def quality_text(quality: Session | Race) -> str:

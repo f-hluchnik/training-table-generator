@@ -117,7 +117,7 @@ Everything the sheet shows, computed in Python, including the display strings. T
 
 ```json
 {
-  "schema_version": 4,
+  "schema_version": 5,
   "title": "marathon training plan",
   "paces": [{"code": "I", "pace": "4:15 + 2′ jog", "label": "hard"}, ...],
   "gauge": {"boxes": 80, "label_every_km": 10},
@@ -135,7 +135,7 @@ Everything the sheet shows, computed in Python, including the display strings. T
     "planned_km": 18, "note": "race"
   }, ...],
   "footer": {
-    "races": ["Beskydská sedmička 28–29 aug (B)", "Běhej Lesy Lednice 10 oct (A)"],
+    "races": [{"dates": "28–29 aug", "name": "Beskydská sedmička", "details": "B"}, {"dates": "10 oct", "name": "Běhej Lesy Lednice", "details": "A"}],
     "rules": ["Short on time: …", "Tired or ill: …"],
     "success": "A week counts as fully done at 80 % of its planned km."
   },
@@ -156,7 +156,7 @@ Everything the sheet shows, computed in Python, including the display strings. T
 | `weeks[].quality.type` | As in the season file: `H`, `I`, `T`, `MP`, `S`, `none`; or `race` for a C race up to 10 km, which replaces the quality run (D-017, D-030). |
 | `weeks[].quality.km` | The estimate of `TRAINING_MODEL.md` §3; a C race counts its distance (D-030). |
 | `weeks[].long.km` | The long run. A race replaces it in its race week, or a C race from the half marathon up; an A or B race counts 0, a C race its distance (D-030). |
-| `footer.races` | Every race, in date order, as printed under the pace legend: name, date(s), priority, `hilly` if marked (D-030, D-041). |
+| `footer.races` | Every race, in date order, printed under the pace legend as `28–29 aug: Beskydská sedmička (B)`: `dates`, `name`, and `details`, the priority and `hilly` if marked (D-030, D-041, D-047). |
 | `weeks[].note` | The text of the last column: the planned km in build, deload and specific weeks; *taper*, *race* or *recovery* otherwise; or the override's `note` (D-030). |
 | `warnings` | Not printed on the sheet; `week` may be `null`. |
 
@@ -177,7 +177,8 @@ Column order as in the reference:
 9. Planned km (grey) or a note (e.g. *taper*, *race*)
 
 Below the table:
-- the pace legend, one entry per session code in the table: the code bold, its pace plain, its description grey, space between entries (e.g. **ER** 5:30 easy · **S** 6 km + 6×20″ fast, relaxed strides · **H** hard uphill effort, jog down · **I** 4:15 + 2′ jog hard …; D-034, D-047)
+- the pace legend, one entry per session code in the table: the code bold, its pace plain, its description grey, space between entries (e.g. **ER**: 5:30 easy  **S**: 6 km + 6×20″ fast, relaxed strides  **H**: hard uphill effort, jog down  **I**: 4:15 + 2′ jog hard …; D-034, D-047)
+- the races, the date first: **28–29 aug**: Beskydská sedmička (B) • **10 oct**: Běhej Lesy Lednice (A) (D-047)
 - the life-happens rules and the 80 % rule (D-008, D-006); the gauge has no 80 % marker (D-045)
 
 No colour legend: the sheet is black and white, and the colours the runner uses are his own (D-032).

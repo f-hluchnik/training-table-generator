@@ -7,7 +7,7 @@ from datetime import date
 import pytest
 
 from ttg.expand import expand
-from ttg.export import PHASE_SHORT_LABELS, export, long_run_text, phase_label, quality_text, race_text
+from ttg.export import PHASE_SHORT_LABELS, export, long_run_text, phase_label, quality_text, race_entry
 from ttg.model import (
     LongRun,
     Phase,
@@ -138,20 +138,23 @@ def test_a_c_race_is_a_quality_run_of_type_race(plan_2026):
 
 
 @pytest.mark.parametrize(
-    ("race", "text"),
+    ("race", "entry"),
     [
-        (MARATHON, "Marathon 10 oct (A)"),
-        (Race("Ultra", date(2026, 8, 28), 101, Priority.B, end=date(2026, 8, 29)), "Ultra 28–29 aug (B)"),
-        (Race("Stage race", date(2026, 8, 31), 101, end=date(2026, 9, 2)), "Stage race 31 aug – 2 sep (A)"),
+        (MARATHON, ("10 oct", "Marathon", "A")),
+        (Race("Ultra", date(2026, 8, 28), 101, Priority.B, end=date(2026, 8, 29)), ("28–29 aug", "Ultra", "B")),
+        (Race("Stage race", date(2026, 8, 31), 101, end=date(2026, 9, 2)), ("31 aug – 2 sep", "Stage race", "A")),
     ],
 )
-def test_race_list_entry(race, text):
-    assert race_text(race) == text
+def test_race_list_entry(race, entry):
+    dates, name, details = entry
+    assert race_entry(race) == {"dates": dates, "name": name, "details": details}
 
 
 def test_footer_lists_the_races(document_2026):
-    races = ["Beskydská sedmička 28–29 aug (B)", "Běhej Lesy Lednice 10 oct (A)"]
-    assert document_2026["footer"]["races"] == races
+    assert document_2026["footer"]["races"] == [
+        {"dates": "28–29 aug", "name": "Beskydská sedmička", "details": "B"},
+        {"dates": "10 oct", "name": "Běhej Lesy Lednice", "details": "A"},
+    ]
 
 
 def test_gauge_covers_the_highest_week(document_2026):
@@ -193,4 +196,4 @@ def test_the_2026_phases_are_numbered_in_order(document_2026):
 
 
 def test_the_footer_marks_a_hilly_race():
-    assert race_text(Race("Trail", date(2027, 10, 10), 30, hilly=True)) == "Trail 10 oct (A, hilly)"
+    assert race_entry(Race("Trail", date(2027, 10, 10), 30, hilly=True))["details"] == "A, hilly"

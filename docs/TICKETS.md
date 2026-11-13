@@ -139,7 +139,7 @@ Q-8 (b), owner S7: a `hilly` marker on a race leans its race-specific block into
 *Owner, S8:* the output folder depended on the folder `ttg` was run from. The default is now `out/<season file name>/` next to the season file (D-046); `-o` is unchanged. Tested: a build from another folder writes next to the season file and creates no `out/` in the working folder; checked by hand from two folders.
 
 ### T-19 A quiet footer — in review
-*Owner, S8:* the legend should look minimalistic. The footer's typography is quieter (D-047): code bold, pace plain, description grey, no punctuation clutter; races and rules separated by grey dots. Two legend texts tidied in `plan.json` (`4:15 + 2′ jog`, *fast, relaxed strides*). Snapshots regenerated, diff reviewed; 2026 and a hilly test-2027 sheet inspected.
+*Owner, S8:* the legend should look minimalistic. The footer's typography is quieter (D-047): code bold, pace plain, description grey, no punctuation clutter; races and rules separated by grey dots. Two legend texts tidied in `plan.json` (`4:15 + 2′ jog`, *fast, relaxed strides*). Snapshots regenerated, diff reviewed; 2026 and a hilly test-2027 sheet inspected. *Owner's review:* a colon after each code; the race dates set apart (bold, first; `footer.races` structured, `plan.json` 5); visible bullets instead of grey dots. Sheet inspected again.
 
 ### Later (not scheduled)
 - **T-12** Elevation for mountain ultras (Q-5). *Evaluated in S7; parked by the owner (Q-7).* The race-type gap it found is covered by T-15 (`hilly`).

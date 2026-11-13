@@ -1,5 +1,5 @@
 {
-  "schema_version": 4,
+  "schema_version": 5,
   "title": "marathon training plan",
   "paces": [
     {
@@ -1514,8 +1514,16 @@
   ],
   "footer": {
     "races": [
-      "Beskydská sedmička 28–29 aug (B)",
-      "Běhej Lesy Lednice 10 oct (A)"
+      {
+        "dates": "28–29 aug",
+        "name": "Beskydská sedmička",
+        "details": "B"
+      },
+      {
+        "dates": "10 oct",
+        "name": "Běhej Lesy Lednice",
+        "details": "A"
+      }
     ],
     "rules": [
       "Short on time: drop an easy run → intensity → long run.",
