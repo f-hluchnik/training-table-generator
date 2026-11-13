@@ -2085,21 +2085,5 @@
     ],
     "success": "A week counts at ≥ 80 % of the planned km."
   },
-  "warnings": [
-    {
-      "code": "C7",
-      "week": 15,
-      "message": "6 km at interval pace in one session (at most 5: the lesser of 10 km and 8 % of the week's 59 km)"
-    },
-    {
-      "code": "C7",
-      "week": 19,
-      "message": "6 km at interval pace in one session (at most 5: the lesser of 10 km and 8 % of the week's 59 km)"
-    },
-    {
-      "code": "C7",
-      "week": 23,
-      "message": "7 km at interval pace in one session (at most 5: the lesser of 10 km and 8 % of the week's 60 km)"
-    }
-  ]
+  "warnings": []
 }

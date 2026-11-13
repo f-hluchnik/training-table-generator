@@ -11,8 +11,16 @@ from itertools import pairwise
 
 from ttg import long_run
 from ttg.model import Plan, PlanWarning, Session, SessionType, WarningCode, Week
-from ttg.paces import SECONDS_PER_MINUTE, Pace, derive_paces
-from ttg.sessions import MAX_THRESHOLD_MINUTES, round_km
+from ttg.paces import derive_paces
+from ttg.sessions import (
+    MAX_INTERVAL_KM,
+    MAX_INTERVAL_SHARE_OF_WEEK,
+    MAX_THRESHOLD_MINUTES,
+    interval_limit_km,
+    round_km,
+    work_km,
+    work_minutes,
+)
 
 # C3: planned km more than 10 % above the previous loading week. A common heuristic
 # with weak evidence [source 21]. It compares the easy runs and the long run only: the
@@ -22,10 +30,8 @@ MAX_WEEKLY_RAMP = 0.10
 MAX_LONG_RUN_SHARE = 0.50
 # C6: at most 40′ at threshold in one session [source 5]; the same cap holds the T progression.
 MAX_THRESHOLD_SESSION_MINUTES = MAX_THRESHOLD_MINUTES
-# C7: running at I pace in one session, at most the lesser of 10 km and 8 % of the week
-# [source 11]. Compared in whole km, the sheet's precision (D-025, D-031).
-MAX_INTERVAL_KM = 10
-MAX_INTERVAL_SHARE = 0.08
+# C7: Daniels' limit for I pace in one session, the one the I progression holds within
+# (`ttg.sessions`, D-030); only an override can pass it. Compared in whole km (D-031).
 # C8 [default]: an overridden threshold pace this far from the derived one.
 MAX_THRESHOLD_DEVIATION_SECONDS = 10
 
@@ -82,7 +88,7 @@ def long_run_above_cap(plan: Plan) -> Iterator[PlanWarning]:
 def threshold_volume(plan: Plan) -> Iterator[PlanWarning]:
     """C6."""
     for week, session in _sessions_of(plan, SessionType.THRESHOLD):
-        minutes = _minutes_at(session, plan.paces.threshold)
+        minutes = work_minutes(session, plan.paces.threshold)
         if minutes > MAX_THRESHOLD_SESSION_MINUTES:
             yield PlanWarning(
                 WarningCode.THRESHOLD_VOLUME,
@@ -94,14 +100,14 @@ def threshold_volume(plan: Plan) -> Iterator[PlanWarning]:
 def interval_volume(plan: Plan) -> Iterator[PlanWarning]:
     """C7."""
     for week, session in _sessions_of(plan, SessionType.INTERVALS):
-        km = round_km(_km_at(session, plan.paces.interval))
-        limit = round_km(min(MAX_INTERVAL_KM, MAX_INTERVAL_SHARE * week.planned_km))
+        km = round_km(work_km(session, plan.paces.interval))
+        limit = interval_limit_km(week.planned_km)
         if km > limit:
             yield PlanWarning(
                 WarningCode.INTERVAL_VOLUME,
                 week.number,
                 f"{km} km at interval pace in one session (at most {limit}: the lesser of "
-                f"{MAX_INTERVAL_KM} km and {_percent(MAX_INTERVAL_SHARE)} of the week's {week.planned_km} km)",
+                f"{MAX_INTERVAL_KM} km and {_percent(MAX_INTERVAL_SHARE_OF_WEEK)} of the week's {week.planned_km} km)",
             )
 
 
@@ -144,15 +150,3 @@ def _sessions_of(plan: Plan, session_type: SessionType) -> Iterator[tuple[Week, 
     for week in plan.weeks:
         if isinstance(week.quality, Session) and week.quality.type is session_type:
             yield week, week.quality
-
-
-def _minutes_at(session: Session, pace: Pace) -> float:
-    """Minutes of work in a session given in minutes or in km."""
-    per_rep = session.minutes if session.km is None else session.km * pace.seconds_per_km / SECONDS_PER_MINUTE
-    return session.reps * per_rep
-
-
-def _km_at(session: Session, pace: Pace) -> float:
-    """Km of work in a session given in minutes or in km."""
-    per_rep = session.km if session.km is not None else session.minutes * SECONDS_PER_MINUTE / pace.seconds_per_km
-    return session.reps * per_rep

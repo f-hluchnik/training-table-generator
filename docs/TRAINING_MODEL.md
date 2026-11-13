@@ -195,9 +195,7 @@ Overrides above the cap are allowed and produce a warning.
 | C7 | interval volume | > 10 km or > 8 % of the week at I in one session, compared in whole km (D-031) | **[source 11]** |
 | C8 | pace consistency | overridden T more than 10 s/km off the derived T | default |
 
-Warnings go to the command line, not on the sheet. Implemented in `ttg.checks` (T-07); `check(plan)` merges C1 and C2 from the layout.
-
-The I progression is not capped (unlike T at 40′), so long plans reach C7: test-2027 warns in weeks 15, 19 and 23 (I 6 × 4′, 5 × 5′, 6 × 5′ in weeks of about 60 km).
+Warnings go to the command line, not on the sheet. Implemented in `ttg.checks` (T-07); `check(plan)` merges C1 and C2 from the layout. The progressions stay within C6 and C7 (T at 40′, I within Daniels' limit, D-030), so those two fire only for overrides.
 
 ## 8. "Life happens" rules (D-008)
 

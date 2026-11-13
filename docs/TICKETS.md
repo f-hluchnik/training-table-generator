@@ -79,7 +79,7 @@ Warnings C3–C8 (`TRAINING_MODEL.md` §7), each a small function with a named t
 
 **Done when:** each check has a firing and a non-firing test; 2026 produces the expected warnings (C4, C8, shortened specific block).
 
-*Done 13 Nov 2026 (S5):* `ttg.checks` (`check(plan)` returns every warning, ordered by week); D-031. 2026 warns C8, C4 (weeks 13, 14), C3 (week 14, the 40 km override) and C1. The snapshots now carry the warnings. Open for later: the I progression has no cap, so long plans reach C7 (test-2027 weeks 15, 19, 23).
+*Done 13 Nov 2026 (S5):* `ttg.checks` (`check(plan)` returns every warning, ordered by week); D-031. 2026 warns C8, C4 (weeks 13, 14), C3 (week 14, the 40 km override) and C1. The snapshots now carry the warnings. Since the I progression is capped (D-030), C6 and C7 fire only for overrides; test-2027 has none.
 
 ### T-08 Typst renderer — in progress (awaiting the owner's approval of the printed look)
 - `templates/plan.typ` reproducing the reference sheet from `plan.json` (PLAN §5), starting from `tests/fixtures/sample-plan-2026-weeks-1-4.json`; gauge per D-019 (1 km per box, 80 % marker); line hierarchy per D-024; an ER column wide enough for 4 easy runs.

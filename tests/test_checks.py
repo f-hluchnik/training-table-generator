@@ -127,8 +127,11 @@ def test_c7_quiet_at_the_limit_in_whole_km():
 
 def test_c7_fires_above_8_percent_of_the_week():
     plan = plan_of(WeekOverride(2, quality=Session(SessionType.INTERVALS, reps=6, minutes=5)))  # 7 km
-    # The default plan already reaches the limit later: I 6 × 4′ (6 km) in week 14's 59 km.
-    assert weeks_of(interval_volume(plan)) == [2, *weeks_of(interval_volume(plan_of()))] == [2, 14]
+    assert weeks_of(interval_volume(plan)) == [2]
+
+
+def test_c7_quiet_for_the_default_progression_which_holds_within_the_limit():
+    assert list(interval_volume(plan_of())) == []
 
 
 def test_c7_fires_above_10_km_in_a_big_week():

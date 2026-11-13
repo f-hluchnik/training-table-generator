@@ -242,5 +242,5 @@ How `ttg.expand` turns phases into weeks. The numbers are named constants in `tt
 
 ### D-031 Checks C3 and C7 (T-07)
 - **C3 compares easy runs + long run**, not the total planned km. *Owner, S5:* agreed. On the total, 2026 warned in weeks 2, 6 and 10 only because the rotation moves from hills (estimated 6 km) to intervals (10 km); now it warns only for week 14, the 40 km long-run override.
-- **C7 is compared in whole km**, the sheet's precision (D-025). *Proposed.* 2026 week 2 (I 5 × 3′ = 3.53 km against 8 % of 44 km = 3.52 km) no longer warns over 0.01 km; the real overreach of test-2027 still does.
+- **C7 is compared in whole km**, the sheet's precision (D-025). *Proposed.* 2026 week 2 (I 5 × 3′ = 3.53 km against 8 % of 44 km = 3.52 km) no longer warns over 0.01 km. The I progression holds within the same limit (D-030), so C7 fires only for overrides; test-2027 has no warnings.
 - 2026 warns C8, C4 (weeks 13, 14), C3 (week 14) and C1 (week 23). The ticket expected C4, C8 and the shortened specific block; C3 for week 14 is the override's jump and is kept.
