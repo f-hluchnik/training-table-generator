@@ -18,9 +18,9 @@ Automate building a printable training-table outline like `docs/reference/2026-m
 ## 3. Architecture
 
 ```
-seasons/2026.toml ──spec──▶ Season ──layout──▶ phases ──expand──▶ Plan ──checks──▶ warnings
-                                                                    │
-                                                         plan.json ◀┘──render (Typst)──▶ plan.pdf
+seasons/2026.toml ──spec──▶ Season ──layout──▶ phases ──expand (+ checks)──▶ Plan with warnings
+                                                                                  │
+                                                                       plan.json ◀┘──render (Typst)──▶ plan.pdf
 ```
 
 Modules of the package `ttg`. Everything marked *pure* follows D-013.
@@ -33,8 +33,8 @@ Modules of the package `ttg`. Everything marked *pure* follows D-013.
 | `layout` | backward phase layout, compression, layout warnings (`TRAINING_MODEL.md` §5) | yes |
 | `sessions` | session catalogue, progressions, km estimate (§1, §3, §4) | yes |
 | `long_run` | long-run growth, caps, deload, taper and restart (§4, §6) | yes |
-| `expand` | phase rules → weeks; applies `[overrides]` (D-030) | yes |
-| `checks` | warnings C1–C8 (§7) | yes |
+| `expand` | phase rules → weeks; applies `[overrides]` (D-030); collects every warning (D-037) | yes |
+| `checks` | warnings C3–C8 (§7); C1 and C2 come from the layout and the expansion | yes |
 | `export` | `Plan` → JSON-ready dict including display strings (D-012) | yes |
 | `spec` | read and validate `season.toml` → `Season` (errors for invalid input) | no |
 | `render` | write `plan.json`, call Typst with the template `src/ttg/plan.typ` (D-035) | no |
@@ -42,7 +42,7 @@ Modules of the package `ttg`. Everything marked *pure* follows D-013.
 
 **Errors vs warnings:** invalid input (unparsable date, start after the last race, negative km) is an error and nothing is built. Questionable input is a warning, and the plan is still built.
 
-**Dependencies:** `typst` from PyPI (pinned; the Typst compiler bundled, no separate install), `pytest` for development. Nothing else. Python ≥ 3.11, in a virtual environment (D-011).
+**Dependencies:** `typst` from PyPI (pinned; the Typst compiler bundled, no separate install). For development: `pytest`, and `ruff` and `mypy`, pinned, which CI runs (D-040). Nothing else. Python ≥ 3.11, in a virtual environment (D-011).
 
 ## 4. Data contracts
 
@@ -104,7 +104,7 @@ A quality session is `{ type, reps, minutes | km }`. `type` is `"H"`, `"I"`, `"T
 20 = { quality = { type = "MP", reps = 3, km = 3 }, note = "check" }
 ```
 
-**Errors** (nothing is built; the message names the field, e.g. `race[2].date: …`): unknown field, wrong type, value out of range, missing required field, `start` together with `weeks`, a race ending before `start`, duplicate race names, `end` before `date`, a phase length on a C race, a race before week 1 when the start comes from `weeks` or defaults to next Monday (checked when the calendar is built, `ttg.calendar`), an override for a week past the end of the plan (`overrides.N`, checked by `ttg.expand`).
+**Errors** (nothing is built; the message names the field, e.g. `race[2].date: …`): unknown field, wrong type, value out of range, missing required field, `start` together with `weeks`, a race ending before `start`, duplicate race names, `end` before `date`, a phase length on a C race, a race before week 1 when the start comes from `weeks` or defaults to next Monday (checked when the calendar is built, `ttg.calendar`), an override for a week past the end of the plan (`overrides.N`, checked by `ttg.expand`), an override that would replace a race in its cell (D-038).
 
 An override changes only its own week; the progressions of the following weeks ignore it (D-030).
 
@@ -116,15 +116,16 @@ Everything the sheet shows, computed in Python, including the display strings. T
 
 ```json
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "title": "marathon training plan",
   "paces": [{"code": "I", "pace": "4:15+2'", "label": "hard"}, ...],
-  "gauge": {"km_per_box": 1, "boxes": 80, "label_every_km": 10},
+  "gauge": {"boxes": 80, "label_every_km": 10},
   "weeks": [{
     "number": 23,
     "days": [{"date": "2026-10-05", "text": "5", "race": false}, ..., {"date": "2026-10-10", "text": "10", "race": true}, null],
     "month": "oct",
     "kind": "race",
+    "phase": 6,
     "phase_label": "taper",
     "easy": {"km": [12, 6], "text": "12+6"},
     "quality": {"type": "none", "km": 0, "text": "–"},
@@ -143,10 +144,11 @@ Everything the sheet shows, computed in Python, including the display strings. T
 | Field | Meaning |
 |---|---|
 | `paces` | The pace legend, in print order; `pace` and `label` may be empty. |
-| `gauge.boxes` | The highest planned week rounded up to the next `label_every_km` (D-019). |
+| `gauge.boxes` | The highest planned week rounded up to the next `label_every_km`; one box per km (D-019). |
 | `weeks[].days` | Always 7 entries, Monday to Sunday; `text` is the printed day of the month; `race` marks a race day (printed bold); `null` for days after the plan ends on the last race day. |
 | `weeks[].month` | The month containing the week's Thursday. |
 | `weeks[].kind` | `build`, `deload`, `specific`, `taper`, `race`, `recovery`. |
+| `weeks[].phase` | The phase's number on the sheet, from 1; the phase column groups by it (D-037). |
 | `weeks[].phase_label` | The phase column text (D-026). |
 | `weeks[].quality.type` | As in the season file: `H`, `I`, `T`, `MP`, `S`, `none`; or `race` for a C race up to 10 km, which replaces the quality run (D-017, D-030). |
 | `weeks[].quality.km` | The estimate of `TRAINING_MODEL.md` §3; a C race counts its distance (D-030). |
@@ -156,7 +158,7 @@ Everything the sheet shows, computed in Python, including the display strings. T
 | `weeks[].note` | The text of the last column: the planned km in build, deload and specific weeks; *taper*, *race* or *recovery* otherwise; or the override's `note` (D-030). |
 | `warnings` | Not printed on the sheet; `week` may be `null`. |
 
-All km are whole numbers. Month and phase cells span the consecutive weeks with equal values; this grouping is layout, not logic.
+All km are whole numbers. Month cells span the consecutive weeks of one month, phase cells those of one `phase`; a span continued on the next page is labelled again there (D-037). This grouping is layout, not logic.
 
 ## 5. The sheet (R-1)
 

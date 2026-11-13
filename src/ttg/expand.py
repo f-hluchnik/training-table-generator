@@ -6,12 +6,13 @@ changes only its own week, never the progressions after it (D-030). Pure (D-013)
 """
 
 from collections import Counter, defaultdict
-from collections.abc import Iterator, Mapping, Sequence
+from collections.abc import Iterable, Iterator, Mapping, Sequence
 from dataclasses import dataclass, field, replace
 from datetime import date
 from types import MappingProxyType
 
 from ttg import long_run
+from ttg.checks import check
 from ttg.layout import Layout, lay_out
 from ttg.model import (
     EasyRuns,
@@ -66,16 +67,22 @@ SHORT_C_RACE = RaceType.TEN_K
 
 
 def expand(season: Season, today: date) -> Plan:
-    """The weeks of the season's plan, overrides applied. Raises SeasonError for an override past the end."""
+    """The season's plan, overrides applied, with every warning. Raises SeasonError for invalid overrides."""
     layout = lay_out(season, today)
     expander = _Expander(season, layout, season.paces.resolve())
     weeks = tuple(expander.weeks())
-    return Plan(
+    plan = Plan(
         season=season,
         paces=expander.paces,
         weeks=expander.with_overrides(weeks),
         warnings=layout.warnings + expander.warnings(weeks),
     )
+    return replace(plan, warnings=_by_week((*plan.warnings, *check(plan))))
+
+
+def _by_week(warnings: Iterable[PlanWarning]) -> tuple[PlanWarning, ...]:
+    """Ordered by week; warnings about the whole plan first."""
+    return tuple(sorted(warnings, key=lambda warning: (warning.week or 0, warning.code)))
 
 
 @dataclass
@@ -114,6 +121,7 @@ class _Expander:
         c_race = self._c_race(number)
         # Easy runs are reduced in every week that is not a loading week (D-022).
         easy = self._easy_runs(EasyRuns.REGULAR if kind.is_loading else EasyRuns.REDUCED)
+        # Order matters: both calls advance the progressions, and the I cap needs the long run's km.
         long = self._long_run(kind, number, phase, target, c_race)
         long_km = self._long_run_km(long)
         quality = self._quality(kind, target, c_race, other_week_km=sum(easy) + long_km)
@@ -162,8 +170,9 @@ class _Expander:
             case WeekKind.BUILD | WeekKind.SPECIFIC:
                 return self._loading_long_run(kind, target, tune_up_week=c_race is not None)
             case WeekKind.DELOAD:
-                assert self._progress.long_run_km is not None  # a deload follows three loading weeks
-                return LongRun(long_run.deload(self._progress.long_run_km, easy_run_km))
+                # Long C races can have taken the place of every loading long run since the last race.
+                last_km = self._progress.long_run_km or self._first_long_run_km(target)
+                return LongRun(long_run.deload(last_km, easy_run_km))
             case WeekKind.TAPER:
                 weeks_to_race_week = phase.last_week - number
                 return LongRun(long_run.taper(self._taper_peak(), weeks_to_race_week, easy_run_km))
@@ -199,9 +208,7 @@ class _Expander:
         progress.rotation_positions[rotation] += 1
         occurrence = progress.occurrences[session_type]
         progress.occurrences[session_type] += 1
-        return progression_session(
-            session_type, occurrence, self.paces, self.season.load.easy_run_km, other_week_km
-        )
+        return progression_session(session_type, occurrence, self.paces, self.season.load.easy_run_km, other_week_km)
 
     def _loading_long_run(self, kind: WeekKind, target: Race, tune_up_week: bool) -> LongRun:
         """+2 km a loading week up to the cap; after a race, a restart (TRAINING_MODEL.md §4, §6)."""
@@ -210,13 +217,18 @@ class _Expander:
             in_specific_block = kind is WeekKind.SPECIFIC
             cap = long_run.cap(target.type) if in_specific_block else long_run.build_cap(target.type)
             km = long_run.grow(progress.long_run_km, cap)
-        elif progress.previous_peak_km is not None:
-            km = long_run.restart(progress.previous_peak_km, target.type, self.season.load.easy_run_km)
         else:
-            km = self.season.load.long_run_km
+            km = self._first_long_run_km(target)
         progress.long_run_km = km
         progress.peak_km = max(km, progress.peak_km or 0)
         return LongRun(km, self._long_run_mp_km(kind, target, km, tune_up_week))
+
+    def _first_long_run_km(self, target: Race) -> int:
+        """The first loading long run of the plan (the starting load) or after a race (a restart)."""
+        previous_peak_km = self._progress.previous_peak_km
+        if previous_peak_km is None:
+            return self.season.load.long_run_km
+        return long_run.restart(previous_peak_km, target.type, self.season.load.easy_run_km)
 
     def _long_run_mp_km(self, kind: WeekKind, target: Race, km: int, tune_up_week: bool) -> int:
         """MP km in every other marathon-specific long run, none in a tune-up race's week (D-033)."""
@@ -309,6 +321,7 @@ class _Expander:
         )
 
     def _overridden(self, week: Week, override: WeekOverride) -> Week:
+        _check_no_race_overridden(week, override)
         quality = week.quality if override.quality is None else override.quality
         long = week.long_run if override.long_run_km is None else _long_run_override(week, override.long_run_km)
         return replace(
@@ -320,6 +333,20 @@ class _Expander:
             long_run_km=self._long_run_km(long),
             note=week.note if override.note is None else override.note,
         )
+
+
+def _check_no_race_overridden(week: Week, override: WeekOverride) -> None:
+    """A race is not a session: an override must not replace the race in its cell (D-038)."""
+    cells = (
+        ("quality", "quality run", override.quality, week.quality),
+        ("long_run_km", "long run", override.long_run_km, week.long_run),
+    )
+    for field_name, cell, value, computed in cells:
+        if value is not None and isinstance(computed, Race):
+            raise SeasonError(
+                f"overrides.{week.number}.{field_name}: the {cell} of week {week.number} is the race "
+                f'"{computed.name}", which cannot be overridden'
+            )
 
 
 def _replaces_long_run(c_race: Race) -> bool:

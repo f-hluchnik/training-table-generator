@@ -3,20 +3,16 @@ tests/test_golden_2026.py."""
 
 from dataclasses import replace
 from datetime import date, timedelta
-from pathlib import Path
 
 import pytest
 
 from ttg.expand import expand
 from ttg.model import (
     EasyRuns,
-    Load,
     LongRun,
-    Paces,
     Plan,
     Priority,
     Race,
-    RaceResult,
     Season,
     SeasonError,
     Session,
@@ -29,8 +25,9 @@ from ttg.model import (
 from ttg.sessions import capped_interval_session, interval_limit_km, interval_session, round_km, work_km
 from ttg.spec import load_season
 
-SEASONS = Path(__file__).parents[1] / "seasons"
-TODAY = date(2026, 11, 13)
+import support
+from support import SEASONS, TODAY
+
 H, I, T, MP, S, NONE = (
     SessionType.HILLS, SessionType.INTERVALS, SessionType.THRESHOLD,
     SessionType.MARATHON_PACE, SessionType.STRIDES, SessionType.NONE,
@@ -45,12 +42,7 @@ FIRST_SPECIFIC = 17  # of the MARATHON-only plan: build 1–16, specific 17–21
 
 def season(*races: Race, **fields) -> Season:
     fields.setdefault("start", START)
-    return Season(
-        races=tuple(sorted(races, key=lambda race: race.date)),
-        paces=Paces(RaceResult(42.195, timedelta(hours=3, minutes=30, seconds=2))),
-        load=Load(easy_run_km=12, long_run_km=15),
-        **fields,
-    )
+    return support.season(*races, **fields)
 
 
 def plan_of(*races: Race, **fields) -> Plan:
@@ -172,6 +164,13 @@ def test_a_longer_c_race_replaces_the_long_run_and_the_quality_run():
     assert weeks[1].planned_km == sum(weeks[1].easy) + 21
     # Neither progression advanced: week 3 continues where week 1 stopped.
     assert (weeks[2].quality.type, weeks[2].long_run) == (I, LongRun(17))
+
+
+def test_a_deload_after_three_long_c_races_reduces_the_starting_long_run():
+    """The C races took every long run before the deload, so there is no last loading long run."""
+    halves = [replace(TUNE_UP_HALF, name=f"Half {n}", date=START + timedelta(days=6 + 7 * n)) for n in range(3)]
+    week_4 = plan_of(*halves, MARATHON).weeks[3]
+    assert (week_4.kind, week_4.long_run) == (DELOAD, LongRun(12))  # 75 % of 15, at least an easy run
 
 
 def test_a_c_race_in_a_recovery_block_warns():
@@ -303,6 +302,24 @@ def test_a_long_run_override_keeps_the_mp_km_up_to_its_length():
     mp_week = next(w for w in plan.weeks if w.kind is SPECIFIC)
     overridden = plan_of(MARATHON, overrides=(WeekOverride(mp_week.number, long_run_km=4),))
     assert overridden.weeks[mp_week.number - 1].long_run == LongRun(4, 4)
+
+
+@pytest.mark.parametrize(
+    ("override", "field"),
+    [
+        (WeekOverride(23, long_run_km=10), "23.long_run_km"),  # the marathon's race week
+        (WeekOverride(2, quality=Session(T, reps=3, minutes=10)), "2.quality"),  # the 10 km tune-up's week
+    ],
+)
+def test_an_override_cannot_replace_a_race(override, field):
+    """D-038: the race would vanish from its cell while the day stays bold."""
+    with pytest.raises(SeasonError, match=rf'^overrides\.{field}: the [a-z ]+ of week \d+ is the race "'):
+        plan_of(TUNE_UP, MARATHON, overrides=(override,))
+
+
+def test_an_override_may_change_the_other_cells_of_a_race_week():
+    week_2 = plan_of(TUNE_UP, MARATHON, overrides=(WeekOverride(2, long_run_km=0),)).weeks[1]
+    assert (week_2.quality, week_2.long_run) == (TUNE_UP, None)
 
 
 def test_an_override_past_the_end_is_an_error():

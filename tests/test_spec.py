@@ -1,7 +1,6 @@
 import copy
 import tomllib
 from datetime import date, timedelta
-from pathlib import Path
 
 import pytest
 
@@ -17,7 +16,7 @@ from ttg.model import (
 from ttg.paces import Pace
 from ttg.spec import SeasonError, load_season, parse_season
 
-SEASONS = Path(__file__).parent.parent / "seasons"
+from support import SEASONS
 
 MINIMAL = tomllib.loads(
     """
@@ -146,9 +145,19 @@ def test_file_errors_are_prefixed_with_the_path(tmp_path):
         load_season(path)
 
 
+def test_a_file_that_is_not_utf_8_is_an_input_error(tmp_path):
+    path = tmp_path / "season.toml"
+    path.write_bytes("# Běhej Lesy\n".encode("cp1250"))
+    with pytest.raises(SeasonError, match=rf"^{path}: not a UTF-8 text file"):
+        load_season(path)
+
+
 @pytest.mark.parametrize(
     ("data", "field", "fragment"),
     [
+        (season_with(race=[race(distance_km=float("nan"))]), "race[1].distance_km", "expected a number"),
+        (season_with(race=[race(distance_km=float("inf"))]), "race[1].distance_km", "expected a number"),
+        (season_with(overrides={"²": {"note": "x"}}), "overrides.²", "week number"),
         (season_with(start="2027-01-04"), "start", "expected a date"),
         (season_with(start=date(2027, 10, 11)), "start", 'after the race "Marathon"'),
         (season_with(start=date(2027, 5, 3), weeks=20), "weeks", "not both"),

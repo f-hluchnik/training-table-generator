@@ -1,22 +1,12 @@
 from dataclasses import replace
-from datetime import date, timedelta
+from datetime import date
 
 import pytest
 
 from ttg.calendar import Calendar, monday_of, monday_on_or_after, plan_calendar
-from ttg.model import Load, Paces, Race, RaceResult, Season, SeasonError
+from ttg.model import Race, SeasonError
 
-TODAY = date(2026, 11, 13)  # a Friday
-
-
-def season(*races: Race, **fields) -> Season:
-    return Season(
-        races=tuple(sorted(races, key=lambda race: race.date)),
-        paces=Paces(RaceResult(42.195, timedelta(hours=3, minutes=30, seconds=2))),
-        load=Load(easy_run_km=12, long_run_km=15),
-        **fields,
-    )
-
+from support import TODAY, season
 
 MARATHON = Race("Marathon", date(2027, 10, 10), 42.195)  # a Sunday
 

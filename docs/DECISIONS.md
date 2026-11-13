@@ -131,6 +131,10 @@ Default: A.
 - **Q-3** *Answered:* easy runs don't grow → D-022.
 - **Q-4** *Answered:* a thicker line, minimal → D-019.
 - **Q-5** *Answered:* km only in v1; elevation is a later ticket. The ultra quality sessions are not limited to hills → D-023.
+- **Q-7** *Answered (owner, S7):* elevation stays parked; T-12 is not scheduled.
+- **Q-8** *Answered (owner, S7):* (b), keep the race type by distance. The owner asked for a `hilly` marker that leans into hill repeats, designed by the coach: T-15.
+- **Q-9** *Answered (owner, S7):* an override must not replace a race → D-038.
+- **Q-10** *Answered (owner, S7):* C4 and C5 skip a race in the long run's place → D-039.
 - **Q-6** *Closed by D-036: no website.* Website route, later: (a) the Python core in the browser via Pyodide plus a Typst WebAssembly build, which works as a static site on GitHub Pages; (b) port the core to TypeScript; (c) a small server, which cannot run on GitHub Pages. No decision needed now; D-013 keeps (a) and (b) open. Typst-in-browser is not yet verified.
 
 ---
@@ -279,3 +283,23 @@ test-2027 is frozen as the snapshot `tests/fixtures/plan-test-2027.json` with th
 - **No coloured print.** Dropped: ticket T-13 (D-032's optional tinted columns). The sheet stays black and white; the colouring is the runner's own, by hand (D-007).
 - **What stays:** the pure core (D-013) is kept for its own reason, easy testing. `schema_version` in `plan.json` (D-027) stays as the contract's version marker between expand and render. The fonts of D-028 still ship inside the `typst` package, so the sheet looks the same on every machine.
 - Ticket numbers T-11 and T-13 are retired, not reused.
+
+---
+
+## Session S7 (13 Nov 2026): review (T-14)
+
+### D-037 plan.json version 2; bands per phase and per page — Agreed
+*Owner, S7: asked for the review's findings to be fixed.*
+- **`weeks[].phase`:** the phase's number on the sheet, from 1. The template groups the phase column by it instead of by `phase_label`, so two adjacent phases with one label (two back-to-back tapers) keep their own bands and the boundary between them.
+- **`gauge.km_per_box` is dropped:** D-019 fixes one box per km and the template never read it.
+- `schema_version` is 2 (D-027).
+- **A band continued on the next page is cut at the page break,** so both pages show its label. The template reads the page of each week row from Typst's previous layout pass; cutting moves no row, so the layout converges. Since T-14 the bands are also breakable: before, a band longer than a page pushed the table onto page 2 and cut off its last weeks.
+
+### D-038 An override cannot replace a race — Agreed
+*Owner, S7 (Q-9).* `long_run_km` in a week whose long run is a race (the race week, a C race from the half marathon up) and `quality` in a week whose quality run is a race (a C race up to 10 km) are input errors naming the override, e.g. `overrides.23.long_run_km: the long run of week 23 is the race "Marathon", which cannot be overridden`. Before, the race vanished from its cell while its day stayed bold. The week's other cells can still be overridden.
+
+### D-039 C4 and C5 skip a race in the long run's place — Agreed
+*Owner, S7 (Q-10).* A race is not a long run: a 50 km C race in a marathon plan warned "long run of 50 km above the 32 km cap". C1 still warns about a race in the wrong place (a recovery block, the same week as another race).
+
+### D-040 Lint and type checks in CI — Agreed
+*Owner, S7: asked for the review's findings to be fixed.* `ruff check`, `ruff format --check` (120 columns) and `mypy --strict` on `src` run in CI before the tests. `ruff` and `mypy` are pinned development dependencies, like `typst`: a new release can add rules and break CI unannounced. The checks found no bugs, but required fields in `spec` and the optional repetitions of `Session` were typed as optional; both are now narrowed explicitly.

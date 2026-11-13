@@ -1,41 +1,26 @@
 """Phase layout (T-04). The cases and their expected layouts were confirmed by the owner in S3."""
 
 from dataclasses import replace
-from datetime import date, timedelta
-from pathlib import Path
+from datetime import date
 
 import pytest
 
 from ttg.layout import Layout, lay_out, phase_lengths
 from ttg.model import (
-    Load,
-    Paces,
     PhaseKind,
     Priority,
     Race,
-    RaceResult,
-    Season,
     SeasonError,
     WarningCode,
 )
 from ttg.spec import load_season
 
-SEASONS = Path(__file__).parent.parent / "seasons"
-TODAY = date(2026, 11, 13)
+from support import SEASONS, TODAY, season
 
 BUILD, SPECIFIC, TAPER, RECOVERY = PhaseKind.BUILD, PhaseKind.SPECIFIC, PhaseKind.TAPER, PhaseKind.RECOVERY
 C1, C2 = WarningCode.RACES_TOO_CLOSE, WarningCode.PLAN_TOO_SHORT
 
 MARATHON = Race("Marathon", date(2027, 10, 10), 42.195)
-
-
-def season(*races: Race, **fields) -> Season:
-    return Season(
-        races=tuple(sorted(races, key=lambda race: race.date)),
-        paces=Paces(RaceResult(42.195, timedelta(hours=3, minutes=30, seconds=2))),
-        load=Load(easy_run_km=12, long_run_km=15),
-        **fields,
-    )
 
 
 def phases(layout: Layout) -> list[tuple[PhaseKind, int, int, str | None]]:
@@ -129,7 +114,7 @@ def test_six_week_plan_for_a_marathon_keeps_the_taper_and_warns():
 
 
 def test_start_after_the_race_is_an_error():
-    with pytest.raises(SeasonError, match="^start: "):
+    with pytest.raises(SeasonError, match=r"^start: "):
         lay_out(season(MARATHON), date(2027, 10, 11))
 
 

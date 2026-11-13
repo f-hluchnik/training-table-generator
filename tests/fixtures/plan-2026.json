@@ -1,5 +1,5 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "title": "marathon training plan",
   "paces": [
     {
@@ -39,7 +39,6 @@
     }
   ],
   "gauge": {
-    "km_per_box": 1,
     "boxes": 80,
     "label_every_km": 10
   },
@@ -85,6 +84,7 @@
       ],
       "month": "may",
       "kind": "build",
+      "phase": 1,
       "phase_label": "build",
       "easy": {
         "km": [
@@ -148,6 +148,7 @@
       ],
       "month": "may",
       "kind": "build",
+      "phase": 1,
       "phase_label": "build",
       "easy": {
         "km": [
@@ -211,6 +212,7 @@
       ],
       "month": "may",
       "kind": "build",
+      "phase": 1,
       "phase_label": "build",
       "easy": {
         "km": [
@@ -274,6 +276,7 @@
       ],
       "month": "may",
       "kind": "deload",
+      "phase": 1,
       "phase_label": "build",
       "easy": {
         "km": [
@@ -337,6 +340,7 @@
       ],
       "month": "jun",
       "kind": "build",
+      "phase": 1,
       "phase_label": "build",
       "easy": {
         "km": [
@@ -400,6 +404,7 @@
       ],
       "month": "jun",
       "kind": "build",
+      "phase": 1,
       "phase_label": "build",
       "easy": {
         "km": [
@@ -463,6 +468,7 @@
       ],
       "month": "jun",
       "kind": "build",
+      "phase": 1,
       "phase_label": "build",
       "easy": {
         "km": [
@@ -526,6 +532,7 @@
       ],
       "month": "jun",
       "kind": "deload",
+      "phase": 1,
       "phase_label": "build",
       "easy": {
         "km": [
@@ -589,6 +596,7 @@
       ],
       "month": "jul",
       "kind": "specific",
+      "phase": 2,
       "phase_label": "ultra",
       "easy": {
         "km": [
@@ -652,6 +660,7 @@
       ],
       "month": "jul",
       "kind": "specific",
+      "phase": 2,
       "phase_label": "ultra",
       "easy": {
         "km": [
@@ -715,6 +724,7 @@
       ],
       "month": "jul",
       "kind": "specific",
+      "phase": 2,
       "phase_label": "ultra",
       "easy": {
         "km": [
@@ -778,6 +788,7 @@
       ],
       "month": "jul",
       "kind": "deload",
+      "phase": 2,
       "phase_label": "ultra",
       "easy": {
         "km": [
@@ -841,6 +852,7 @@
       ],
       "month": "jul",
       "kind": "specific",
+      "phase": 2,
       "phase_label": "ultra",
       "easy": {
         "km": [
@@ -904,6 +916,7 @@
       ],
       "month": "aug",
       "kind": "specific",
+      "phase": 2,
       "phase_label": "ultra",
       "easy": {
         "km": [
@@ -967,6 +980,7 @@
       ],
       "month": "aug",
       "kind": "taper",
+      "phase": 3,
       "phase_label": "taper",
       "easy": {
         "km": [
@@ -1030,6 +1044,7 @@
       ],
       "month": "aug",
       "kind": "taper",
+      "phase": 3,
       "phase_label": "taper",
       "easy": {
         "km": [
@@ -1093,6 +1108,7 @@
       ],
       "month": "aug",
       "kind": "race",
+      "phase": 3,
       "phase_label": "taper",
       "easy": {
         "km": [
@@ -1156,6 +1172,7 @@
       ],
       "month": "sep",
       "kind": "recovery",
+      "phase": 4,
       "phase_label": "recovery",
       "easy": {
         "km": [
@@ -1219,6 +1236,7 @@
       ],
       "month": "sep",
       "kind": "recovery",
+      "phase": 4,
       "phase_label": "recovery",
       "easy": {
         "km": [
@@ -1282,6 +1300,7 @@
       ],
       "month": "sep",
       "kind": "specific",
+      "phase": 5,
       "phase_label": "marathon",
       "easy": {
         "km": [
@@ -1345,6 +1364,7 @@
       ],
       "month": "sep",
       "kind": "specific",
+      "phase": 5,
       "phase_label": "marathon",
       "easy": {
         "km": [
@@ -1408,6 +1428,7 @@
       ],
       "month": "oct",
       "kind": "taper",
+      "phase": 6,
       "phase_label": "taper",
       "easy": {
         "km": [
@@ -1467,6 +1488,7 @@
       ],
       "month": "oct",
       "kind": "race",
+      "phase": 6,
       "phase_label": "taper",
       "easy": {
         "km": [

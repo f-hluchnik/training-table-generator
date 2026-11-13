@@ -37,7 +37,7 @@ def shape(session: Session) -> tuple[int, float]:
 def test_hills_add_a_rep_then_halve_the_reps_and_double_the_duration():
     assert [shape(hill_session(n)) for n in range(7)] == [
         (6, 1), (7, 1), (8, 1), (9, 1), (5, 2), (6, 2), (7, 2),
-    ]
+    ]  # fmt: skip
 
 
 def test_intervals_alternate_a_rep_and_a_minute():
@@ -122,7 +122,7 @@ REFERENCE_2026 = [
     (H, 7, 1, 8), (I, 6, 3, 9), (T, 3, 10, 11),
     (H, 8, 1, 9), (I, 5, 4, 9), (T, 4, 8, 11),
     (H, 9, 1, 9), (I, 6, 4, 10), (T, 4, 10, 11),
-]
+]  # fmt: skip
 # The owner's km are hand estimates: they are not derivable from any one formula (hill runs are
 # 2–3 km above the estimate, T 4 × 10′ is 2.6 km below). The estimate stays within this much.
 REFERENCE_KM_TOLERANCE = 3.0

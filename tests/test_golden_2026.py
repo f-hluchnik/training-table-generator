@@ -8,7 +8,6 @@ The season uses only general features; no override was added just to copy the re
 from collections import Counter
 from collections.abc import Mapping
 from dataclasses import dataclass
-from datetime import date
 from pathlib import Path
 
 import pytest
@@ -17,8 +16,9 @@ from ttg.expand import expand
 from ttg.export import export
 from ttg.spec import load_season
 
+from support import TODAY
+
 SEASON = Path(__file__).parents[1] / "seasons" / "2026.toml"
-TODAY = date(2026, 11, 13)
 COLUMNS = ("phase", "easy", "quality", "long", "note")
 
 # docs/reference/2026-marathon-training.pdf, page 1, transcribed in D-018 notation: the sheet's
@@ -57,6 +57,7 @@ class Difference:
     reason: str
 
 
+# fmt: off
 DIFFERENCES = (
     Difference(
         "phase",
@@ -73,14 +74,14 @@ DIFFERENCES = (
     Difference(
         "note",
         {1: "39", 2: "44", 3: "47", 4: "38", 5: "51", 6: "57",
-         8: "43", 9: "57", 10: "63", 11: "67", 12: "47", 13: "64", 14: "75"},  # fmt: skip
+         8: "43", 9: "57", 10: "63", 11: "67", 12: "47", 13: "64", 14: "75"},
         "Planned km are the sum of the sessions (D-006); the reference subtracted hand corrections "
         "(D-020). The quality-km estimate also differs from the owner's (TRAINING_MODEL.md §3).",
     ),
     Difference(
         "long",
         {2: "17 km", 3: "19 km", 5: "21 km", 6: "23 km", 7: "25 km", 9: "27 km", 10: "29 km",
-         11: "31 km", 13: "33 km"},  # fmt: skip
+         11: "31 km", 13: "33 km"},
         "The long run grows +2 km a loading week (D-030); 2026 grew +2–3 km.",
     ),
     Difference(
@@ -138,6 +139,7 @@ DIFFERENCES = (
         "The last taper long run is 60 % of the peak (26 km) and has no MP km (D-030).",
     ),
 )
+# fmt: on
 
 
 def expected() -> dict[int, dict[str, str]]:
@@ -151,7 +153,7 @@ def expected() -> dict[int, dict[str, str]]:
 @pytest.fixture(scope="module")
 def generated() -> dict[int, dict[str, str]]:
     plan = expand(load_season(SEASON), TODAY)
-    weeks = export(plan, plan.warnings)["weeks"]
+    weeks = export(plan)["weeks"]
     return {
         week["number"]: {
             "phase": week["phase_label"],

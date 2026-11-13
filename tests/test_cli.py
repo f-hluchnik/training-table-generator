@@ -1,15 +1,14 @@
 """End-to-end tests of `ttg build` (T-09): both reference seasons, input errors, exit codes."""
 
 import json
-from pathlib import Path
 
 import pytest
 
 from ttg.cli import EXIT_INPUT_ERROR, main
 from ttg.render import PLAN_JSON, PLAN_PDF
 
-ROOT = Path(__file__).parents[1]
-FIXTURES = Path(__file__).parent / "fixtures"
+from support import FIXTURES, ROOT
+
 SEASONS = {"2026": "plan-2026.json", "test-2027": "plan-test-2027.json"}
 
 

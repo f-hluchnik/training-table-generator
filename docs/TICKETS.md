@@ -106,5 +106,36 @@ Delete the prototype files and Flask (D-014); update the README.
 
 *Done 13 Nov 2026 (S6):* deleted `config.py`, `generator.py`, `build.py`, `my_plan.py`, `plan_table.py`, `app.py` and `templates/index.html` (the Flask page; `plan.typ` had moved into the package in T-09). Flask was not declared in `pyproject.toml`, so no dependency needed removing. Nothing in `src/` or `tests/` referenced the prototype. The salvaged parts (`Pace`, the H/I/T progressions, the quality-km estimate) live on in `ttg.paces` and `ttg.sessions`. Both seasons build unchanged (the snapshots are identical).
 
+### T-14 Review and refactoring — in review (PR #19)
+A whole-project review by an architect and an engineer (S7, 13 Nov 2026), and the owner's answers to its questions (Q-7–Q-10).
+
+*Bugs fixed:*
+- **Long plans lost weeks.** A month or phase band longer than a page could not break (Typst cells spanning only fixed-height rows are unbreakable by default), so a real 60-week plan put the title alone on page 1, the table on page 2 and cut off weeks 55–60. The bands are now breakable, and a band continued on the next page is labelled again there (D-037). The old test repeated 2026's short bands and missed it; the new ones render a generated 60-week plan.
+- **Crashes instead of input errors:** `nan`/`inf` distances, a season file that is not UTF-8, an override key like `²`, and a deload after three long C races (an `assert`). The first three are `SeasonError`s naming the field; the deload reduces the plan's first long run.
+- **Two adjacent phases with one label** (back-to-back tapers) merged into one band: `plan.json` 2 numbers the phases (D-037).
+
+*Behaviour changed (owner):* an override can no longer replace a race (D-038); C4 and C5 skip a race in the long run's place (D-039).
+
+*Code:* `Plan.warnings` holds every warning (`expand` runs the checks; `export(plan)` takes no separate list, so it cannot drop C3–C8 by mistake). `ruff` and `mypy --strict` in CI (D-040), with the typing they asked for: required `spec` fields read through a `REQUIRED` default, `Session` repetitions narrowed. `Race.date` no longer shadows `datetime.date`. `gauge.km_per_box` dropped, `render_file` removed (unused), `MARATHON_KM` defined once, the template computes its bands once. Shared test helpers in `tests/support.py`.
+
+*Verified:* both reference seasons produce the same `plan.json` as before except for the contract change (`schema_version` 2, `weeks[].phase`, no `km_per_box`); their sheets are unchanged by eye; the 60-week plan has two pages with every week and every band labelled.
+
+### T-15 Hilly races — todo
+Q-8 (b), owner S7: a `hilly` marker on a race leans its race-specific block into hill repeats, as an experienced coach would adjust it; the race type, phase lengths and caps stay by distance. Needs a decision for the new field (CLAUDE.md §3).
+
 ### Later (not scheduled)
-- **T-12** Elevation for mountain ultras (Q-5).
+- **T-12** Elevation for mountain ultras (Q-5). *Evaluated in S7; parked by the owner (Q-7).* The race-type gap it found is covered by T-15 (`hilly`).
+
+#### T-12 evaluation (S7)
+The ticket is a title only: no requirement and no done-criterion. *Owner, S7:* keep it parked (Q-7); Q-8 became T-15.
+
+- **The real gap is not elevation on the sheet but the race type.** The type comes from the distance alone (`RaceType.of`), so a 30 km mountain race with 2,000 m+ is a *marathon*: MP repeats, MP long runs, a 32 km cap. That is the wrong training for it. The 2026 ultra (101 km, about 5,300 m+) worked only because any distance above a marathon is an *ultra*.
+- **Coach:** for mountain races the specific stimulus is the elevation change per km of the race, not the weekly total; Koop matches the race's gain and loss per mile across the weekly training and finds no dose-response in total vertical (CTS, trainright.com). Hill repeats are already in the ultra rotation (D-023).
+- **Smallest useful design** (if it is ever scheduled):
+  1. One optional input, `[[race]] elevation_gain_m` (default 0; a new field needs a decision, CLAUDE.md §3).
+  2. The race type uses ITRA's km-effort, km + gain / 100 (itra.run), or only replaces MP work (Q-8).
+  3. Long runs of the race-specific block print a climbing target at the race's density, `30 km (1600 m+)`, like `28 km (10 MP)` (D-018). No new column and no weekly elevation gauge: the sheet has no room, and the runner plans the route.
+  4. `plan.json`: an additive `long.climb_m`, the next `schema_version`.
+- **Out of scope:** descent, time-on-feet long runs, per-session elevation, weekly totals.
+- **Cost:** about one session (spec, model, expand, export, tests). Check that the LR column (27 mm) fits `32 km (1700 m+)`. `seasons/2026.toml` can stay without elevation so the golden test is untouched.
+- **Recommendation:** park it until a season has a mountain race; then do points 1–3.

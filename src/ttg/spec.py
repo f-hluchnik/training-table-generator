@@ -5,13 +5,14 @@ the offending field, e.g. `race[2].date: ...`. Questionable but valid input is
 left to the checks, which only warn (D-001).
 """
 
+import datetime as dt  # not `from datetime import date`: the reader `_Table.date` would shadow it
+import math
 import re
 import tomllib
 from collections.abc import Iterable
-from datetime import date, datetime, timedelta
-from enum import StrEnum
+from enum import Enum, StrEnum, auto
 from pathlib import Path
-from typing import Any, NoReturn, TypeVar
+from typing import Any, NoReturn, TypeGuard, TypeVar, overload
 
 from ttg.model import (
     DEFAULT_RULES,
@@ -38,6 +39,7 @@ _TOML_LINE_PATTERN = re.compile(r"at line (\d+)")
 _DURATION_PATTERN = re.compile(r"(?:(\d+):([0-5]\d)|(\d+)):([0-5]\d)")
 
 _Choice = TypeVar("_Choice", bound=StrEnum)
+_T = TypeVar("_T")
 
 # Fields of `Race` that override a phase length (D-009), and of `Session` that
 # describe its repetitions.
@@ -47,7 +49,10 @@ _REPETITION_FIELDS = ("reps", "minutes", "km")
 
 def load_season(path: Path) -> Season:
     """Read and validate a season file."""
-    text = path.read_text(encoding="utf-8")
+    try:
+        text = path.read_text(encoding="utf-8")
+    except UnicodeDecodeError as error:
+        raise SeasonError(f"{path}: not a UTF-8 text file ({error.reason} at byte {error.start})") from None
     try:
         data = tomllib.loads(text)
     except tomllib.TOMLDecodeError as error:
@@ -65,11 +70,11 @@ def parse_season(data: dict[str, Any]) -> Season:
     weeks = root.integer("weeks", minimum=1)
     if start is not None and weeks is not None:
         _fail("weeks", "give either start or weeks, not both")
-    races = _parse_races(root.tables("race", required=True))
+    races = _parse_races(root.tables("race"))
     season = Season(
         races=races,
-        paces=_parse_paces(root.table("paces", required=True)),
-        load=_parse_load(root.table("load", required=True)),
+        paces=_parse_paces(root.table("paces", REQUIRED)),
+        load=_parse_load(root.table("load", REQUIRED)),
         start=start,
         weeks=weeks,
         sheet=_parse_sheet(root.table("sheet")),
@@ -92,16 +97,16 @@ def _parse_races(tables: list["_Table"]) -> tuple[Race, ...]:
 
 
 def _parse_race(table: "_Table") -> Race:
-    race_date = table.date("date", required=True)
+    race_date = table.date("date", REQUIRED)
     end = table.date("end")
     if end is not None and end < race_date:
         _fail(table.path_of("end"), f"{end} is before the race date {race_date}")
     race = Race(
-        name=table.text("name", required=True),
+        name=table.text("name", REQUIRED),
         date=race_date,
         end=end,
-        distance_km=table.positive_number("distance_km", required=True),
-        priority=table.choice("priority", Priority, default=Priority.A),
+        distance_km=table.positive_number("distance_km", REQUIRED),
+        priority=table.choice("priority", Priority, Priority.A),
         taper_weeks=table.integer("taper_weeks", minimum=1),
         specific_weeks=table.integer("specific_weeks", minimum=0),
         recovery_weeks=table.integer("recovery_weeks", minimum=0),
@@ -128,7 +133,7 @@ def _check_unique_names(races: list[Race], tables: list["_Table"]) -> None:
         seen.add(race.name)
 
 
-def _check_races_not_before_start(races: Iterable[Race], start: date | None) -> None:
+def _check_races_not_before_start(races: Iterable[Race], start: dt.date | None) -> None:
     if start is None:
         return
     for race in races:
@@ -138,7 +143,7 @@ def _check_races_not_before_start(races: Iterable[Race], start: date | None) -> 
 
 def _parse_paces(table: "_Table") -> Paces:
     paces = Paces(
-        race_result=_parse_race_result(table.table("race_result", required=True)),
+        race_result=_parse_race_result(table.table("race_result", REQUIRED)),
         easy=table.pace("easy"),
         mp=table.pace("mp"),
         threshold=table.pace("threshold"),
@@ -150,8 +155,8 @@ def _parse_paces(table: "_Table") -> Paces:
 
 def _parse_race_result(table: "_Table") -> RaceResult:
     result = RaceResult(
-        distance_km=table.positive_number("distance_km", required=True),
-        time=table.duration("time", required=True),
+        distance_km=table.positive_number("distance_km", REQUIRED),
+        time=table.duration("time", REQUIRED),
     )
     table.close()
     return result
@@ -159,10 +164,10 @@ def _parse_race_result(table: "_Table") -> RaceResult:
 
 def _parse_load(table: "_Table") -> Load:
     load = Load(
-        easy_run_km=table.integer("easy_run_km", required=True, minimum=1),
-        long_run_km=table.integer("long_run_km", required=True, minimum=1),
+        easy_run_km=table.integer("easy_run_km", REQUIRED, minimum=1),
+        long_run_km=table.integer("long_run_km", REQUIRED, minimum=1),
         runs_per_week=table.integer(
-            "runs_per_week", default=DEFAULT_RUNS_PER_WEEK, minimum=MIN_RUNS_PER_WEEK, maximum=MAX_RUNS_PER_WEEK
+            "runs_per_week", DEFAULT_RUNS_PER_WEEK, minimum=MIN_RUNS_PER_WEEK, maximum=MAX_RUNS_PER_WEEK
         ),
     )
     table.close()
@@ -173,8 +178,8 @@ def _parse_sheet(table: "_Table | None") -> Sheet:
     if table is None:
         return Sheet()
     sheet = Sheet(
-        title=table.text("title", default=DEFAULT_TITLE),
-        rules=table.texts("rules", default=DEFAULT_RULES),
+        title=table.text("title", DEFAULT_TITLE),
+        rules=table.texts("rules", DEFAULT_RULES),
     )
     table.close()
     return sheet
@@ -183,14 +188,14 @@ def _parse_sheet(table: "_Table | None") -> Sheet:
 def _parse_overrides(table: "_Table | None") -> tuple[WeekOverride, ...]:
     if table is None:
         return ()
-    overrides = [_parse_override(key, table) for key in table.keys()]
+    overrides = [_parse_override(key, table) for key in table.names()]
     return tuple(sorted(overrides, key=lambda override: override.week))
 
 
 def _parse_override(key: str, parent: "_Table") -> WeekOverride:
-    if not key.isdigit() or int(key) < 1:
+    if not key.isdecimal() or int(key) < 1:
         _fail(parent.path_of(key), "expected a week number (1, 2, ...)")
-    table = parent.table(key, required=True)
+    table = parent.table(key, REQUIRED)
     quality_table = table.table("quality")
     override = WeekOverride(
         week=int(key),
@@ -205,7 +210,7 @@ def _parse_override(key: str, parent: "_Table") -> WeekOverride:
 
 def _parse_session(table: "_Table") -> Session:
     session = Session(
-        type=table.choice("type", SessionType, required=True),
+        type=table.choice("type", SessionType, REQUIRED),
         reps=table.integer("reps", minimum=1),
         minutes=table.positive_number("minutes"),
         km=table.positive_number("km"),
@@ -234,8 +239,20 @@ def _check_session_without_repetitions(session: Session, table: "_Table") -> Non
 # --- field reading -----------------------------------------------------------
 
 
+class _Required(Enum):
+    """The `default` of a required field: a missing field is an error."""
+
+    REQUIRED = auto()
+
+
+REQUIRED = _Required.REQUIRED
+
+
 class _Table:
-    """One TOML table: typed access to its fields, and a check for unknown ones."""
+    """One TOML table: typed access to its fields, and a check for unknown ones.
+
+    Every reader takes a `default`: what a missing field reads as, or `REQUIRED`.
+    """
 
     def __init__(self, data: dict[str, Any], path: str) -> None:
         self._data = data
@@ -245,7 +262,8 @@ class _Table:
     def path_of(self, key: str) -> str:
         return f"{self.path}.{key}" if self.path else key
 
-    def keys(self) -> list[str]:
+    def names(self) -> list[str]:
+        """The table's field names, for tables keyed by data such as [overrides]."""
         return list(self._data)
 
     def close(self) -> None:
@@ -254,34 +272,45 @@ class _Table:
             if key not in self._read:
                 _fail(self.path_of(key), "unknown field")
 
-    def text(self, key: str, *, required: bool = False, default: str | None = None) -> str | None:
-        value = self._value(key, required)
+    @overload
+    def text(self, key: str, default: str | _Required) -> str: ...
+    @overload
+    def text(self, key: str, default: None = None) -> str | None: ...
+    def text(self, key: str, default: str | _Required | None = None) -> str | None:
+        value = self._value(key)
         if value is None:
-            return default
+            return self._missing(key, default)
         if not isinstance(value, str) or not value.strip():
             self._wrong_type(key, "non-empty text in quotes", value)
         return value.strip()
 
-    def texts(self, key: str, *, default: tuple[str, ...] | None = None) -> tuple[str, ...] | None:
-        value = self._value(key, required=False)
+    def texts(self, key: str, default: tuple[str, ...]) -> tuple[str, ...]:
+        value = self._value(key)
         if value is None:
             return default
         if not isinstance(value, list) or not all(isinstance(item, str) for item in value):
             self._wrong_type(key, 'a list of texts, e.g. ["…", "…"]', value)
         return tuple(value)
 
+    @overload
+    def integer(
+        self, key: str, default: int | _Required, *, minimum: int | None = None, maximum: int | None = None
+    ) -> int: ...
+    @overload
+    def integer(
+        self, key: str, default: None = None, *, minimum: int | None = None, maximum: int | None = None
+    ) -> int | None: ...
     def integer(
         self,
         key: str,
+        default: int | _Required | None = None,
         *,
-        required: bool = False,
-        default: int | None = None,
         minimum: int | None = None,
         maximum: int | None = None,
     ) -> int | None:
-        value = self._value(key, required)
+        value = self._value(key)
         if value is None:
-            return default
+            return self._missing(key, default)
         if not _is_integer(value):
             self._wrong_type(key, "a whole number", value)
         if minimum is not None and value < minimum:
@@ -290,22 +319,30 @@ class _Table:
             _fail(self.path_of(key), f"must be at most {maximum}, got {value}")
         return value
 
-    def positive_number(self, key: str, *, required: bool = False) -> float | None:
-        """A number greater than 0; whole numbers are accepted too."""
-        value = self._value(key, required)
+    @overload
+    def positive_number(self, key: str, default: _Required) -> float: ...
+    @overload
+    def positive_number(self, key: str, default: None = None) -> float | None: ...
+    def positive_number(self, key: str, default: _Required | None = None) -> float | None:
+        """A finite number greater than 0; whole numbers are accepted too."""
+        value = self._value(key)
         if value is None:
-            return None
-        if not (_is_integer(value) or isinstance(value, float)):
+            return self._missing(key, default)
+        if not (_is_integer(value) or isinstance(value, float)) or not math.isfinite(value):
             self._wrong_type(key, "a number", value)
         if value <= 0:
             _fail(self.path_of(key), f"must be greater than 0, got {value}")
         return float(value)
 
-    def date(self, key: str, *, required: bool = False) -> date | None:
-        value = self._value(key, required)
+    @overload
+    def date(self, key: str, default: _Required) -> dt.date: ...
+    @overload
+    def date(self, key: str, default: None = None) -> dt.date | None: ...
+    def date(self, key: str, default: _Required | None = None) -> dt.date | None:
+        value = self._value(key)
         if value is None:
-            return None
-        if not isinstance(value, date) or isinstance(value, datetime):
+            return self._missing(key, default)
+        if not isinstance(value, dt.date) or isinstance(value, dt.datetime):
             self._wrong_type(key, "a date like 2026-05-04 (without quotes)", value)
         return value
 
@@ -318,68 +355,76 @@ class _Table:
         except ValueError as error:
             _fail(self.path_of(key), str(error))
 
-    def duration(self, key: str, *, required: bool = False) -> timedelta | None:
-        text = self.text(key, required=required)
-        if text is None:
-            return None
+    def duration(self, key: str, default: _Required) -> dt.timedelta:
+        """A required time, "h:mm:ss" or "m:ss" (the season file's only time is required)."""
+        text = self.text(key, default)
         try:
             return _parse_duration(text)
         except ValueError as error:
             _fail(self.path_of(key), str(error))
 
-    def choice(
-        self, key: str, choices: type[_Choice], *, required: bool = False, default: _Choice | None = None
-    ) -> _Choice | None:
-        text = self.text(key, required=required)
+    @overload
+    def choice(self, key: str, choices: type[_Choice], default: _Choice | _Required) -> _Choice: ...
+    @overload
+    def choice(self, key: str, choices: type[_Choice], default: None = None) -> _Choice | None: ...
+    def choice(self, key: str, choices: type[_Choice], default: _Choice | _Required | None = None) -> _Choice | None:
+        text = self.text(key)
         if text is None:
-            return default
+            return self._missing(key, default)
         try:
             return choices(text)
         except ValueError:
             allowed = ", ".join(f'"{choice}"' for choice in choices)
             _fail(self.path_of(key), f'expected one of {allowed}, got "{text}"')
 
-    def table(self, key: str, *, required: bool = False) -> "_Table | None":
-        value = self._value(key, required)
+    @overload
+    def table(self, key: str, default: _Required) -> "_Table": ...
+    @overload
+    def table(self, key: str, default: None = None) -> "_Table | None": ...
+    def table(self, key: str, default: _Required | None = None) -> "_Table | None":
+        value = self._value(key)
         if value is None:
-            return None
+            return self._missing(key, default)
         if not isinstance(value, dict):
             self._wrong_type(key, "a table", value)
         return _Table(value, self.path_of(key))
 
-    def tables(self, key: str, *, required: bool = False) -> list["_Table"]:
-        """An array of tables, e.g. [[race]]; paths are numbered from 1."""
-        value = self._value(key, required)
+    def tables(self, key: str) -> list["_Table"]:
+        """A required array of tables, e.g. [[race]]; paths are numbered from 1."""
+        value = self._value(key)
         if value is None:
-            return []
+            self._missing(key, REQUIRED)
         if not isinstance(value, list) or not all(isinstance(item, dict) for item in value):
             self._wrong_type(key, f"[[{key}]] tables", value)
         return [_Table(item, f"{self.path_of(key)}[{number}]") for number, item in enumerate(value, start=1)]
 
-    def _value(self, key: str, required: bool) -> Any:
+    def _value(self, key: str) -> Any:
+        """The raw value, None if missing; marks the field as read."""
         self._read.add(key)
-        if key not in self._data:
-            if required:
-                _fail(self.path_of(key), "missing (required)")
-            return None
-        return self._data[key]
+        return self._data.get(key)
+
+    def _missing(self, key: str, default: _T | _Required) -> _T:
+        """What a missing field reads as: its default, or an error if it is required."""
+        if isinstance(default, _Required):
+            _fail(self.path_of(key), "missing (required)")
+        return default
 
     def _wrong_type(self, key: str, expected: str, value: Any) -> NoReturn:
         shown = f'"{value}"' if isinstance(value, str) else str(value)
         _fail(self.path_of(key), f"expected {expected}, got {shown}")
 
 
-def _is_integer(value: Any) -> bool:
+def _is_integer(value: object) -> TypeGuard[int]:
     return isinstance(value, int) and not isinstance(value, bool)
 
 
-def _parse_duration(text: str) -> timedelta:
+def _parse_duration(text: str) -> dt.timedelta:
     """Parse "h:mm:ss" or "m:ss", e.g. "3:30:02" or "42:15"."""
     match = _DURATION_PATTERN.fullmatch(text)
     if match is None:
         raise ValueError(f'expected a time like "3:30:02" or "42:15", got "{text}"')
     hours, minutes_after_hours, minutes_only, seconds = match.groups()
-    duration = timedelta(
+    duration = dt.timedelta(
         hours=int(hours or 0),
         minutes=int(minutes_after_hours or minutes_only),
         seconds=int(seconds),
