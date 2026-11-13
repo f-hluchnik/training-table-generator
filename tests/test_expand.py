@@ -174,6 +174,13 @@ def test_a_longer_c_race_replaces_the_long_run_and_the_quality_run():
     assert (weeks[2].quality.type, weeks[2].long_run) == (I, LongRun(17))
 
 
+def test_a_deload_after_three_long_c_races_reduces_the_starting_long_run():
+    """The C races took every long run before the deload, so there is no last loading long run."""
+    halves = [replace(TUNE_UP_HALF, name=f"Half {n}", date=START + timedelta(days=6 + 7 * n)) for n in range(3)]
+    week_4 = plan_of(*halves, MARATHON).weeks[3]
+    assert (week_4.kind, week_4.long_run) == (DELOAD, LongRun(12))  # 75 % of 15, at least an easy run
+
+
 def test_a_c_race_in_a_recovery_block_warns():
     half = Race("Half", date(2027, 6, 27), 21.0975)  # recovery weeks 9–10
     tune_up = replace(TUNE_UP, date=date(2027, 7, 4))  # Sunday of week 9

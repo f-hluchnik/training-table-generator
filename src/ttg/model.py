@@ -10,7 +10,7 @@ from dataclasses import dataclass
 from datetime import date, timedelta
 from enum import StrEnum
 
-from ttg.paces import Pace, TrainingPaces, derive_paces
+from ttg.paces import MARATHON_KM, Pace, TrainingPaces, derive_paces
 
 # D-016: 3–6 runs a week, default 4 (one quality run, one long run, the rest easy).
 MIN_RUNS_PER_WEEK = 3
@@ -26,10 +26,9 @@ DEFAULT_RULES = (
 )
 
 
-# Standard race distances.
+# Standard race distances (MARATHON_KM comes from `ttg.paces`, which needs it for MP).
 TEN_K_KM = 10.0
 HALF_MARATHON_KM = 21.0975
-MARATHON_KM = 42.195
 # [default] Tolerance when classifying a race by distance, so that rounded
 # distances such as 21.1 or 42.2 still count as a half or a full marathon.
 RACE_DISTANCE_SLACK_KM = 0.1

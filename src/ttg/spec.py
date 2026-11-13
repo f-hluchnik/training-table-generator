@@ -5,6 +5,7 @@ the offending field, e.g. `race[2].date: ...`. Questionable but valid input is
 left to the checks, which only warn (D-001).
 """
 
+import math
 import re
 import tomllib
 from collections.abc import Iterable
@@ -47,7 +48,10 @@ _REPETITION_FIELDS = ("reps", "minutes", "km")
 
 def load_season(path: Path) -> Season:
     """Read and validate a season file."""
-    text = path.read_text(encoding="utf-8")
+    try:
+        text = path.read_text(encoding="utf-8")
+    except UnicodeDecodeError as error:
+        raise SeasonError(f"{path}: not a UTF-8 text file ({error.reason} at byte {error.start})") from None
     try:
         data = tomllib.loads(text)
     except tomllib.TOMLDecodeError as error:
@@ -188,7 +192,7 @@ def _parse_overrides(table: "_Table | None") -> tuple[WeekOverride, ...]:
 
 
 def _parse_override(key: str, parent: "_Table") -> WeekOverride:
-    if not key.isdigit() or int(key) < 1:
+    if not key.isdecimal() or int(key) < 1:
         _fail(parent.path_of(key), "expected a week number (1, 2, ...)")
     table = parent.table(key, required=True)
     quality_table = table.table("quality")
@@ -295,7 +299,7 @@ class _Table:
         value = self._value(key, required)
         if value is None:
             return None
-        if not (_is_integer(value) or isinstance(value, float)):
+        if not (_is_integer(value) or isinstance(value, float)) or not math.isfinite(value):
             self._wrong_type(key, "a number", value)
         if value <= 0:
             _fail(self.path_of(key), f"must be greater than 0, got {value}")

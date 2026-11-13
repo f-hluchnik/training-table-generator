@@ -114,6 +114,7 @@ class _Expander:
         c_race = self._c_race(number)
         # Easy runs are reduced in every week that is not a loading week (D-022).
         easy = self._easy_runs(EasyRuns.REGULAR if kind.is_loading else EasyRuns.REDUCED)
+        # Order matters: both calls advance the progressions, and the I cap needs the long run's km.
         long = self._long_run(kind, number, phase, target, c_race)
         long_km = self._long_run_km(long)
         quality = self._quality(kind, target, c_race, other_week_km=sum(easy) + long_km)
@@ -162,8 +163,9 @@ class _Expander:
             case WeekKind.BUILD | WeekKind.SPECIFIC:
                 return self._loading_long_run(kind, target, tune_up_week=c_race is not None)
             case WeekKind.DELOAD:
-                assert self._progress.long_run_km is not None  # a deload follows three loading weeks
-                return LongRun(long_run.deload(self._progress.long_run_km, easy_run_km))
+                # Long C races can have taken the place of every loading long run since the last race.
+                last_km = self._progress.long_run_km or self._first_long_run_km(target)
+                return LongRun(long_run.deload(last_km, easy_run_km))
             case WeekKind.TAPER:
                 weeks_to_race_week = phase.last_week - number
                 return LongRun(long_run.taper(self._taper_peak(), weeks_to_race_week, easy_run_km))
@@ -210,13 +212,18 @@ class _Expander:
             in_specific_block = kind is WeekKind.SPECIFIC
             cap = long_run.cap(target.type) if in_specific_block else long_run.build_cap(target.type)
             km = long_run.grow(progress.long_run_km, cap)
-        elif progress.previous_peak_km is not None:
-            km = long_run.restart(progress.previous_peak_km, target.type, self.season.load.easy_run_km)
         else:
-            km = self.season.load.long_run_km
+            km = self._first_long_run_km(target)
         progress.long_run_km = km
         progress.peak_km = max(km, progress.peak_km or 0)
         return LongRun(km, self._long_run_mp_km(kind, target, km, tune_up_week))
+
+    def _first_long_run_km(self, target: Race) -> int:
+        """The first loading long run of the plan (the starting load) or after a race (a restart)."""
+        previous_peak_km = self._progress.previous_peak_km
+        if previous_peak_km is None:
+            return self.season.load.long_run_km
+        return long_run.restart(previous_peak_km, target.type, self.season.load.easy_run_km)
 
     def _long_run_mp_km(self, kind: WeekKind, target: Race, km: int, tune_up_week: bool) -> int:
         """MP km in every other marathon-specific long run, none in a tune-up race's week (D-033)."""

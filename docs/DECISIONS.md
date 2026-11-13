@@ -131,6 +131,10 @@ Default: A.
 - **Q-3** *Answered:* easy runs don't grow → D-022.
 - **Q-4** *Answered:* a thicker line, minimal → D-019.
 - **Q-5** *Answered:* km only in v1; elevation is a later ticket. The ultra quality sessions are not limited to hills → D-023.
+- **Q-7** (S7, T-12) Is elevation wanted now, i.e. does a coming season have a mountain race? If not, T-12 stays parked.
+- **Q-8** (S7, T-12) A hilly race shorter than a marathon (e.g. 30 km, 2,000 m+): (a) classify the race by ITRA km-effort (km + gain / 100), so it gets the ultra rules: H → I → T rotation, longer taper and recovery; or (b) keep the type by distance and only replace the MP work with the H → I → T rotation. *Architect:* (b), the smaller change; (a) also lengthens taper and recovery, which a 30 km race does not need.
+- **Q-9** (S7) An override on a race's cell silently removes the race: `long_run_km` in a race week replaces `RACE 42 km`, and `quality` in a short C race's week replaces `RACE 10 km` (the day stays bold, the footer still lists it). *Architect:* make it an input error naming the override; a race is not a session to override.
+- **Q-10** (S7) C4 and C5 treat a race that replaces the long run as a long run: a 50 km C race in a marathon plan warns "long run of 50 km above the 32 km cap". *Architect:* skip both checks in weeks whose long run is a race; keep C1 for races in the wrong place.
 - **Q-6** *Closed by D-036: no website.* Website route, later: (a) the Python core in the browser via Pyodide plus a Typst WebAssembly build, which works as a static site on GitHub Pages; (b) port the core to TypeScript; (c) a small server, which cannot run on GitHub Pages. No decision needed now; D-013 keeps (a) and (b) open. Typst-in-browser is not yet verified.
 
 ---

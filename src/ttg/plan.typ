@@ -85,9 +85,14 @@
   }
   runs
 }
+#let month-spans = spans("month")
+#let phase-spans = spans("phase_label")
 
 #let band(content, rows) = table.cell(
   rowspan: rows,
+  // Cells spanning fixed-height rows are unbreakable by default; a band longer than a page
+  // would push the whole table to the next page and overflow it.
+  breakable: true,
   fill: band-fill,
   align: center + horizon,
   inset: 0pt,
@@ -114,10 +119,8 @@
 )
 
 #let week-cells(index, week) = {
-  let months = spans("month")
-  let phases = spans("phase_label")
   let cells = ()
-  let month-run = months.find(run => run.at(1) == index)
+  let month-run = month-spans.find(run => run.at(1) == index)
   if month-run != none { cells.push(band(month-run.at(0), month-run.at(2))) }
   cells.push(table.cell(align: center + horizon, strong(str(week.number))))
   for day in week.days {
@@ -125,7 +128,7 @@
     cells.push(table.cell(align: center + horizon, label))
   }
   cells += range(box-count).map(_ => [])
-  let phase-run = phases.find(run => run.at(1) == index)
+  let phase-run = phase-spans.find(run => run.at(1) == index)
   if phase-run != none { cells.push(band(phase-run.at(0), phase-run.at(2))) }
   cells.push(prescription(week.easy.text))
   cells.push(prescription(week.quality.text))
@@ -148,10 +151,10 @@
   }
 
   // Group weight: month boundaries, phase boundaries, the 10 km marks.
-  for (_, first, _) in spans("month").slice(1) {
+  for (_, first, _) in month-spans.slice(1) {
     all.push(table.hline(y: week-row(first), end: framed, stroke: group))
   }
-  for (_, first, _) in spans("phase_label").slice(1) {
+  for (_, first, _) in phase-spans.slice(1) {
     all.push(table.hline(y: week-row(first), start: col-phase, end: col-phase + 1, stroke: group))
   }
   for x in range(col-gauge + label-every, col-phase, step: label-every) {

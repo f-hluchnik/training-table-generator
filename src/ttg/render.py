@@ -22,12 +22,6 @@ def render_pdf(plan: dict) -> bytes:
     return typst.compile(TEMPLATE, sys_inputs={PLAN_INPUT: plan_text})
 
 
-def render_file(plan_path: Path, pdf_path: Path) -> None:
-    """Read `plan_path` (JSON) and write the PDF to `pdf_path`."""
-    plan = json.loads(plan_path.read_text(encoding="utf-8"))
-    pdf_path.write_bytes(render_pdf(plan))
-
-
 def write_outputs(plan: dict, directory: Path) -> tuple[Path, Path]:
     """Write `plan.json` and `plan.pdf` of `plan` into `directory`, created if missing.
 
