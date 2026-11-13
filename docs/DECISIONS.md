@@ -346,7 +346,7 @@ test-2027 is frozen as the snapshot `tests/fixtures/plan-test-2027.json` with th
 
 ### D-047 A quiet footer — Agreed in principle (owner, S8); revised after the owner's review
 *Owner, S8:* the legend should look minimalistic, and it wasn't pleasing. It read `ER=5:30 [easy]; S=6 km + 6×20″ [easy, with fast relaxed strides]; … I=4:15+2' [hard]; …` in one dense line.
-- **Pace legend:** the code bold with a colon (owner: something between the code and the pace), its pace plain, its description in the note column's grey; no `=`, brackets or semicolons; 5 mm between entries. Same entries and order as D-034: **ER**: 5:30 easy.
+- **Pace legend:** the code bold with a colon (owner: something between the code and the pace), its pace plain, its description in the note column's grey; no `=`, brackets or semicolons. Same entries and order as D-034: **ER**: 5:30 easy.
 - **Races:** the dates first, set like the codes (owner: "do something about the dates"), the name plain, the priority grey: **28–29 aug**: Beskydská sedmička (B). The dates make the line self-explanatory, so it has no *races* label. `footer.races` entries are `{dates, name, details}`: `plan.json` 5.
-- **Separators:** a small bullet in dark grey between the races and between the rules (a grey middle dot was invisible on the page, owner).
+- **Separators:** a dark-grey `|` with 1.5 mm on each side between the entries of every footer line: pace entries, races and rules (owner: the space-separated entries felt too roomy, and a grey middle dot was invisible on the page).
 - **Two texts in `plan.json`:** the recovery is written `4:15 + 2′ jog` (it was `4:15+2'`, a straight quote next to the strides' `″`), and the strides' description is *fast, relaxed strides*: the S code and *6 km* already say it is an easy run. The snapshots change only in these values and in the race entries.

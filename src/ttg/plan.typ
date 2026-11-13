@@ -239,19 +239,18 @@
 
 // ---------------------------------------------------------------- footer
 // Quiet typography (D-047): no `=`, brackets or semicolons. Each entry is a bold key and a colon,
-// its value plain, its details grey like the note column; space separates the pace entries, a
-// bullet the items of the race and rule lines.
-#let legend-entry-gap = h(5mm)
+// its value plain, its details grey like the note column; a grey bar separates the entries of
+// every footer line.
 #let quiet(body) = text(fill: note-ink, body)
 #let separator-ink = luma(40%)
-#let list-separator = [#h(2.5mm)#text(fill: separator-ink, size: 0.7 * text-size, baseline: -0.1em)[•]#h(2.5mm)]
+#let list-separator = [#h(1.5mm)#text(fill: separator-ink)[|]#h(1.5mm)]
 
 #let pace-entry(entry) = {
   [#strong(entry.code):]
   if entry.pace != "" [ #entry.pace]
   if entry.label != "" [ #quiet(entry.label)]
 }
-#let pace-legend = plan.paces.map(pace-entry).join(legend-entry-gap)
+#let pace-legend = plan.paces.map(pace-entry).join(list-separator)
 
 // The races of the season, so a "RACE" cell can be told apart (owner, S5): the dates set apart
 // like the session codes above them.
