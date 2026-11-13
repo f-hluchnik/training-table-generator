@@ -233,7 +233,7 @@ How `ttg.expand` turns phases into weeks. The numbers are named constants in `tt
 *Proposed (review in the T-06 pull request):*
 - **3:1 cycle:** a deload after every three consecutive loading weeks (build or specific); any taper, race or recovery week restarts the count. This places 2026's deloads in weeks 4, 8 and 12, and none in the two marathon weeks after the recovery. "Counted from the plan start" (`TRAINING_MODEL.md` §4) would have put one in week 20.
 - **Quality rotation:** each type keeps its own progression for the whole plan; a rotation (build H → I → T, which the ultra block continues; I/T for 10 km) continues where it stopped. A C race takes the quality run's place without advancing the rotation.
-- **Taper:** in the weeks before the race week, the quality run is T 6 × 1 km and the long run is 60 % of the peak since the last race in the week just before the race week, 75 % earlier. No MP km in the taper's long run. Race week: no quality run; the race replaces the long run.
+- **Taper:** in the weeks before the race week, the quality run is T 6 × 1 km and the long run is 60 % of the peak since the last race in the week just before the race week, 75 % earlier. No MP km in the taper's long run. Race week: strides (D-033); the race replaces the long run.
 - **Recovery:** easy runs only in the first week; later recovery weeks add a long run of one easy-run length (2026's 12 km "flush").
 - **MP cap:** at most 90 minutes at marathon pace in one session (Daniels), for both the MP repeats and the MP km of a long run. A 6-week marathon block would otherwise reach 8 × 3 km.
 - **A long run is never shorter than an easy run** when it is reduced (deload, taper, restart).
@@ -247,3 +247,12 @@ How `ttg.expand` turns phases into weeks. The numbers are named constants in `tt
 ### D-032 No colour legend on the sheet
 *Owner, S5:* the sheet is otherwise black and white, so a legend of coloured swatches is out of place. The colour scheme of D-007 stays the runner's own; the sheet and plan.json no longer carry it (`footer.colours` removed from the contract).
 *Later, if wanted:* an option for coloured print, where the table is its own legend (e.g. the ER, QR and LR columns tinted in the colours of their runs), ticket T-13.
+
+### D-033 Coach review of test-2027 (T-06)
+*Owner, S5:* agrees with test-2027 on condition that an experienced coach would approve it. The coach approves the structure (periodisation, 3:1 deloads, capped T, I and MP work, a 10 km tune-up five weeks out, two-week taper) and changes three rules, agreed by the owner:
+- **MP long runs alternate with plain long runs** in the marathon-specific block: MP km (6 → 8 → 10 …) in every other long run; deloads don't count in the alternation. The MP long run is one of the hardest sessions of a marathon plan, and the block also has a weekly midweek MP session; without the alternation test-2027 weeks 29–30 held 27–32 km at MP in 76–79 km weeks (35–40 %). Pfitzinger's schedules alternate MP long runs with plain ones (source 23), and coaches advise alternating them to limit injury and overtraining risk (source 24). The MP stimulus stays weekly through the midweek session.
+- **No MP km in a tune-up race's week:** the C race is that week's hard effort. The alternation goes on after it.
+- **Race week keeps strides (S)** instead of no quality run: the legs stay sharp, and the race week holds 24 km instead of 18 (about 30 % of the peak; guidance 40–50 %, source 8). Pfitzinger's final weeks keep short runs with strides (source 23).
+- Not changed: in a long plan the weekly volume stays flat during the build (test-2027: 55–60 km for about 20 weeks). That is a maintenance base, a consequence of the plan's length and of fixed easy runs (D-022), not of the rules.
+
+test-2027 is frozen as the snapshot `tests/fixtures/plan-test-2027.json` with these rules.

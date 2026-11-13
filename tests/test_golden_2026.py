@@ -112,15 +112,20 @@ DIFFERENCES = (
     ),
     Difference(
         "quality",
+        {17: "S", 23: "S"},
+        "Race weeks keep strides before the race (D-033); 2026 had no quality run.",
+    ),
+    Difference(
+        "quality",
         {20: "MP: 3x3 km", 21: "MP: 4x3 km"},
         "Notation: a colon after the type, as for every other session (D-018).",
     ),
     Difference(
         "long",
-        {20: "24 km (6 MP)", 21: "26 km (8 MP)"},
+        {20: "24 km (6 MP)", 21: "26 km"},
         "After a race the long run restarts at 75 % of the previous peak, at most the next race's "
-        "build cap (24 km for a marathon), then +2 km (D-030); MP km printed per D-018, "
-        "6 → 8 (TRAINING_MODEL.md §4).",
+        "build cap (24 km for a marathon), then +2 km (D-030). MP km in every other marathon long "
+        "run (D-033), printed per D-018.",
     ),
     Difference(
         "long",

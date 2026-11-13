@@ -88,7 +88,8 @@ class _Progress:
     long_run_km: int | None = None  # the last loading week's long run since the last race
     peak_km: int | None = None  # the longest loading long run since the last race
     previous_peak_km: int | None = None  # the peak before the last race
-    mp_long_runs: int = 0  # marathon-specific long runs so far
+    mp_long_runs: int = 0  # marathon-specific long runs with MP km so far
+    last_specific_long_run_had_mp: bool = False  # for the alternation (D-033)
 
 
 class _Expander:
@@ -159,7 +160,7 @@ class _Expander:
         easy_run_km = self.season.load.easy_run_km
         match kind:
             case WeekKind.BUILD | WeekKind.SPECIFIC:
-                return self._loading_long_run(kind, target)
+                return self._loading_long_run(kind, target, tune_up_week=c_race is not None)
             case WeekKind.DELOAD:
                 assert self._progress.long_run_km is not None  # a deload follows three loading weeks
                 return LongRun(long_run.deload(self._progress.long_run_km, easy_run_km))
@@ -185,7 +186,9 @@ class _Expander:
                 return strides_session()
             case WeekKind.TAPER:
                 return taper_session()
-            case WeekKind.RACE | WeekKind.RECOVERY:
+            case WeekKind.RACE:
+                return strides_session()  # keeps the legs sharp before the race (D-033)
+            case WeekKind.RECOVERY:
                 return no_session()
         raise ValueError(f"unknown week kind {kind}")
 
@@ -200,7 +203,7 @@ class _Expander:
             session_type, occurrence, self.paces, self.season.load.easy_run_km, other_week_km
         )
 
-    def _loading_long_run(self, kind: WeekKind, target: Race) -> LongRun:
+    def _loading_long_run(self, kind: WeekKind, target: Race, tune_up_week: bool) -> LongRun:
         """+2 km a loading week up to the cap; after a race, a restart (TRAINING_MODEL.md §4, §6)."""
         progress = self._progress
         if progress.long_run_km is not None:
@@ -213,13 +216,19 @@ class _Expander:
             km = self.season.load.long_run_km
         progress.long_run_km = km
         progress.peak_km = max(km, progress.peak_km or 0)
-        return LongRun(km, self._long_run_mp_km(kind, target, km))
+        return LongRun(km, self._long_run_mp_km(kind, target, km, tune_up_week))
 
-    def _long_run_mp_km(self, kind: WeekKind, target: Race, km: int) -> int:
+    def _long_run_mp_km(self, kind: WeekKind, target: Race, km: int, tune_up_week: bool) -> int:
+        """MP km in every other marathon-specific long run, none in a tune-up race's week (D-033)."""
         if kind is not WeekKind.SPECIFIC or target.type is not RaceType.MARATHON:
             return 0
-        mp_km = marathon_long_run_mp_km(self._progress.mp_long_runs, self.paces.mp)
-        self._progress.mp_long_runs += 1
+        progress = self._progress
+        with_mp = not progress.last_specific_long_run_had_mp and not tune_up_week
+        progress.last_specific_long_run_had_mp = with_mp
+        if not with_mp:
+            return 0
+        mp_km = marathon_long_run_mp_km(progress.mp_long_runs, self.paces.mp)
+        progress.mp_long_runs += 1
         return min(mp_km, km)
 
     def _taper_peak(self) -> int:
