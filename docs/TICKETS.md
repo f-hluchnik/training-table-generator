@@ -2,7 +2,7 @@
 
 Status: **todo**, **in progress**, **done**, **blocked (reason)**. One branch per ticket, named `t-NN-short-name`.
 
-All decisions needed for T-01–T-10 are made (D-001–D-029). Q-5 and Q-6 are for the later tickets.
+All decisions needed for T-01–T-10 are made (D-001–D-029). Q-5 is for the later ticket (T-12). The website (T-11) and coloured print (T-13) were dropped in S6 (D-036).
 
 ```
 T-01 ─▶ T-02 ─┬─▶ T-03 ─┐
@@ -107,6 +107,4 @@ Delete the prototype files and Flask (D-014); update the README.
 *Done 13 Nov 2026 (S6):* deleted `config.py`, `generator.py`, `build.py`, `my_plan.py`, `plan_table.py`, `app.py` and `templates/index.html` (the Flask page; `plan.typ` had moved into the package in T-09). Flask was not declared in `pyproject.toml`, so no dependency needed removing. Nothing in `src/` or `tests/` referenced the prototype. The salvaged parts (`Pace`, the H/I/T progressions, the quality-km estimate) live on in `ttg.paces` and `ttg.sessions`. Both seasons build unchanged (the snapshots are identical).
 
 ### Later (not scheduled)
-- **T-11** Website feasibility spike (Q-6): Pyodide + Typst WebAssembly on a static page.
 - **T-12** Elevation for mountain ultras (Q-5).
-- **T-13** Coloured print, optional (D-032): the colour scheme shown in the table itself, e.g. the ER, QR and LR columns tinted green, yellow and blue, instead of a separate legend.

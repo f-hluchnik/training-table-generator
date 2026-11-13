@@ -14,7 +14,8 @@ The tool turns a few inputs into a plan *outline* and automates the tedious, err
 *Why:* training algorithms prescribe plans that stop fitting life. The owner adapts the outline during the season with his own rules (D-008).
 
 ### D-002 Personal tool first, command line first
-The owner is the only known user. A website is nice-to-have, later (D-013 keeps the option open). No web framework now.
+The owner is the only known user. A website was nice-to-have, later (D-013 kept the option open). No web framework now.
+*Amended S6 (D-036):* the website is dropped; the tool stays command-line only.
 
 ### D-003 Renderer: Typst
 The PDF is rendered by a Typst template from `plan.json`.
@@ -60,11 +61,12 @@ Python ≥ 3.11 (the owner has 3.11 and 3.12), always in a virtual environment (
 - `plan.json` contains everything the sheet shows: numbers and the pre-formatted display strings. Typst only lays it out; there is no logic in the template.
 - Manual changes go into `[overrides]` in `season.toml`, keyed by week number, never into `plan.json`, so regenerating is always safe.
 
-*Why:* there is one place for logic (Python, testable). The JSON is a stable contract a future web renderer could reuse.
+*Why:* there is one place for logic (Python, testable). The JSON is a stable contract between the two stages (a web renderer is no longer planned, D-036).
 
 ### D-013 Pure core
 Everything except loading (`spec`), the command line (`cli`) and rendering (`render`) is pure functions on immutable dataclasses: no I/O, no clock.
 *Why:* trivial tests, and the website routes (Q-6) stay open, because Python can run in the browser (Pyodide).
+*Amended S6 (D-036):* the website is dropped, so only the first reason remains.
 
 ### D-014 Replace the prototype
 - New package `ttg`.
@@ -129,7 +131,7 @@ Default: A.
 - **Q-3** *Answered:* easy runs don't grow → D-022.
 - **Q-4** *Answered:* a thicker line, minimal → D-019.
 - **Q-5** *Answered:* km only in v1; elevation is a later ticket. The ultra quality sessions are not limited to hills → D-023.
-- **Q-6** Website route, later: (a) the Python core in the browser via Pyodide plus a Typst WebAssembly build, which works as a static site on GitHub Pages; (b) port the core to TypeScript; (c) a small server, which cannot run on GitHub Pages. No decision needed now; D-013 keeps (a) and (b) open. Typst-in-browser is not yet verified.
+- **Q-6** *Closed by D-036: no website.* Website route, later: (a) the Python core in the browser via Pyodide plus a Typst WebAssembly build, which works as a static site on GitHub Pages; (b) port the core to TypeScript; (c) a small server, which cannot run on GitHub Pages. No decision needed now; D-013 keeps (a) and (b) open. Typst-in-browser is not yet verified.
 
 ---
 
@@ -184,14 +186,14 @@ The fields and their validation are documented in PLAN §4. Choices beyond PLAN'
 Not configurable. *Supersedes* D-021 (base / strength / volume by position).
 
 ### D-027 plan.json contract
-The fields are documented in PLAN §4. Every value the sheet prints is computed in Python, including each day's printed date and whether it is a race day (D-012); the template does no date arithmetic. Days are always 7 per week, `null` after the plan ends. `schema_version` marks the contract for a future web renderer (Q-6). Warnings are structured (`code`, `week`, `message`) and not printed on the sheet.
+The fields are documented in PLAN §4. Every value the sheet prints is computed in Python, including each day's printed date and whether it is a race day (D-012); the template does no date arithmetic. Days are always 7 per week, `null` after the plan ends. `schema_version` marks the version of the contract. Warnings are structured (`code`, `week`, `message`) and not printed on the sheet.
 
 ---
 
 ## Proposed in session S4, agreed in S5 (13 Nov 2026)
 
 ### D-028 Sheet fonts and drawing values (T-08) — Agreed
-- **Fonts:** *Libertinus Serif* for the calendar, titles and footer; *DejaVu Sans Mono* for the prescriptions (ER, QR, LR). Both ship inside the `typst` package, so the sheet looks the same on every machine and in a future browser build (Q-6). The reference was made in Excel with a Garamond-like serif; its font is not redistributable and not present on every machine.
+- **Fonts:** *Libertinus Serif* for the calendar, titles and footer; *DejaVu Sans Mono* for the prescriptions (ER, QR, LR). Both ship inside the `typst` package, so the sheet looks the same on every machine. The reference was made in Excel with a Garamond-like serif; its font is not redistributable and not present on every machine.
 - **Line weights (D-024):** outline 1.5 pt black; group 0.75 pt black; hairline 0.25 pt, 55 % grey. They are named constants at the top of `src/ttg/plan.typ` (moved there in T-09, D-035). The 10 km marks, the month boundaries and the 80 % marker share the group weight; the phase boundaries use the group weight in the phase column only.
 - **Geometry:** the gauge box is at most 1.2 mm wide (96 mm for 80 boxes; owner's request, 13 Nov 2026: smaller gauge, wider calendar) and shrinks further until the table fits the page width (A4 landscape, 8 mm margins). Day cells are 10 mm wide. Rows are 6.4 mm and shrink so that long plans stay on one page.
 
@@ -247,7 +249,7 @@ How `ttg.expand` turns phases into weeks. The numbers are named constants in `tt
 - 2026 warns C8, C4 (weeks 13, 14), C3 (week 14) and C1 (week 23). The ticket expected C4, C8 and the shortened specific block; C3 for week 14 is the override's jump and is kept.
 ### D-032 No colour legend on the sheet
 *Owner, S5:* the sheet is otherwise black and white, so a legend of coloured swatches is out of place. The colour scheme of D-007 stays the runner's own; the sheet and plan.json no longer carry it (`footer.colours` removed from the contract).
-*Later, if wanted:* an option for coloured print, where the table is its own legend (e.g. the ER, QR and LR columns tinted in the colours of their runs), ticket T-13.
+*Dropped (S6, D-036):* the optional coloured print (ER, QR and LR columns tinted in the colours of their runs, ticket T-13) will not be built.
 
 ### D-033 Coach review of test-2027 (T-06)
 *Owner, S5:* agrees with test-2027 on condition that an experienced coach would approve it. The coach approves the structure (periodisation, 3:1 deloads, capped T, I and MP work, a 10 km tune-up five weeks out, two-week taper) and changes three rules, agreed by the owner:
@@ -265,7 +267,15 @@ test-2027 is frozen as the snapshot `tests/fixtures/plan-test-2027.json` with th
 
 ## Session S6 (13 Nov 2026)
 
-### D-035 Command line output and template location (T-09) — Proposed
+### D-035 Command line output and template location (T-09) — Agreed
+*Owner, 13 Nov 2026 (S6): agreed in the T-09 pull request.*
 - **Output folder:** `ttg build SEASON.toml` writes `plan.json` and `plan.pdf` into `out/<season file name>/` (git-ignored); `-o DIR` writes them straight into `DIR`. *Why:* a fixed `out/` would let a second season silently overwrite the first.
 - **Exit codes:** 0 when built, with or without warnings; 1 for an input error (invalid season file or an unreadable one), with nothing written; 2 for a command-line usage error (argparse). Warnings and errors go to stderr, the written paths to stdout.
 - **The Typst template lives in the package:** `templates/plan.typ` became `src/ttg/plan.typ`, declared as package data, so a wheel or a non-editable install renders as well. The `templates/` folder held only the prototype's page afterwards (removed in T-10).
+
+### D-036 No website and no coloured print — Agreed
+*Owner, 13 Nov 2026 (S6):* both optional goals are dropped, not just postponed.
+- **No website.** The tool stays a command-line tool. The README describes clearly how to set it up on one's own computer instead. Dropped: ticket T-11 (website spike) and question Q-6; D-002 and R-6 no longer mention a website.
+- **No coloured print.** Dropped: ticket T-13 (D-032's optional tinted columns). The sheet stays black and white; the colouring is the runner's own, by hand (D-007).
+- **What stays:** the pure core (D-013) is kept for its own reason, easy testing. `schema_version` in `plan.json` (D-027) stays as the contract's version marker between expand and render. The fonts of D-028 still ship inside the `typst` package, so the sheet looks the same on every machine.
+- Ticket numbers T-11 and T-13 are retired, not reused.
