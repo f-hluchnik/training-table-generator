@@ -188,14 +188,14 @@ Overrides above the cap are allowed and produce a warning.
 |---|---|---|---|
 | C1 | races too close | a block shortened because of the previous race, or two races in one week (§5); emitted by the layout | default |
 | C2 | plan too short | a block of the first A or B race shortened because the plan starts too late (§5); emitted by the layout | default |
-| C3 | weekly ramp | planned km +10 % over the previous build week (not after deload or recovery) | common heuristic, weak evidence |
+| C3 | weekly ramp | easy runs + long run +10 % over the previous week, both loading weeks (so not after a deload, taper, race or recovery). The quality km are left out: they are an estimate that swings with the session type (D-031) | common heuristic, weak evidence **[source 21]** |
 | C4 | long-run share | LR > 50 % of the planned week (40–50 % is normal with 4 runs a week; 2026 peaked at 54 %) | default |
 | C5 | LR above cap | §6 | §6 |
 | C6 | threshold volume | > 40′ at T in one session | **[source 5]** |
-| C7 | interval volume | > 10 km or > 8 % of the week at I in one session | **[source 11]** |
+| C7 | interval volume | > 10 km or > 8 % of the week at I in one session, compared in whole km (D-031) | **[source 11]** |
 | C8 | pace consistency | overridden T more than 10 s/km off the derived T | default |
 
-Warnings go to the command line, not on the sheet.
+Warnings go to the command line, not on the sheet. Implemented in `ttg.checks` (T-07); `check(plan)` merges C1 and C2 from the layout. The progressions stay within C6 and C7 (T at 40′, I within Daniels' limit, D-030), so those two fire only for overrides.
 
 ## 8. "Life happens" rules (D-008)
 
