@@ -135,6 +135,9 @@ Q-8 (b), owner S7: a `hilly` marker on a race leans its race-specific block into
 ### T-17 No 80 % marker — in review
 *Owner, S8:* remove the 80 % marks from the gauge and reword the success rule (D-045). The marker and `weeks[].box_80pct` are gone (`plan.json` 4); the footer reads "A week counts as fully done at 80 % of its planned km." Branched from T-16 (#22), which also changes the `plan.json` version. Snapshots regenerated: only `box_80pct`, the footer text and the version change. 2026 sheet inspected.
 
+### T-18 Output next to the season file — in review
+*Owner, S8:* the output folder depended on the folder `ttg` was run from. The default is now `out/<season file name>/` next to the season file (D-046); `-o` is unchanged. Tested: a build from another folder writes next to the season file and creates no `out/` in the working folder; checked by hand from two folders.
+
 ### Later (not scheduled)
 - **T-12** Elevation for mountain ultras (Q-5). *Evaluated in S7; parked by the owner (Q-7).* The race-type gap it found is covered by T-15 (`hilly`).
 

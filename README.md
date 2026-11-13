@@ -108,9 +108,11 @@ Only the macOS/Linux commands have been run by the author; the Windows lines are
 2. **Build it:**
 
    ```sh
-   ttg build my-season.toml                 # writes out/my-season/plan.pdf and plan.json
-   ttg build my-season.toml -o my-plan/     # or into a folder of your choice
+   ttg build seasons/my-season.toml                # writes seasons/out/my-season/plan.pdf and plan.json
+   ttg build seasons/my-season.toml -o my-plan/    # or into a folder of your choice
    ```
+
+   By default the output goes into `out/<season file name>/` **next to the season file**, so it lands in the same place whichever folder you run `ttg` from. `out/` folders are ignored by Git.
 
 3. **Print `plan.pdf` on A4, landscape, at 100 % scale** (not "fit to page"), so the cells keep their size for colouring.
 

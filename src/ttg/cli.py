@@ -19,7 +19,9 @@ from ttg.render import write_outputs
 from ttg.spec import load_season
 
 EXIT_INPUT_ERROR = 1
-DEFAULT_OUTPUT_ROOT = Path("out")  # git-ignored; each season gets its own folder inside
+# The default output: `out/<season file name>/` next to the season file, so it does not depend on the
+# folder `ttg` is run from (D-046). `out/` is git-ignored; each season gets its own folder inside.
+OUTPUT_FOLDER_NAME = "out"
 
 
 def _parser() -> argparse.ArgumentParser:
@@ -36,7 +38,7 @@ def _parser() -> argparse.ArgumentParser:
         "--output",
         type=Path,
         metavar="DIR",
-        help=f"output folder (default: {DEFAULT_OUTPUT_ROOT / '<season file name>'})",
+        help=f"output folder (default: {OUTPUT_FOLDER_NAME}/<season file name>/ next to the season file)",
     )
     return parser
 
@@ -52,13 +54,18 @@ def _build(season_path: Path, output: Path | None) -> int:
     except (SeasonError, OSError) as error:
         print(f"ttg: error: {error}", file=sys.stderr)
         return EXIT_INPUT_ERROR
-    directory = output if output is not None else DEFAULT_OUTPUT_ROOT / season_path.stem
+    directory = output if output is not None else default_output(season_path)
     written = write_outputs(export(plan), directory)
     for warning in plan.warnings:
         print(_format_warning(warning), file=sys.stderr)
     for path in written:
         print(f"wrote {path}")
     return 0
+
+
+def default_output(season_path: Path) -> Path:
+    """`out/<season file name>/` in the season file's folder (D-046)."""
+    return season_path.parent / OUTPUT_FOLDER_NAME / season_path.stem
 
 
 def main(argv: Sequence[str] | None = None) -> int:

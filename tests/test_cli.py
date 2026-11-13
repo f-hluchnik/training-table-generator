@@ -1,10 +1,12 @@
 """End-to-end tests of `ttg build` (T-09): both reference seasons, input errors, exit codes."""
 
 import json
+import shutil
+from pathlib import Path
 
 import pytest
 
-from ttg.cli import EXIT_INPUT_ERROR, main
+from ttg.cli import EXIT_INPUT_ERROR, default_output, main
 from ttg.render import PLAN_JSON, PLAN_PDF
 
 from support import FIXTURES, ROOT
@@ -36,10 +38,23 @@ def test_build_creates_the_output_folder(tmp_path):
     assert (folder / PLAN_PDF).is_file()
 
 
-def test_build_defaults_to_a_folder_per_season(tmp_path, monkeypatch):
-    monkeypatch.chdir(tmp_path)
-    assert main(["build", str(ROOT / "seasons" / "test-2027.toml")]) == 0
-    assert (tmp_path / "out" / "test-2027" / PLAN_PDF).is_file()
+def test_build_defaults_to_a_folder_per_season_next_to_the_season_file(tmp_path, monkeypatch):
+    """D-046: the same place whichever folder `ttg` is run from."""
+    seasons = tmp_path / "seasons"
+    seasons.mkdir()
+    season_file = seasons / "test-2027.toml"
+    shutil.copy(ROOT / "seasons" / "test-2027.toml", season_file)
+    elsewhere = tmp_path / "elsewhere"
+    elsewhere.mkdir()
+    monkeypatch.chdir(elsewhere)
+    assert main(["build", str(season_file)]) == 0
+    assert (seasons / "out" / "test-2027" / PLAN_PDF).is_file()
+    assert not (elsewhere / "out").exists()
+
+
+def test_default_output_is_in_the_season_files_folder():
+    assert default_output(Path("s.toml")) == Path("out/s")
+    assert default_output(Path("seasons/s.toml")) == Path("seasons/out/s")
 
 
 def test_invalid_season_is_an_error_and_writes_nothing(tmp_path, capsys):
