@@ -26,14 +26,36 @@ Every number here becomes a named constant in code, with the same tag (CLAUDE.md
 - **Input:** one recent race result. Defaults are derived with Daniels' VDOT model **[source 1, 2]**; any pace can be overridden.
 - **MP:** defaults to the race-equivalent marathon pace; a goal pace overrides it.
 
-Check against the owner's real result (marathon 3:30:02 → VDOT 44.5). Computed with the fixed-percentage approximation of the VDOT model **[source 2]**; T-03 must verify against Daniels' published tables, which may differ by a few s/km.
+Implemented in `ttg.paces` (T-03). The fractions of VDOT are named constants:
+
+| Pace | Rule | Basis |
+|---|---|---|
+| Threshold | pace at 88 % of VDOT | **[source 1, 2]** |
+| Interval | pace at 97.5 % of VDOT | **[default]**, fitted to the book (Daniels gives 95–100 %) |
+| Easy | pace at 70 % of VDOT | **[default]**; Daniels' range is 59–74 % **[source 2]**, the book's range at VDOT 51 is 63–73 % |
+| MP | pace of the race-equivalent marathon time | **[source 1, 2]**, D-015 |
+
+**Verification against Daniels' tables (T-03).** I did not have the book. The values below are transcribed from secondary sources (sources 1 and 12); tests in `tests/test_paces.py`. Table values are whole seconds (per mile in the 2nd edition, per 400 m for I), so the comparison allows for rounding.
+
+| Check | Table | Computed | Deviation |
+|---|---|---|---|
+| VDOT of the 5 km, 10 km and marathon times for VDOT 50, 55, 58 (2nd ed. table 3.1) | 50 / 55 / 58 | within 0.1 | none beyond the rounding of the times |
+| M, VDOT 50 / 55 / 57 (2nd ed. table 3.2) | 4:31 / 4:10 / 4:03 per km | ≤ 1 s/km | none |
+| T, VDOT 50 / 55 / 57 (2nd ed.) | 4:15 / 3:56 / 3:49 per km | ≤ 0.3 s/km | none |
+| I, VDOT 50 / 55 / 57 (2nd ed., 93 / 87 / 85 s per 400 m) | 3:52.5 / 3:37.5 / 3:32.5 | +2.4 / −0.1 / −1.3 s/km | up to 2.4 s/km, the table's resolution (1 s per 400 m = 2.5 s/km) |
+| M / T / I, VDOT 51 (4th ed. table 5.2, per km) | 4:27 / 4:11 / 3:51 | −0.4 / +0.1 / +0.1 s | none |
+| E, VDOT 51 | 4:52–5:29 per km | default 5:02 | inside the range |
+
+Not verified: the E pace beyond VDOT 51, the R pace (not used), and VDOT values outside 50–58. The formulas are the published Daniels–Gilbert equations, so the values should hold elsewhere in the usual range, but I have not checked them there.
+
+Result for the owner's marathon, 3:30:02 → VDOT 44.5:
 
 | Pace | Derived | 2026 plan | Comment |
 |---|---|---|---|
-| Easy | 5:22–6:26 | 5:30 | inside the range |
+| Easy | 5:37 (range 5:22–6:26) | 5:30 | inside the range |
 | MP | 4:59 | 4:58 | spot on (raced 4:59) |
-| Threshold | ≈ 4:40 | 4:30 | ≈ 10 s/km fast; it implies VDOT ≈ 46.6 |
-| Interval | ≈ 4:17 | 4:15 | consistent |
+| Threshold | 4:40 | 4:30 | ≈ 10 s/km fast; it implies VDOT ≈ 46.6 |
+| Interval | 4:18 | 4:15 | consistent; the first estimate here (≈ 4:17) used 98 % |
 
 For comparison, Daniels' table for VDOT 51 gives M 4:27, T 4:11, I 3:51 per km **[source 1]**: T ≈ M − 16 s, I ≈ T − 20 s.
 
@@ -184,4 +206,5 @@ The owner finished the season uninjured and ran the planned marathon pace. That 
 10. Daniels long-run cap 32 km: <https://ctyeh.com/running/vdot?lang=en>
 11. Interval session ≤ 10 km or 8 % of weekly mileage: <https://ctyeh.com/running/interval?lang=en>
 
-Sources 1, 10 and 11 are secondary summaries of Daniels; prefer the book when implementing.
+Sources 1, 10, 11 and 12 are secondary summaries of Daniels; prefer the book when implementing.
+12. Daniels, *Daniels' Running Formula*, 2nd ed., tables 3.1 and 3.2 (VDOT 50, 55–58), transcribed at <https://www.runningahead.com/groups/the_league/forum/0a085839fcc9423887c0bae90092e299>
