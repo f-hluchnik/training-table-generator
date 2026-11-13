@@ -34,12 +34,12 @@
 #let text-size = 8pt
 #let table-height = 152mm // budget for all rows; rows shrink for long plans
 #let max-row-height = 6.4mm
-#let max-box-width = 1.75mm // D-019: 1 km per box; shrinks if the gauge would not fit
+#let max-box-width = 1.2mm // D-019: 1 km per box; shrinks if the gauge would not fit
 
 // Fixed columns. ER holds up to four easy runs (D-016), QR and LR the longest prescriptions.
 #let month-width = 6mm
 #let week-width = 7mm
-#let day-width = 7.5mm
+#let day-width = 10mm
 #let phase-width = 6mm
 #let easy-width = 24mm
 #let quality-width = 24mm
