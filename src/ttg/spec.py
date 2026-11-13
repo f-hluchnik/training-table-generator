@@ -26,6 +26,7 @@ from ttg.model import (
     Race,
     RaceResult,
     Season,
+    SeasonError,
     Session,
     SessionType,
     Sheet,
@@ -42,10 +43,6 @@ _Choice = TypeVar("_Choice", bound=StrEnum)
 # describe its repetitions.
 _PHASE_LENGTH_FIELDS = ("taper_weeks", "specific_weeks", "recovery_weeks")
 _REPETITION_FIELDS = ("reps", "minutes", "km")
-
-
-class SeasonError(ValueError):
-    """The season file is invalid. The message names the field."""
 
 
 def load_season(path: Path) -> Season:
@@ -116,7 +113,7 @@ def _parse_race(table: "_Table") -> Race:
 
 def _check_phase_lengths_allowed(race: Race, table: "_Table") -> None:
     """C races get no taper, specific or recovery block (D-017)."""
-    if race.priority is not Priority.C:
+    if race.is_key:
         return
     for key in _PHASE_LENGTH_FIELDS:
         if getattr(race, key) is not None:

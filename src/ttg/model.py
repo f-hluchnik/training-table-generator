@@ -1,9 +1,9 @@
-"""The season: what the runner writes in season.toml, as immutable values.
+"""The domain model as immutable values.
 
-The schema is documented in docs/PLAN.md §4 (D-025). Validation lives in
-`ttg.spec`; these classes only hold already-validated data. The plan-side
-classes (phases, weeks, the plan) are added with the tickets that build them
-(T-04, T-06).
+The season is what the runner writes in season.toml; the schema is documented
+in docs/PLAN.md §4 (D-025). Validation lives in `ttg.spec`; these classes only
+hold already-validated data. On the plan side, phases and warnings exist since
+T-04; weeks and the plan follow in T-06.
 """
 
 from dataclasses import dataclass
@@ -26,12 +26,47 @@ DEFAULT_RULES = (
 )
 
 
+# Standard race distances.
+TEN_K_KM = 10.0
+HALF_MARATHON_KM = 21.0975
+MARATHON_KM = 42.195
+# [default] Tolerance when classifying a race by distance, so that rounded
+# distances such as 21.1 or 42.2 still count as a half or a full marathon.
+RACE_DISTANCE_SLACK_KM = 0.1
+
+
+class SeasonError(ValueError):
+    """The season is invalid and nothing is built. The message names the field."""
+
+
 class Priority(StrEnum):
     """Race priority (D-017)."""
 
     A = "A"  # full taper and recovery
     B = "B"  # taper shortened by one week
     C = "C"  # tune-up: replaces one quality run; no taper, specific or recovery block
+
+
+class RaceType(StrEnum):
+    """The race type decides phase lengths and the specific block (TRAINING_MODEL.md §4–§6).
+
+    The values are the phase labels of the race-specific block (D-026).
+    """
+
+    TEN_K = "10 km"  # up to 10 km
+    HALF = "half"  # up to a half marathon
+    MARATHON = "marathon"  # up to a marathon
+    ULTRA = "ultra"  # longer
+
+    @classmethod
+    def of(cls, distance_km: float) -> "RaceType":
+        if distance_km <= TEN_K_KM + RACE_DISTANCE_SLACK_KM:
+            return cls.TEN_K
+        if distance_km <= HALF_MARATHON_KM + RACE_DISTANCE_SLACK_KM:
+            return cls.HALF
+        if distance_km <= MARATHON_KM + RACE_DISTANCE_SLACK_KM:
+            return cls.MARATHON
+        return cls.ULTRA
 
 
 class SessionType(StrEnum):
@@ -71,6 +106,15 @@ class Race:
     @property
     def last_day(self) -> date:
         return self.end or self.date
+
+    @property
+    def type(self) -> RaceType:
+        return RaceType.of(self.distance_km)
+
+    @property
+    def is_key(self) -> bool:
+        """A and B races get their own phases; C races only replace a quality run (D-017)."""
+        return self.priority is not Priority.C
 
 
 @dataclass(frozen=True)
@@ -139,3 +183,47 @@ class Season:
     weeks: int | None = None
     sheet: Sheet = Sheet()
     overrides: tuple[WeekOverride, ...] = ()  # sorted by week
+
+
+# --- plan side -----------------------------------------------------------------
+
+
+class PhaseKind(StrEnum):
+    """The phases the layout places (TRAINING_MODEL.md §4–§5).
+
+    Deload and race weeks are week kinds inside these phases, decided in T-06:
+    deloads inside build, the race week as the last week of a taper.
+    """
+
+    BUILD = "build"  # general preparation
+    SPECIFIC = "specific"  # race-specific preparation
+    TAPER = "taper"  # ends with the race week
+    RECOVERY = "recovery"  # after a race
+
+
+@dataclass(frozen=True)
+class Phase:
+    kind: PhaseKind
+    first_week: int  # 1-based week number
+    weeks: int
+    race: Race | None = None  # the race prepared for or recovered from; None for build
+
+    @property
+    def last_week(self) -> int:
+        return self.first_week + self.weeks - 1
+
+
+class WarningCode(StrEnum):
+    """Check codes (TRAINING_MODEL.md §7)."""
+
+    RACES_TOO_CLOSE = "C1"
+    PLAN_TOO_SHORT = "C2"
+
+
+@dataclass(frozen=True)
+class PlanWarning:
+    """Questionable input: the plan is still built (D-001). Not printed on the sheet (D-027)."""
+
+    code: WarningCode
+    week: int | None
+    message: str

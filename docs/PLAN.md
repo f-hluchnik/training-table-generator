@@ -71,12 +71,12 @@ All fields:
 
 | Field | Type | Default | Meaning |
 |---|---|---|---|
-| `start` | date | — | Week 1 is the Monday-based week containing it. At most one of `start` and `weeks`; neither → next Monday (D-004). |
-| `weeks` | integer ≥ 1 | — | Plan length, counted back from the last race week. |
+| `start` | date | — | Week 1 is the Monday-based week containing it. At most one of `start` and `weeks`; neither → the next Monday, today if it is a Monday (D-004, D-028). |
+| `weeks` | integer ≥ 1 | — | Plan length: the plan ends with the week of the last race day and has this many weeks. |
 | `[sheet] title` | text | `"training plan"` | Title printed on the sheet. |
 | `[sheet] rules` | list of texts | TRAINING_MODEL §8 | "Life happens" rules in the footer (D-008). |
 | `[[race]] name` | text | required | Unique. |
-| `[[race]] date` | date | required | First race day. |
+| `[[race]] date` | date | required | First race day; its week is the race week (D-028). |
 | `[[race]] end` | date ≥ `date` | — | Last day of a multi-day race. |
 | `[[race]] distance_km` | number > 0 | required | Decides the race type (TRAINING_MODEL §5). |
 | `[[race]] priority` | `"A"`, `"B"`, `"C"` | `"A"` | D-017. |
@@ -103,7 +103,7 @@ A quality session is `{ type, reps, minutes | km }`. `type` is `"H"`, `"I"`, `"T
 20 = { quality = { type = "MP", reps = 3, km = 3 }, note = "check" }
 ```
 
-**Errors** (nothing is built; the message names the field, e.g. `race[2].date: …`): unknown field, wrong type, value out of range, missing required field, `start` together with `weeks`, a race ending before `start`, duplicate race names, `end` before `date`, a phase length on a C race. Not yet checked: a race before the start implied by `weeks` (T-04) and an override for a week past the end of the plan (T-06).
+**Errors** (nothing is built; the message names the field, e.g. `race[2].date: …`): unknown field, wrong type, value out of range, missing required field, `start` together with `weeks`, a race ending before `start`, duplicate race names, `end` before `date`, a phase length on a C race, a race before week 1 when the start comes from `weeks` or defaults to next Monday (checked when the calendar is built, `ttg.calendar`). Not yet checked: an override for a week past the end of the plan (T-06).
 
 The 2026 reference and the test season are in `seasons/`.
 
