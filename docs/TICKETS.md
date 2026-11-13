@@ -33,7 +33,7 @@ T-01 ─▶ T-02 ─┬─▶ T-03 ─┐
 
 *Done 13 Nov 2026 (S1):* schemas D-025–D-027. The `Pace` type (parse and format) was salvaged here because the loader validates paces; T-03 adds the derivation. Only the input-side model exists; `Phase`, `Week` and `Plan` come with T-04 and T-06. Sample: `tests/fixtures/sample-plan-2026-weeks-1-4.json`.
 
-### T-03 Paces — done (PR pending)
+### T-03 Paces — done
 - `Pace` (parse, format) exists since T-02; add what the derivation needs.
 - VDOT from a race result and derived easy / MP / T / I (D-015); overrides.
 - Verify against Daniels' published tables for at least three VDOT values.
@@ -54,7 +54,7 @@ T-01 ─▶ T-02 ─┬─▶ T-03 ─┐
 - a 6-week plan for a marathon (warning);
 - start after the race (error).
 
-### T-05 Sessions and progressions — done (PR pending; builds on T-03)
+### T-05 Sessions and progressions — done
 - Session catalogue (`TRAINING_MODEL.md` §1); 3–6 runs per week (D-016); regular and reduced easy runs (D-022).
 - H/I/T progressions salvaged from the prototype, MP repeats, LR with MP km, strides.
 - Quality km estimate; T cap.
