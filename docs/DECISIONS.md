@@ -273,7 +273,7 @@ test-2027 is frozen as the snapshot `tests/fixtures/plan-test-2027.json` with th
 
 ### D-035 Command line output and template location (T-09) — Agreed
 *Owner, 13 Nov 2026 (S6): agreed in the T-09 pull request.*
-- **Output folder:** `ttg build SEASON.toml` writes `plan.json` and `plan.pdf` into `out/<season file name>/` (git-ignored); `-o DIR` writes them straight into `DIR`. *Why:* a fixed `out/` would let a second season silently overwrite the first.
+- **Output folder:** `ttg build SEASON.toml` writes `plan.json` and `plan.pdf` into `out/<season file name>/` (git-ignored); `-o DIR` writes them straight into `DIR`. *Why:* a fixed `out/` would let a second season silently overwrite the first. *Amended by D-046:* `out/` is next to the season file, not in the folder `ttg` is run from.
 - **Exit codes:** 0 when built, with or without warnings; 1 for an input error (invalid season file or an unreadable one), with nothing written; 2 for a command-line usage error (argparse). Warnings and errors go to stderr, the written paths to stdout.
 - **The Typst template lives in the package:** `templates/plan.typ` became `src/ttg/plan.typ`, declared as package data, so a wheel or a non-editable install renders as well. The `templates/` folder held only the prototype's page afterwards (removed in T-10).
 
@@ -340,3 +340,6 @@ test-2027 is frozen as the snapshot `tests/fixtures/plan-test-2027.json` with th
 *Owner, S8:* "I don't like the 80 % marks"; the sentence should be different, "something like *Week counts as fully done when completed at least on 80 %*".
 - **The gauge has no 80 % marker.** Each row keeps its 1 km boxes and the 10 km marks. `weeks[].box_80pct`, which only placed the marker, is dropped: `plan.json` 4. *Amends* D-019 and D-024 (the group weight no longer draws the marker).
 - **The success rule stays (D-006), in the footer only:** "A week counts as fully done at 80 % of its planned km." The 80 % comes from the same constant as before, `SUCCESS_SHARE`.
+
+### D-046 The default output folder is next to the season file — Agreed (owner, S8)
+*Owner, S8:* the place where the PDF is generated depended on the folder `ttg` was run from; it should always be the same. `ttg build SEASON.toml` now writes into `out/<season file name>/` in the season file's own folder: `seasons/2026.toml` → `seasons/out/2026/`, from any working folder. Next to the season file and not in the repository's `out/`, because the tool also runs installed outside a checkout (D-035), where there is no repository folder to find. `-o DIR` keeps meaning `DIR`, relative to the working folder as usual. `out/` at any depth is git-ignored. *Amends* D-035.
