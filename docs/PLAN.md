@@ -32,7 +32,8 @@ Modules of the package `ttg`. Everything marked *pure* follows D-013.
 | `calendar` | Monday-based weeks, week ↔ date, month of a week (the month containing its Thursday) | yes |
 | `layout` | backward phase layout, compression, layout warnings (`TRAINING_MODEL.md` §5) | yes |
 | `sessions` | session catalogue, progressions, km estimate (§1, §3, §4) | yes |
-| `expand` | phase rules → weeks; applies `[overrides]` | yes |
+| `long_run` | long-run growth, caps, deload, taper and restart (§4, §6) | yes |
+| `expand` | phase rules → weeks; applies `[overrides]` (D-030) | yes |
 | `checks` | warnings C1–C8 (§7) | yes |
 | `export` | `Plan` → JSON-ready dict including display strings (D-012) | yes |
 | `spec` | read and validate `season.toml` → `Season` (errors for invalid input) | no |
@@ -103,7 +104,9 @@ A quality session is `{ type, reps, minutes | km }`. `type` is `"H"`, `"I"`, `"T
 20 = { quality = { type = "MP", reps = 3, km = 3 }, note = "check" }
 ```
 
-**Errors** (nothing is built; the message names the field, e.g. `race[2].date: …`): unknown field, wrong type, value out of range, missing required field, `start` together with `weeks`, a race ending before `start`, duplicate race names, `end` before `date`, a phase length on a C race, a race before week 1 when the start comes from `weeks` or defaults to next Monday (checked when the calendar is built, `ttg.calendar`). Not yet checked: an override for a week past the end of the plan (T-06).
+**Errors** (nothing is built; the message names the field, e.g. `race[2].date: …`): unknown field, wrong type, value out of range, missing required field, `start` together with `weeks`, a race ending before `start`, duplicate race names, `end` before `date`, a phase length on a C race, a race before week 1 when the start comes from `weeks` or defaults to next Monday (checked when the calendar is built, `ttg.calendar`), an override for a week past the end of the plan (`overrides.N`, checked by `ttg.expand`).
+
+An override changes only its own week; the progressions of the following weeks ignore it (D-030).
 
 The 2026 reference and the test season are in `seasons/`.
 
@@ -125,11 +128,11 @@ Everything the sheet shows, computed in Python, including the display strings. T
     "phase_label": "taper",
     "easy": {"km": [12, 6], "text": "12+6"},
     "quality": {"type": "none", "km": 0, "text": "–"},
-    "long": {"km": 42.2, "mp_km": 0, "text": "RACE"},
+    "long": {"km": 0, "mp_km": 0, "text": "RACE 42 km"},
     "planned_km": 18, "box_80pct": 15, "note": "race"
   }, ...],
   "footer": {
-    "colours": [{"colour": "green", "shape": "fill", "label": "easy run"}, ..., {"colour": "red", "shape": "triangle", "label": "unexpected event"}],
+    "races": ["Beskydská sedmička 28–29 aug (B)", "Běhej Lesy Lednice 10 oct (A)"],
     "rules": ["Short on time: …", "Tired or ill: …"],
     "success": "A week counts at ≥ 80 % of the planned km."
   },
@@ -145,12 +148,15 @@ Everything the sheet shows, computed in Python, including the display strings. T
 | `weeks[].month` | The month containing the week's Thursday. |
 | `weeks[].kind` | `build`, `deload`, `specific`, `taper`, `race`, `recovery`. |
 | `weeks[].phase_label` | The phase column text (D-026). |
-| `weeks[].quality.type` | As in the season file: `H`, `I`, `T`, `MP`, `S`, `none`. |
+| `weeks[].quality.type` | As in the season file: `H`, `I`, `T`, `MP`, `S`, `none`; or `race` for a C race up to 10 km, which replaces the quality run (D-017, D-030). |
+| `weeks[].quality.km` | The estimate of `TRAINING_MODEL.md` §3; a C race counts its distance (D-030). |
+| `weeks[].long.km` | The long run. A race replaces it in its race week, or a C race from the half marathon up; an A or B race counts 0, a C race its distance (D-030). |
+| `footer.races` | Every race, in date order, as printed under the pace legend: name, date(s), priority (D-030). |
 | `weeks[].box_80pct` | The gauge box after which the 80 % border is drawn (D-019). |
-| `weeks[].note` | The text of the last column: the planned km or a word. |
+| `weeks[].note` | The text of the last column: the planned km in build, deload and specific weeks; *taper*, *race* or *recovery* otherwise; or the override's `note` (D-030). |
 | `warnings` | Not printed on the sheet; `week` may be `null`. |
 
-How a race counts in `planned_km` is decided in T-06. Month and phase cells span the consecutive weeks with equal values; this grouping is layout, not logic.
+All km are whole numbers. Month and phase cells span the consecutive weeks with equal values; this grouping is layout, not logic.
 
 ## 5. The sheet (R-1)
 
@@ -168,8 +174,9 @@ Column order as in the reference:
 
 Below the table:
 - the pace legend (e.g. `ER=5:30 [easy]; I=4:15+2′ [hard]; …`)
-- the colour legend (D-007)
 - the life-happens rules and the 80 % rule (D-008, D-006)
+
+No colour legend: the sheet is black and white, and the colours the runner uses are his own (D-032).
 
 Typography follows the reference: a serif face for the calendar, monospace for the prescriptions. Line weights follow D-024.
 

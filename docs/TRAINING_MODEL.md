@@ -63,7 +63,7 @@ McMillan names the same intensities Endurance, Stamina and Speed, and also start
 
 ## 3. Week structure (D-016)
 
-3–6 runs, default 4: one quality run, one LR, the rest easy runs (D-016). Easy runs are *e* each; in reduced weeks the last one is *e*/2. They never grow and are not a lever for anything else (D-022). The weekly planned km is the sum of all runs (D-006). Quality-run km are estimated as follows **[2026, prototype]**: 10′ warm-up + reps × work + (reps − 1) × recovery + 10′ cool-down, everything at easy pace except the work itself (hill efforts also counted at easy pace). Reps given in km (MP repeats, T 6 × 1 km) count the km themselves, with 2′ easy recoveries. A strides run (S) counts as half an easy run, rounded up. Implemented in `ttg.sessions` (T-05).
+3–6 runs, default 4: one quality run, one LR, the rest easy runs (D-016). Easy runs are *e* each; in reduced weeks the last one is *e*/2. They never grow and are not a lever for anything else (D-022). The weekly planned km is the sum of all runs (D-006). Quality-run km are estimated as follows **[2026, prototype]**: 10′ warm-up + reps × work + (reps − 1) × recovery + 10′ cool-down, everything at easy pace except the work itself (hill efforts also counted at easy pace). Reps given in km (MP repeats, T 6 × 1 km) count the km themselves, with 2′ easy recoveries. A strides run (S) counts as half an easy run, rounded up. A C race in place of the quality run counts its distance; an A or B race in place of the long run is not counted (D-030). All km are rounded to whole km, halves up. Implemented in `ttg.sessions` (T-05) and `ttg.expand` (T-06).
 
 **Against the 2026 reference.** The sessions (type, reps, minutes) are reproduced exactly for weeks 1–3, 5–7, 9–11 and 14–15; week 13 is the override (rule: 9 × 1′, owner: 10 × 1′). The owner's quality km (second page of the reference) are hand estimates and deviate from the estimate:
 
@@ -78,12 +78,12 @@ The test allows 3 km and pins the estimate itself. The hill km are low because t
 ## 4. Phase kinds
 
 ### build (general preparation)
-- **3:1 cycle:** three build weeks, then one deload week **[2026, source 6]**. Cycles are counted from the plan start.
+- **3:1 cycle:** three loading weeks (build or specific), then one deload week **[2026, source 6]**. Any taper, race or recovery week restarts the count, so the cycle runs on from the build into the specific block and starts afresh after a race (D-030).
 - **Quality rotation:** H → I → T **[2026]**. Each type progresses each time it occurs **[2026]**:
   - H: 6×1′ → +1 rep each time; at 10 reps, halve the reps and double the duration. In 2026 the owner wrote 10×1′ for the 4th occurrence, where this rule gives 9×1′; that week is an override in the reference season.
-  - I: 5×3′ → 6×3′ → 5×4′ → 6×4′ → 5×5′ …
+  - I: 5×3′ → 6×3′ → 5×4′ → 6×4′ → 5×5′ …, held at the last step within Daniels' limit for the week: the lesser of 10 km and 8 % of the week at I pace, in whole km **[source 11]** (D-030).
   - T: 3×8′ → 3×10′ → 4×8′ → 4×10′ → 5×8′, held there by the cap of **40′ total at T** (tempo work is 15–40 min) **[source 5]**.
-- **LR:** +2 km per build week **[2026: +2–3 km]**, up to the cap (§6).
+- **LR:** +2 km per loading week **[2026: +2–3 km]**, up to the build cap (§6); the cap stops growth but never cuts a longer starting long run. Coaches usually add 1–2 miles a week to the long run **[source 22]**; the "10 % rule" is about weekly volume and has weak evidence **[source 21]**, so it is only a warning (C3). After a race the LR restarts at 75 % of the previous peak, at most the next race's build cap **[default, owner S5]**. A reduced LR (deload, taper, restart) is never shorter than an easy run **[default]**.
 - **Easy runs:** regular (D-022).
 - **Label:** *build*, for deloads too (D-026).
 
@@ -91,7 +91,7 @@ The test allows 3 km and pins the estimate itself. The hill km are low because t
 - Defined by its purpose: **no intensity** (the quality run becomes S) and a **shorter long run, 75 % of the last build LR** **[default]**. The easy runs are reduced (D-022).
 - The weekly total is a consequence, not a target. With 2026's numbers it lands at about 70–80 % of the previous week, depending on the easy runs, which is inside the usual 10–30 % cut **[source 6, 7]**. No check polices it.
 - The week still feels like rest: no intensity and a clearly shorter long run.
-- 2026 cut to about 50–55 % (61 → 33 km). That is deeper than standard, which is acceptable but not the default; it is an override in the reference season.
+- 2026 cut to about 50–55 % (61 → 33 km). That is deeper than standard, which is acceptable but not the default; the golden test lists it as a difference (D-030).
 
 ### specific (race-specific preparation; content depends on race distance)
 
@@ -100,24 +100,30 @@ The test allows 3 km and pins the estimate itself. The hill km are low because t
 | ≤ 10 km | I and T alternating | capped lower (§6) |
 | half marathon | T | — |
 | marathon | MP repeats: 3×3 km, +1 rep a week **[2026]** | the last MP km grow 6 → 8 → 10 … **[default]** |
+
+The long run grows to the full cap (§6) only here. Marathon-pace work is capped at 90 minutes per session, for the repeats and for the MP km of a long run: Daniels' limit is the lesser of 90 min and 16 miles **[source 20]**. With 2026's MP (4:58) that is 6 × 3 km and 18 km. Deloads inside the block are as in build.
 | ultra | build rotation H → I → T (D-023) | toward the ultra cap |
 
 Elevation (vertical metres) is out of scope in v1 (Q-5).
 
 ### taper (ends with the race week)
 - **Marathon (2 weeks including race week):** about 70–75 % of peak volume, then 40–50 % in race week **[source 8]**. Intensity is kept short (e.g. T 6×1 km **[2026]**), and the last LR is about 60 % of the peak LR. 2026 did 69 % and 35 %: close to the guidance.
-- Other distances: see §5 lengths.
+- **Rule for every distance (D-030):** each taper week before the race week has T 6 × 1 km **[2026]** and a LR of 75 % of the peak since the last race **[default]**, 60 % in the week just before the race week **[source 8]**, without MP km. The race week has no quality run.
+- Lengths: see §5.
 
 Taper, race and recovery weeks all use the reduced easy pair (D-022).
 
 ### race week
-The race replaces the LR. The race day prints bold in the calendar, and the week's row ends on race day.
+The race replaces the LR and prints its distance, `RACE 42 km`; the footer lists the races by name (D-030). The race day prints bold in the calendar, and the week's row ends on race day.
+
+### C races (D-017, D-030)
+A C race up to 10 km replaces the week's quality run. From the half marathon up it replaces the long run, and the week has no quality run: one long, hard effort a week **[default, coach S5]**. Either way the replaced progression continues the next week as if nothing happened, and the race counts in the planned km.
 
 ### recovery (after a race)
 - **Week 1:** easy runs only, no LR.
-- **Week 2:** easy runs plus a short LR ("flush" in 2026).
+- **Week 2 and later:** easy runs plus a LR of one easy run's length ("flush" in 2026, 12 km) **[2026]**.
 - After that, the next phase starts.
-- Pfitzinger uses a 5-week return-to-running schedule after a marathon **[source 9]**. Our recovery block is shorter because the next phase starts gently anyway; a warning fires if quality returns sooner than the defaults below.
+- Pfitzinger uses a 5-week return-to-running schedule after a marathon **[source 9]**. Our recovery block is shorter because the next phase starts gently anyway. The rules put no quality run into a recovery block; a C race inside it warns (C1). An override that adds quality is taken as is (D-030).
 
 ## 5. Phase layout (D-009, D-029)
 
@@ -171,6 +177,8 @@ The taper stays ahead of the specific block: a week or two of race-specific work
 | half | 21 km | default |
 | marathon | 32 km | Daniels' long-run cap **[source 10]** |
 | ultra | 40 km | **[2026]** |
+
+The cap is reached in the race-specific block. Build weeks stop at 75 % of it (marathon: 24 km), so long plans peak near the race instead of holding the full cap for months **[default, owner S5]**. The cap of a week is that of the next A or B race (after the last one: the last one).
 
 Overrides above the cap are allowed and produce a warning.
 
@@ -233,5 +241,8 @@ The owner finished the season uninjured and ran the planned marathon pace. That 
 17. Coach-written 100 km plan: race-specific weeks 13–17, taper weeks 18–19, race week 20: <https://www.trainingpeaks.com/training-plans/running/trail/tp-680386/20-week-100k-ultramarathon-training-plan-intermediate-4-days-per-week>
 18. J. Koop, highest-volume block 6–9 weeks before an ultra: <https://trainright.com/how-much-time-do-you-really-need-to-train-for-an-ultramarathon/>
 19. At least 3–4 weeks of recovery after a 100-mile race: <https://vert.run/100-miles-training-guide/>
+20. Daniels, *Daniels' Running Formula*, table of training intensities: M-pace running up to the lesser of 90 min and 16 miles per session; quoted at <https://www.runningahead.com/forums/post/8acf6a4b0f634d4ebfb25f87b1304a6e> and <https://www.runningahead.com/forums/post/e989f57406784efdabd375505274c770>.
+21. Buist et al. (2008), *No effect of a graded training program on the number of running-related injuries in novice runners: a randomized controlled trial*, Am J Sports Med 36(1): 33–39 (10 % rule vs a faster programme: 20.8 % vs 20.3 % injured): <https://research.rug.nl/en/publications/no-effect-of-a-graded-training-program-on-the-number-of-running-r/>
+22. Long run extended by 1–2 miles a week in marathon preparation: <https://www.ajc.com/news/health-news/marathon-training-increase-the-miles-and-find-your-pace/ZRGCER7QV5HK3F4SSATF5MMKQ4/>
 
-Sources 1, 10, 11, 12 and 16 are secondary summaries of Daniels; prefer the book when implementing.
+Sources 1, 10, 11, 12, 16 and 20 are secondary summaries of Daniels; prefer the book when implementing. Source 22 is a newspaper interview, weak; the +2 km step itself is from 2026.
