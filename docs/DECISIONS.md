@@ -197,3 +197,15 @@ The fields are documented in PLAN §4. Every value the sheet prints is computed 
 
 *Open:* the owner approves the look, the grey values and the weights on a printed page (D-024). Phase boundaries in the group weight are an addition to D-024's list; say if they should be hairlines.
 
+---
+
+## Agreed in session S3 (13 Nov 2026)
+
+### D-029 Phase layout: what gives way, calibrated lengths, calendar edge cases
+Proposed by the architect, agreed by the owner. Details and sources in `TRAINING_MODEL.md` §5.
+- **Compression order between two races:** build weeks → the later race's specific block, down to 0 → the earlier race's recovery, down to 1 week → the later race's taper, down to the race week → the earlier race's recovery, down to 0. Each block is shortened only as far as needed. *Changed from the first draft*, which stopped the specific block at 1 week and cut the taper first: a single week of race-specific work between two races builds little, a taper week clearly pays.
+- **Short plan before the first race:** the same priority. The taper is kept first, then the specific block; build weeks get what is left.
+- **Warnings:** one per shortened block, emitted by the layout: C1 when the previous race is the cause, C2 when the plan starts too late. T-07 does not recompute them.
+- **Default lengths calibrated:** unchanged except the recovery after a half marathon, 1 → 2 weeks.
+- **Calendar:** a week belongs to the month of its Thursday (ISO 8601). A race's week is the week of its first day; the plan ends on the last race's last day, so a multi-day race running from Sunday into Monday adds a short last week. Without `start` or `weeks`, the plan starts next Monday, or today if today is a Monday. Two A or B races in the same week share one race week, the earlier race gets no recovery, and C1 warns.
+- `weeks = N` gives a plan of exactly N weeks, ending with the week of the last race day.

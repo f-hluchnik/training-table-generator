@@ -2,7 +2,7 @@
 
 Status: **todo**, **in progress**, **done**, **blocked (reason)**. One branch per ticket, named `t-NN-short-name`.
 
-All decisions needed for T-01–T-10 are made (D-001–D-027). Q-5 and Q-6 are for the later tickets.
+All decisions needed for T-01–T-10 are made (D-001–D-029). Q-5 and Q-6 are for the later tickets.
 
 ```
 T-01 ─▶ T-02 ─┬─▶ T-03 ─┐
@@ -40,7 +40,7 @@ T-01 ─▶ T-02 ─┬─▶ T-03 ─┐
 
 **Done when:** tests pass, including the 3:30:02 check in `TRAINING_MODEL.md` §2, with deviations from the table documented.
 
-### T-04 Calendar and phase layout — todo
+### T-04 Calendar and phase layout — done
 - Monday weeks; the month of a week; race weeks, multi-day races; plan length from `start` or `weeks`.
 - Error when a race falls before the start implied by `weeks` (the loader only checks an explicit `start`).
 - Backward layout and compression with warnings (`TRAINING_MODEL.md` §5).
@@ -53,6 +53,8 @@ T-01 ─▶ T-02 ─┬─▶ T-03 ─┐
 - a C race inside a build;
 - a 6-week plan for a marathon (warning);
 - start after the race (error).
+
+*Done 13 Nov 2026 (S3):* `ttg.calendar` and `ttg.layout`; the layout rules, the calibrated lengths and the calendar edge cases are D-029. The test cases and their expected layouts were confirmed by the owner before implementation (`tests/test_layout.py`). The layout returns phases (`build`, `specific`, `taper` ending with the race week, `recovery`); deload and race weeks are week kinds that T-06 sets inside them. C races get no phase; T-06 finds their week with `Calendar.week_of`. Warnings C1 and C2 come from the layout. `SeasonError` moved to `ttg.model`, so the pure core doesn't import the loader.
 
 ### T-05 Sessions and progressions — done
 - Session catalogue (`TRAINING_MODEL.md` §1); 3–6 runs per week (D-016); regular and reduced easy runs (D-022).
@@ -71,7 +73,7 @@ T-01 ─▶ T-02 ─┬─▶ T-03 ─┐
 **Done when:** golden test: `seasons/2026.toml` produces the reference table week for week (intentional differences listed in the test). `test-2027` is reviewed by the owner and frozen as a snapshot.
 
 ### T-07 Checks — todo
-Warnings C1–C8 (`TRAINING_MODEL.md` §7), each a small function with a named threshold constant.
+Warnings C3–C8 (`TRAINING_MODEL.md` §7), each a small function with a named threshold constant. C1 and C2 come from the layout since T-04 (D-029); T-07 only merges them.
 
 **Done when:** each check has a firing and a non-firing test; 2026 produces the expected warnings (C4, C8, shortened specific block).
 
