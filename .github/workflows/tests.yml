@@ -16,3 +16,12 @@ jobs:
           python-version: ${{ matrix.python-version }}
       - run: pip install -e '.[dev]'
       - run: pytest
+      # Build both reference seasons end to end and keep the PDFs for review (T-09).
+      - run: |
+          ttg build seasons/2026.toml -o out/2026
+          ttg build seasons/test-2027.toml -o out/test-2027
+      - uses: actions/upload-artifact@v4
+        if: matrix.python-version == '3.12'
+        with:
+          name: season-pdfs
+          path: out/*/plan.pdf

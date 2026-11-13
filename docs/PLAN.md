@@ -37,7 +37,7 @@ Modules of the package `ttg`. Everything marked *pure* follows D-013.
 | `checks` | warnings C1–C8 (§7) | yes |
 | `export` | `Plan` → JSON-ready dict including display strings (D-012) | yes |
 | `spec` | read and validate `season.toml` → `Season` (errors for invalid input) | no |
-| `render` | write `plan.json`, call Typst with `templates/plan.typ` | no |
+| `render` | write `plan.json`, call Typst with the template `src/ttg/plan.typ` (D-035) | no |
 | `cli` | `ttg build SEASON.toml [-o DIR]` → `plan.json`, `plan.pdf`; warnings on stderr | no |
 
 **Errors vs warnings:** invalid input (unparsable date, start after the last race, negative km) is an error and nothing is built. Questionable input is a warning, and the plan is still built.

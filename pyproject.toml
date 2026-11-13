@@ -23,5 +23,8 @@ ttg = "ttg.cli:main"
 [tool.setuptools.packages.find]
 where = ["src"]
 
+[tool.setuptools.package-data]
+ttg = ["plan.typ"]  # the Typst template travels with the package (T-09)
+
 [tool.pytest.ini_options]
 testpaths = ["tests"]

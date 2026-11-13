@@ -17,6 +17,15 @@ pytest
 
 The Typst compiler comes with the `typst` Python package; nothing else needs installing.
 
+## Building a plan
+
+```sh
+ttg build seasons/2026.toml            # writes out/2026/plan.json and out/2026/plan.pdf
+ttg build my-season.toml -o my-plan/   # or into a folder of your choice
+```
+
+Warnings about the plan (docs/TRAINING_MODEL.md §7) are printed on stderr and do not stop the build. An invalid season file prints the offending field, writes nothing and exits with code 1.
+
 ## Season files
 
 A plan is described by a short TOML file; see `seasons/` for examples and [`docs/PLAN.md`](docs/PLAN.md) §4 for every field.
