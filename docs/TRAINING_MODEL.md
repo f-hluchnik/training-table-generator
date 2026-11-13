@@ -53,7 +53,7 @@ McMillan names the same intensities Endurance, Stamina and Speed, and also start
   - T: 3×8′ → 3×10′ → 4×8′ → 4×10′, capped at **40′ total at T** (tempo work is 15–40 min) **[source 5]**.
 - **LR:** +2 km per build week **[2026: +2–3 km]**, up to the cap (§6).
 - **Easy runs:** regular (D-022).
-- **Labels:** one per 4-week cycle: base, strength, volume, volume … (D-021).
+- **Label:** *build*, for deloads too (D-026).
 
 ### deload (every 4th build week)
 - Defined by its purpose: **no intensity** (the quality run becomes S) and a **shorter long run, 75 % of the last build LR** **[default]**. The easy runs are reduced (D-022).
