@@ -264,7 +264,7 @@ How `ttg.expand` turns phases into weeks. The numbers are named constants in `tt
 
 test-2027 is frozen as the snapshot `tests/fixtures/plan-test-2027.json` with these rules.
 
-### D-034 Pace legend lists S and H
+### D-034 Pace legend lists S and H (typography and two wordings changed by D-047)
 *Owner, S5:* the legend missed the strides run. The legend now lists every session code printed in the table: `ER`, `S` (e/2 km easy with 6 × 20″ fast, relaxed strides, TRAINING_MODEL §1), `H` (hard uphill effort, jog down; effort-based, no pace, D-015), `I`, `T`, `MP`, `LR`.
 
 ---
@@ -343,3 +343,9 @@ test-2027 is frozen as the snapshot `tests/fixtures/plan-test-2027.json` with th
 
 ### D-046 The default output folder is next to the season file — Agreed (owner, S8)
 *Owner, S8:* the place where the PDF is generated depended on the folder `ttg` was run from; it should always be the same. `ttg build SEASON.toml` now writes into `out/<season file name>/` in the season file's own folder: `seasons/2026.toml` → `seasons/out/2026/`, from any working folder. Next to the season file and not in the repository's `out/`, because the tool also runs installed outside a checkout (D-035), where there is no repository folder to find. `-o DIR` keeps meaning `DIR`, relative to the working folder as usual. `out/` at any depth is git-ignored. *Amends* D-035.
+
+### D-047 A quiet footer — Agreed in principle (owner, S8); the look to approve in the PR
+*Owner, S8:* the legend should look minimalistic, and it wasn't pleasing. It read `ER=5:30 [easy]; S=6 km + 6×20″ [easy, with fast relaxed strides]; … I=4:15+2' [hard]; …` in one dense line.
+- **Pace legend:** the code bold, its pace plain, its description in the note column's grey; no `=`, brackets or semicolons; 5 mm between entries. Same entries and order as D-034.
+- **Races and rules:** the word *races* in grey, the items separated by a grey dot; the rules and the success rule on one line, separated the same way.
+- **Two texts in `plan.json`:** the recovery is written `4:15 + 2′ jog` (it was `4:15+2'`, a straight quote next to the strides' `″`), and the strides' description is *fast, relaxed strides*: the S code and *6 km* already say it is an easy run. No contract change; the snapshots change only in these values.

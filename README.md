@@ -43,7 +43,7 @@ Session codes:
 | `RACE 21 km` | A race in place of the session. |
 | `–` | No session. |
 
-The planned km assume a 10′ warm-up and a 10′ cool-down around every quality run. Below the table, the sheet prints the pace legend (e.g. `ER=5:37 [easy]; … I=4:18+2′ [hard]`, where `+2′` is the recovery jog), the races with their dates and priorities (and `hilly`), the "life happens" rules (*Short on time: drop an easy run → intensity → long run. Tired or ill: drop intensity first.*) and the success rule (*A week counts as fully done at 80 % of its planned km.*)
+The planned km assume a 10′ warm-up and a 10′ cool-down around every quality run. Below the table, the sheet prints the pace legend (e.g. **ER** 5:37 easy … **I** 4:18 + 2′ jog hard, with the description in grey), the races with their dates and priorities (and `hilly`), the "life happens" rules (*Short on time: drop an easy run → intensity → long run. Tired or ill: drop intensity first.*) and the success rule (*A week counts as fully done at 80 % of its planned km.*)
 
 The sheet is black and white, and the colours are yours. The reference season used green for easy, yellow for quality and blue for long runs, with a red triangle in a corner for an unexpected event (illness, a trip).
 

@@ -10,7 +10,7 @@
     {
       "code": "S",
       "pace": "6 km + 6×20″",
-      "label": "easy, with fast relaxed strides"
+      "label": "fast, relaxed strides"
     },
     {
       "code": "H",
@@ -19,12 +19,12 @@
     },
     {
       "code": "I",
-      "pace": "4:18+2'",
+      "pace": "4:18 + 2′ jog",
       "label": "hard"
     },
     {
       "code": "T",
-      "pace": "4:40+2'",
+      "pace": "4:40 + 2′ jog",
       "label": "comfortably hard"
     },
     {

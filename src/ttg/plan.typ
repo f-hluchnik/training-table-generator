@@ -238,18 +238,23 @@
 }
 
 // ---------------------------------------------------------------- footer
-#let pace-legend = (
-  plan.paces
-    .map(entry => {
-      let pace = if entry.pace != "" { "=" + entry.pace } else { "" }
-      let label = if entry.label != "" { " [" + entry.label + "]" } else { "" }
-      [#strong(entry.code)#pace#label]
-    })
-    .join("; ")
-)
+// Quiet typography (D-047): no `=`, brackets or semicolons. The code is bold, its pace plain, its
+// description grey like the note column; space separates the entries, a grey dot the list items.
+#let legend-entry-gap = h(5mm)
+#let quiet(body) = text(fill: note-ink, body)
+#let list-separator = quiet[#h(2mm)·#h(2mm)]
+
+#let pace-entry(entry) = {
+  strong(entry.code)
+  if entry.pace != "" [ #entry.pace]
+  if entry.label != "" [ #quiet(entry.label)]
+}
+#let pace-legend = plan.paces.map(pace-entry).join(legend-entry-gap)
 
 // The races of the season, so a "RACE" cell can be told apart (owner, S5).
-#let race-list = [#strong[races]: #plan.footer.races.join("; ")]
+#let race-list = [#quiet[races]#h(2mm)#plan.footer.races.join(list-separator)]
+
+#let footer-rules = (..plan.footer.rules, plan.footer.success).join(list-separator)
 
 // ---------------------------------------------------------------- page
 #set page(paper: "a4", flipped: true, margin: page-margin)
@@ -264,8 +269,9 @@
 
 #v(2mm)
 #align(center)[
-  #pace-legend \
-  #race-list \
+  #pace-legend
   #v(0.5mm)
-  #plan.footer.rules.join(" ") #plan.footer.success
+  #race-list
+  #v(0.5mm)
+  #footer-rules
 ]

@@ -119,7 +119,7 @@ Everything the sheet shows, computed in Python, including the display strings. T
 {
   "schema_version": 4,
   "title": "marathon training plan",
-  "paces": [{"code": "I", "pace": "4:15+2'", "label": "hard"}, ...],
+  "paces": [{"code": "I", "pace": "4:15 + 2′ jog", "label": "hard"}, ...],
   "gauge": {"boxes": 80, "label_every_km": 10},
   "weeks": [{
     "number": 23,
@@ -177,7 +177,7 @@ Column order as in the reference:
 9. Planned km (grey) or a note (e.g. *taper*, *race*)
 
 Below the table:
-- the pace legend, one entry per session code in the table (e.g. `ER=5:30 [easy]; S=6 km + 6×20″ [easy, with fast relaxed strides]; H [hard uphill effort, jog down]; I=4:15+2′ [hard]; …`, D-034)
+- the pace legend, one entry per session code in the table: the code bold, its pace plain, its description grey, space between entries (e.g. **ER** 5:30 easy · **S** 6 km + 6×20″ fast, relaxed strides · **H** hard uphill effort, jog down · **I** 4:15 + 2′ jog hard …; D-034, D-047)
 - the life-happens rules and the 80 % rule (D-008, D-006); the gauge has no 80 % marker (D-045)
 
 No colour legend: the sheet is black and white, and the colours the runner uses are his own (D-032).

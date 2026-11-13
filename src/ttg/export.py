@@ -43,7 +43,7 @@ MONTHS = ("jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", 
 
 # The pace legend, in print order, labelled as in the reference.
 EASY_LABEL, INTERVAL_LABEL, THRESHOLD_LABEL = "easy", "hard", "comfortably hard"
-STRIDES_LABEL = "easy, with fast relaxed strides"
+STRIDES_LABEL = "fast, relaxed strides"
 HILLS_LABEL = "hard uphill effort, jog down"
 
 # D-018 notation.
@@ -174,7 +174,7 @@ def _note(week: Week) -> str:
 
 def _pace_legend(plan: Plan) -> list[dict[str, str]]:
     paces = plan.paces
-    recovery = f"+{RECOVERY_JOG_MINUTES}'"
+    recovery = f" + {RECOVERY_JOG_MINUTES}′ jog"
     strides = f"{half_easy_run_km(plan.season.load.easy_run_km)} km + {STRIDES_COUNT}×{STRIDES_SECONDS}″"
     return [
         {"code": "ER", "pace": paces.easy.format(), "label": EASY_LABEL},

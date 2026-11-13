@@ -12,7 +12,7 @@ How the tickets are grouped into working sessions, with the prompt that starts e
 | S5 | T-06, T-07 | S2, S3 |
 | S6 | T-09, T-10 | S4, S5 |
 | S7 | T-14 review, T-15; T-12 evaluated | S6 |
-| S8 | T-15 brought to `main`, README, T-16, T-17, T-18 | S7 |
+| S8 | T-15 brought to `main`, README, T-16 to T-19 | S7 |
 
 ## Prompts
 
