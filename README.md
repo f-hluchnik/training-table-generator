@@ -2,7 +2,7 @@
 
 A command-line plan compiler: from a short season file (races, plan start, paces, current load) it produces a printable A4 landscape training table in the style of [`docs/reference/2026-marathon-training.pdf`](docs/reference/2026-marathon-training.pdf).
 
-Status: under construction. The new package `ttg` is being built ticket by ticket (`docs/TICKETS.md`); the older prototype files in the repository root stay until it replaces them (T-10).
+Status: the pipeline season file → `plan.json` → PDF works end to end; the first prototype has been removed (T-10). Open work is in [`docs/TICKETS.md`](docs/TICKETS.md).
 
 ## Development setup
 

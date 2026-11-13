@@ -8,7 +8,7 @@ The table is an **outline** that the runner adapts to life, not a prescription. 
 
 - Single repository `f-hluchnik/training-table-generator`.
 - Python core, Typst renderer (D-003). Command-line tool first; a website is a later, optional goal (D-002, D-013).
-- The code at commit `b462d2e` is the first prototype. It is replaced, not extended (D-014).
+- The first prototype (commit `b462d2e`) was replaced, not extended, and removed in T-10 (D-014).
 
 The architecture was reviewed on 13 Nov 2026 and is described in `docs/PLAN.md`, the training rules in `docs/TRAINING_MODEL.md`, the decisions in `docs/DECISIONS.md`. Verify them against the code before relying on them.
 
