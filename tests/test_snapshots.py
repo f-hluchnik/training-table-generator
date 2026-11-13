@@ -14,6 +14,7 @@ from pathlib import Path
 
 import pytest
 
+from ttg.checks import check
 from ttg.expand import expand
 from ttg.export import export
 from ttg.spec import load_season
@@ -27,7 +28,7 @@ UPDATE = os.environ.get("TTG_UPDATE_SNAPSHOTS") == "1"
 
 def generate(season_file: str) -> dict:
     plan = expand(load_season(ROOT / "seasons" / season_file), TODAY)
-    return export(plan, plan.warnings)
+    return export(plan, check(plan))
 
 
 @pytest.mark.parametrize(("season_file", "snapshot"), SNAPSHOTS.items())
