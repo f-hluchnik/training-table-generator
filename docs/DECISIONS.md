@@ -34,7 +34,7 @@ The planned km of a week is the sum of its planned sessions (quality sessions es
 - **Calendar cells:** one per day, coloured after each run: green easy, yellow quality, blue long, red triangle in a corner for an unexpected event (illness, trip, ...).
 - **Gauge:** narrow boxes of 2 km, coloured at the end of the week by the km actually run.
 
-The tool tracks nothing; it only prints the empty sheet and the colour legend.
+The tool tracks nothing; it only prints the empty sheet. *Amended by D-032:* no colour legend on the sheet.
 
 ### D-008 "Life happens" rules printed on the sheet
 The order in which sessions are dropped is printed in the footer. The text is configurable.
@@ -210,3 +210,37 @@ Proposed by the architect, agreed by the owner. Details and sources in `TRAINING
 - **Default lengths calibrated:** unchanged except the recovery after a half marathon, 1 → 2 weeks.
 - **Calendar:** a week belongs to the month of its Thursday (ISO 8601). A race's week is the week of its first day; the plan ends on the last race's last day, so a multi-day race running from Sunday into Monday adds a short last week. Without `start` or `weeks`, the plan starts next Monday, or today if today is a Monday. Two A or B races in the same week share one race week, the earlier race gets no recovery, and C1 warns.
 - `weeks = N` gives a plan of exactly N weeks, ending with the week of the last race day.
+
+---
+
+## Session S5 (13 Nov 2026)
+
+### D-030 Week expansion rules (T-06)
+How `ttg.expand` turns phases into weeks. The numbers are named constants in `ttg.expand`, `ttg.long_run` and `ttg.sessions`; sources in `TRAINING_MODEL.md` §4 and §6.
+
+*Agreed with the owner in S5:*
+- **No overrides only to copy the reference.** `seasons/2026.toml` keeps the overrides of S1; every other difference from the reference sheet is listed in `tests/test_golden_2026.py` with its reason (amends the plan in D-020 and `TRAINING_MODEL.md` §4 to override the 2026 deload depth).
+- **Build cap:** build weeks grow the long run only up to 75 % of the race's cap; the race-specific block grows it to the full cap. Without it, a 32-week marathon plan would hold 32 km for 17 weeks.
+- **Restart after a race:** the first loading week after a race starts the long run at 75 % of the previous peak, but never above the next race's build cap. That is how a big race is accounted for: after the 40 km ultra peak the marathon block restarts at 24 km, not 30. *Owner:* asked whether this could be configurable; a week override already covers a one-off, so no new field.
+- **Races in planned km:** a C race counts its distance (it is training load); an A or B race does not (as in the reference; a 101 km ultra would also swamp the gauge). In plan.json a C race up to 10 km is a quality run of type `race`; an A or B race, or a longer C race, is the long run (`km` 0 for A or B).
+- **A C race from the half marathon up replaces the long run**, and that week has no quality run: the race is the week's long, hard effort. A C race up to 10 km replaces the quality run (D-017). Neither advances the progression it replaces. *Coach, S5:* a half marathon plus a 21 km long run in one week (test-2027 week 5) is two long efforts; tune-up races of that length take the long run's place.
+- **The I progression holds within Daniels' limit**: at most the lesser of 10 km and 8 % of the week at I pace (source 11), in whole km, like T at 40′. Without it, test-2027 reached 6 × 5′ (7 km in a 60 km week).
+- **Which race:** a race cell prints its distance, `RACE 21 km` (amends D-018's bare `RACE`); the footer lists the races: `races: Half marathon 4 apr (C); …`. The note column is too narrow for names.
+- **A C race inside a recovery block warns** (C1): racing returns sooner than the recovery allows. Overrides that bring back quality are taken as is.
+- **The long run may plateau at the build cap** in long plans (test-2027: 24 km in weeks 9–24). *Coach, S5:* that is a maintenance long run in a long base period; the deloads give the variation, and the growth resumes in the race-specific block. No change.
+- **Overrides change only their own week.** Later weeks, the deload and the taper are computed from the rules, not from the overridden values (2026: the taper reduces from the computed 35 km peak, not from week 14's 40 km override). *Owner:* "if I want it to affect the other weeks, I should override them too."
+- **Long-run growth stays +2 km per loading week.** *Owner:* "the growth should be around 10 %?" The 10 % rule is about weekly volume, and its only randomised trial found no fewer injuries (Buist et al. 2008, source 21); long-run guidance is usually an absolute 1–2 miles a week (source 22). A percentage would put the biggest steps near the peak. The weekly 10 % stays a warning (C3). *Open:* the owner may still prefer 10 %; it is one function (`long_run.grow`).
+
+*Proposed (review in the T-06 pull request):*
+- **3:1 cycle:** a deload after every three consecutive loading weeks (build or specific); any taper, race or recovery week restarts the count. This places 2026's deloads in weeks 4, 8 and 12, and none in the two marathon weeks after the recovery. "Counted from the plan start" (`TRAINING_MODEL.md` §4) would have put one in week 20.
+- **Quality rotation:** each type keeps its own progression for the whole plan; a rotation (build H → I → T, which the ultra block continues; I/T for 10 km) continues where it stopped. A C race takes the quality run's place without advancing the rotation.
+- **Taper:** in the weeks before the race week, the quality run is T 6 × 1 km and the long run is 60 % of the peak since the last race in the week just before the race week, 75 % earlier. No MP km in the taper's long run. Race week: no quality run; the race replaces the long run.
+- **Recovery:** easy runs only in the first week; later recovery weeks add a long run of one easy-run length (2026's 12 km "flush").
+- **MP cap:** at most 90 minutes at marathon pace in one session (Daniels), for both the MP repeats and the MP km of a long run. A 6-week marathon block would otherwise reach 8 × 3 km.
+- **A long run is never shorter than an easy run** when it is reduced (deload, taper, restart).
+- **Last column:** the planned km in build, deload and specific weeks; the words *taper*, *race*, *recovery* otherwise, as on the reference sheet. A `note` override replaces either.
+- **Notation:** `MP: 3x3 km` with a colon, like every other session (the reference printed `MP 3x3 km`).
+
+### D-032 No colour legend on the sheet
+*Owner, S5:* the sheet is otherwise black and white, so a legend of coloured swatches is out of place. The colour scheme of D-007 stays the runner's own; the sheet and plan.json no longer carry it (`footer.colours` removed from the contract).
+*Later, if wanted:* an option for coloured print, where the table is its own legend (e.g. the ER, QR and LR columns tinted in the colours of their runs), ticket T-13.

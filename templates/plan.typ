@@ -19,14 +19,6 @@
 #let band-fill = luma(88%)
 #let note-ink = luma(60%)
 
-// Colour legend (D-007): the plan names the colours, the sheet chooses the shades.
-#let shades = (
-  green: rgb("#8fd18f"),
-  yellow: rgb("#f2dc5d"),
-  blue: rgb("#7fb0e8"),
-  red: rgb("#e0453a"),
-)
-
 // ---------------------------------------------------------------- geometry
 #let page-margin = 8mm
 #let page-width = 297mm
@@ -217,25 +209,8 @@
     .join("; ")
 )
 
-#let swatch(entry) = {
-  let size = 3.2mm
-  let shade = shades.at(entry.colour)
-  box(
-    width: size,
-    height: size,
-    stroke: group,
-    fill: if entry.shape == "fill" { shade } else { none },
-    if entry.shape == "triangle" {
-      place(top + right, polygon(fill: shade, (0pt, 0pt), (-0.55 * size, 0pt), (0pt, 0.55 * size)))
-    },
-  )
-}
-
-#let colour-legend = (
-  plan.footer.colours
-    .map(entry => box[#swatch(entry) #h(0.8mm) #entry.label])
-    .join(h(5mm))
-)
+// The races of the season, so a "RACE" cell can be told apart (owner, S5).
+#let race-list = [#strong[races]: #plan.footer.races.join("; ")]
 
 // ---------------------------------------------------------------- page
 #set page(paper: "a4", flipped: true, margin: page-margin)
@@ -251,8 +226,7 @@
 #v(2mm)
 #align(center)[
   #pace-legend \
-  #v(0.5mm)
-  #colour-legend \
+  #race-list \
   #v(0.5mm)
   #plan.footer.rules.join(" ") #plan.footer.success
 ]

@@ -75,7 +75,7 @@
       ],
       "month": "may",
       "kind": "build",
-      "phase_label": "base",
+      "phase_label": "build",
       "easy": {
         "km": [
           12,
@@ -85,7 +85,7 @@
       },
       "quality": {
         "type": "H",
-        "km": 8,
+        "km": 6,
         "text": "H: 6x1'"
       },
       "long": {
@@ -93,9 +93,9 @@
         "mp_km": 0,
         "text": "15 km"
       },
-      "planned_km": 41,
-      "box_80pct": 33,
-      "note": "41"
+      "planned_km": 39,
+      "box_80pct": 32,
+      "note": "39"
     },
     {
       "number": 2,
@@ -138,7 +138,7 @@
       ],
       "month": "may",
       "kind": "build",
-      "phase_label": "base",
+      "phase_label": "build",
       "easy": {
         "km": [
           12,
@@ -148,13 +148,13 @@
       },
       "quality": {
         "type": "I",
-        "km": 8,
+        "km": 9,
         "text": "I: 5x3'"
       },
       "long": {
-        "km": 18,
+        "km": 17,
         "mp_km": 0,
-        "text": "18 km"
+        "text": "17 km"
       },
       "planned_km": 44,
       "box_80pct": 36,
@@ -201,7 +201,7 @@
       ],
       "month": "may",
       "kind": "build",
-      "phase_label": "base",
+      "phase_label": "build",
       "easy": {
         "km": [
           12,
@@ -215,13 +215,13 @@
         "text": "T: 3x8'"
       },
       "long": {
-        "km": 20,
+        "km": 19,
         "mp_km": 0,
-        "text": "20 km"
+        "text": "19 km"
       },
-      "planned_km": 48,
-      "box_80pct": 39,
-      "note": "48"
+      "planned_km": 47,
+      "box_80pct": 38,
+      "note": "47"
     },
     {
       "number": 4,
@@ -264,7 +264,7 @@
       ],
       "month": "may",
       "kind": "deload",
-      "phase_label": "base",
+      "phase_label": "build",
       "easy": {
         "km": [
           12,
@@ -273,18 +273,18 @@
         "text": "12+6"
       },
       "quality": {
-        "type": "none",
-        "km": 0,
-        "text": "–"
+        "type": "S",
+        "km": 6,
+        "text": "S"
       },
       "long": {
-        "km": 12,
+        "km": 14,
         "mp_km": 0,
-        "text": "12 km"
+        "text": "14 km"
       },
-      "planned_km": 30,
-      "box_80pct": 24,
-      "note": "30"
+      "planned_km": 38,
+      "box_80pct": 31,
+      "note": "38"
     },
     {
       "number": 5,
@@ -327,7 +327,7 @@
       ],
       "month": "jun",
       "kind": "build",
-      "phase_label": "strength",
+      "phase_label": "build",
       "easy": {
         "km": [
           12,
@@ -337,17 +337,17 @@
       },
       "quality": {
         "type": "H",
-        "km": 8,
+        "km": 6,
         "text": "H: 7x1'"
       },
       "long": {
-        "km": 22,
+        "km": 21,
         "mp_km": 0,
-        "text": "22 km"
+        "text": "21 km"
       },
-      "planned_km": 54,
-      "box_80pct": 44,
-      "note": "54"
+      "planned_km": 51,
+      "box_80pct": 41,
+      "note": "51"
     },
     {
       "number": 6,
@@ -390,7 +390,7 @@
       ],
       "month": "jun",
       "kind": "build",
-      "phase_label": "strength",
+      "phase_label": "build",
       "easy": {
         "km": [
           12,
@@ -400,13 +400,13 @@
       },
       "quality": {
         "type": "I",
-        "km": 9,
+        "km": 10,
         "text": "I: 6x3'"
       },
       "long": {
-        "km": 24,
+        "km": 23,
         "mp_km": 0,
-        "text": "24 km"
+        "text": "23 km"
       },
       "planned_km": 57,
       "box_80pct": 46,
@@ -453,7 +453,7 @@
       ],
       "month": "jun",
       "kind": "build",
-      "phase_label": "strength",
+      "phase_label": "build",
       "easy": {
         "km": [
           12,
@@ -467,13 +467,13 @@
         "text": "T: 3x10'"
       },
       "long": {
-        "km": 26,
+        "km": 25,
         "mp_km": 0,
-        "text": "26 km"
+        "text": "25 km"
       },
-      "planned_km": 61,
-      "box_80pct": 49,
-      "note": "61"
+      "planned_km": 60,
+      "box_80pct": 48,
+      "note": "60"
     },
     {
       "number": 8,
@@ -516,7 +516,7 @@
       ],
       "month": "jun",
       "kind": "deload",
-      "phase_label": "strength",
+      "phase_label": "build",
       "easy": {
         "km": [
           12,
@@ -525,18 +525,18 @@
         "text": "12+6"
       },
       "quality": {
-        "type": "none",
-        "km": 0,
-        "text": "–"
+        "type": "S",
+        "km": 6,
+        "text": "S"
       },
       "long": {
-        "km": 15,
+        "km": 19,
         "mp_km": 0,
-        "text": "15 km"
+        "text": "19 km"
       },
-      "planned_km": 33,
-      "box_80pct": 27,
-      "note": "33"
+      "planned_km": 43,
+      "box_80pct": 35,
+      "note": "43"
     },
     {
       "number": 9,
@@ -578,8 +578,8 @@
         }
       ],
       "month": "jul",
-      "kind": "build",
-      "phase_label": "volume",
+      "kind": "specific",
+      "phase_label": "ultra",
       "easy": {
         "km": [
           12,
@@ -589,17 +589,17 @@
       },
       "quality": {
         "type": "H",
-        "km": 9,
+        "km": 6,
         "text": "H: 8x1'"
       },
       "long": {
-        "km": 28,
+        "km": 27,
         "mp_km": 0,
-        "text": "28 km"
+        "text": "27 km"
       },
-      "planned_km": 61,
-      "box_80pct": 49,
-      "note": "61"
+      "planned_km": 57,
+      "box_80pct": 46,
+      "note": "57"
     },
     {
       "number": 10,
@@ -641,8 +641,8 @@
         }
       ],
       "month": "jul",
-      "kind": "build",
-      "phase_label": "volume",
+      "kind": "specific",
+      "phase_label": "ultra",
       "easy": {
         "km": [
           12,
@@ -652,13 +652,13 @@
       },
       "quality": {
         "type": "I",
-        "km": 9,
+        "km": 10,
         "text": "I: 5x4'"
       },
       "long": {
-        "km": 30,
+        "km": 29,
         "mp_km": 0,
-        "text": "30 km"
+        "text": "29 km"
       },
       "planned_km": 63,
       "box_80pct": 51,
@@ -704,8 +704,8 @@
         }
       ],
       "month": "jul",
-      "kind": "build",
-      "phase_label": "volume",
+      "kind": "specific",
+      "phase_label": "ultra",
       "easy": {
         "km": [
           12,
@@ -715,13 +715,13 @@
       },
       "quality": {
         "type": "T",
-        "km": 11,
+        "km": 12,
         "text": "T: 4x8'"
       },
       "long": {
-        "km": 32,
+        "km": 31,
         "mp_km": 0,
-        "text": "32 km"
+        "text": "31 km"
       },
       "planned_km": 67,
       "box_80pct": 54,
@@ -768,7 +768,7 @@
       ],
       "month": "jul",
       "kind": "deload",
-      "phase_label": "volume",
+      "phase_label": "ultra",
       "easy": {
         "km": [
           12,
@@ -777,18 +777,18 @@
         "text": "12+6"
       },
       "quality": {
-        "type": "none",
-        "km": 0,
-        "text": "–"
+        "type": "S",
+        "km": 6,
+        "text": "S"
       },
       "long": {
-        "km": 15,
+        "km": 23,
         "mp_km": 0,
-        "text": "15 km"
+        "text": "23 km"
       },
-      "planned_km": 33,
-      "box_80pct": 27,
-      "note": "33"
+      "planned_km": 47,
+      "box_80pct": 38,
+      "note": "47"
     },
     {
       "number": 13,
@@ -830,8 +830,8 @@
         }
       ],
       "month": "jul",
-      "kind": "build",
-      "phase_label": "volume",
+      "kind": "specific",
+      "phase_label": "ultra",
       "easy": {
         "km": [
           12,
@@ -841,17 +841,17 @@
       },
       "quality": {
         "type": "H",
-        "km": 9,
+        "km": 7,
         "text": "H: 10x1'"
       },
       "long": {
-        "km": 35,
+        "km": 33,
         "mp_km": 0,
-        "text": "35 km"
+        "text": "33 km"
       },
-      "planned_km": 68,
-      "box_80pct": 55,
-      "note": "68"
+      "planned_km": 64,
+      "box_80pct": 52,
+      "note": "64"
     },
     {
       "number": 14,
@@ -893,8 +893,8 @@
         }
       ],
       "month": "aug",
-      "kind": "build",
-      "phase_label": "volume",
+      "kind": "specific",
+      "phase_label": "ultra",
       "easy": {
         "km": [
           12,
@@ -904,7 +904,7 @@
       },
       "quality": {
         "type": "I",
-        "km": 10,
+        "km": 11,
         "text": "I: 6x4'"
       },
       "long": {
@@ -912,9 +912,9 @@
         "mp_km": 0,
         "text": "40 km"
       },
-      "planned_km": 74,
+      "planned_km": 75,
       "box_80pct": 60,
-      "note": "74"
+      "note": "75"
     },
     {
       "number": 15,
@@ -957,23 +957,23 @@
       ],
       "month": "aug",
       "kind": "taper",
-      "phase_label": "ultra",
+      "phase_label": "taper",
       "easy": {
         "km": [
           12,
-          12
+          6
         ],
-        "text": "12+12"
+        "text": "12+6"
       },
       "quality": {
         "type": "T",
         "km": 11,
-        "text": "T: 4x10'"
+        "text": "T: 6x1 km"
       },
       "long": {
-        "km": 20,
+        "km": 26,
         "mp_km": 0,
-        "text": "20 km"
+        "text": "26 km"
       },
       "planned_km": 55,
       "box_80pct": 44,
@@ -1020,7 +1020,7 @@
       ],
       "month": "aug",
       "kind": "taper",
-      "phase_label": "ultra",
+      "phase_label": "taper",
       "easy": {
         "km": [
           12,
@@ -1029,17 +1029,17 @@
         "text": "12+6"
       },
       "quality": {
-        "type": "none",
-        "km": 0,
-        "text": "–"
+        "type": "T",
+        "km": 11,
+        "text": "T: 6x1 km"
       },
       "long": {
-        "km": 12,
+        "km": 21,
         "mp_km": 0,
-        "text": "12 km"
+        "text": "21 km"
       },
-      "planned_km": 30,
-      "box_80pct": 24,
+      "planned_km": 50,
+      "box_80pct": 40,
       "note": "taper"
     },
     {
@@ -1083,7 +1083,7 @@
       ],
       "month": "aug",
       "kind": "race",
-      "phase_label": "ultra",
+      "phase_label": "taper",
       "easy": {
         "km": [
           12,
@@ -1099,7 +1099,7 @@
       "long": {
         "km": 0,
         "mp_km": 0,
-        "text": "RACE"
+        "text": "RACE 101 km"
       },
       "planned_km": 18,
       "box_80pct": 15,
@@ -1146,7 +1146,7 @@
       ],
       "month": "sep",
       "kind": "recovery",
-      "phase_label": "pivot",
+      "phase_label": "recovery",
       "easy": {
         "km": [
           12,
@@ -1209,7 +1209,7 @@
       ],
       "month": "sep",
       "kind": "recovery",
-      "phase_label": "pivot",
+      "phase_label": "recovery",
       "easy": {
         "km": [
           12,
@@ -1271,8 +1271,8 @@
         }
       ],
       "month": "sep",
-      "kind": "build",
-      "phase_label": "pivot",
+      "kind": "specific",
+      "phase_label": "marathon",
       "easy": {
         "km": [
           12,
@@ -1282,16 +1282,16 @@
       },
       "quality": {
         "type": "MP",
-        "km": 9,
-        "text": "MP 3x3 km"
+        "km": 13,
+        "text": "MP: 3x3 km"
       },
       "long": {
-        "km": 20,
-        "mp_km": 10,
-        "text": "20 km (10 MP)"
+        "km": 24,
+        "mp_km": 6,
+        "text": "24 km (6 MP)"
       },
-      "planned_km": 53,
-      "box_80pct": 43,
+      "planned_km": 61,
+      "box_80pct": 49,
       "note": "check"
     },
     {
@@ -1334,8 +1334,8 @@
         }
       ],
       "month": "sep",
-      "kind": "build",
-      "phase_label": "pivot",
+      "kind": "specific",
+      "phase_label": "marathon",
       "easy": {
         "km": [
           12,
@@ -1345,16 +1345,16 @@
       },
       "quality": {
         "type": "MP",
-        "km": 12,
-        "text": "MP 4x3 km"
+        "km": 17,
+        "text": "MP: 4x3 km"
       },
       "long": {
-        "km": 28,
-        "mp_km": 10,
-        "text": "28 km (10 MP)"
+        "km": 26,
+        "mp_km": 8,
+        "text": "26 km (8 MP)"
       },
-      "planned_km": 64,
-      "box_80pct": 52,
+      "planned_km": 67,
+      "box_80pct": 54,
       "note": "peak"
     },
     {
@@ -1398,7 +1398,7 @@
       ],
       "month": "oct",
       "kind": "taper",
-      "phase_label": "race",
+      "phase_label": "taper",
       "easy": {
         "km": [
           12,
@@ -1408,16 +1408,16 @@
       },
       "quality": {
         "type": "T",
-        "km": 6,
+        "km": 11,
         "text": "T: 6x1 km"
       },
       "long": {
-        "km": 18,
-        "mp_km": 6,
-        "text": "18 km (6 MP)"
+        "km": 16,
+        "mp_km": 0,
+        "text": "16 km"
       },
-      "planned_km": 42,
-      "box_80pct": 34,
+      "planned_km": 45,
+      "box_80pct": 36,
       "note": "taper"
     },
     {
@@ -1457,7 +1457,7 @@
       ],
       "month": "oct",
       "kind": "race",
-      "phase_label": "race",
+      "phase_label": "taper",
       "easy": {
         "km": [
           12,
@@ -1473,7 +1473,7 @@
       "long": {
         "km": 0,
         "mp_km": 0,
-        "text": "RACE"
+        "text": "RACE 42 km"
       },
       "planned_km": 18,
       "box_80pct": 15,
@@ -1481,27 +1481,9 @@
     }
   ],
   "footer": {
-    "colours": [
-      {
-        "colour": "green",
-        "shape": "fill",
-        "label": "easy run"
-      },
-      {
-        "colour": "yellow",
-        "shape": "fill",
-        "label": "quality run"
-      },
-      {
-        "colour": "blue",
-        "shape": "fill",
-        "label": "long run"
-      },
-      {
-        "colour": "red",
-        "shape": "triangle",
-        "label": "unexpected event"
-      }
+    "races": [
+      "Beskydská sedmička 28–29 aug (B)",
+      "Běhej Lesy Lednice 10 oct (A)"
     ],
     "rules": [
       "Short on time: drop an easy run → intensity → long run.",
@@ -1509,5 +1491,11 @@
     ],
     "success": "A week counts at ≥ 80 % of the planned km."
   },
-  "warnings": []
+  "warnings": [
+    {
+      "code": "C1",
+      "week": 23,
+      "message": "\"Běhej Lesy Lednice\": specific block shortened from 6 to 2 weeks (\"Beskydská sedmička\" and \"Běhej Lesy Lednice\" are too close)"
+    }
+  ]
 }
