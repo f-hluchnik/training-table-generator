@@ -1,5 +1,5 @@
 {
-  "schema_version": 3,
+  "schema_version": 4,
   "title": "marathon training plan",
   "paces": [
     {
@@ -95,7 +95,6 @@
         "text": "15 km"
       },
       "planned_km": 41,
-      "box_80pct": 33,
       "note": "41"
     },
     {
@@ -160,7 +159,6 @@
         "text": "18 km"
       },
       "planned_km": 44,
-      "box_80pct": 36,
       "note": "44"
     },
     {
@@ -225,7 +223,6 @@
         "text": "20 km"
       },
       "planned_km": 48,
-      "box_80pct": 39,
       "note": "48"
     },
     {
@@ -290,7 +287,6 @@
         "text": "12 km"
       },
       "planned_km": 30,
-      "box_80pct": 24,
       "note": "30"
     }
   ],
@@ -303,7 +299,7 @@
       "Short on time: drop an easy run → intensity → long run.",
       "Tired or ill: drop intensity first."
     ],
-    "success": "A week counts at ≥ 80 % of the planned km."
+    "success": "A week counts as fully done at 80 % of its planned km."
   },
   "warnings": []
 }

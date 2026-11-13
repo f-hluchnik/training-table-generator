@@ -29,7 +29,7 @@ Any number of races on any dates. The plan ends on the last race day. Its start 
 Every pace has a computed default (D-015) and can be overridden in the season file.
 
 ### D-006 Weekly km is derived, not an input
-The planned km of a week is the sum of its planned sessions (quality sessions estimated from warm-up, reps, recoveries, cool-down). It is printed in grey as an approximation. Success rule printed on the sheet: a week counts as done at **≥ 80 %** of the planned km.
+The planned km of a week is the sum of its planned sessions (quality sessions estimated from warm-up, reps, recoveries, cool-down). It is printed in grey as an approximation. Success rule printed on the sheet: a week counts as done at **≥ 80 %** of the planned km. *Amended by D-045:* printed in the footer only, worded "A week counts as fully done at 80 % of its planned km."
 
 ### D-007 The sheet is coloured by hand
 - **Calendar cells:** one per day, coloured after each run: green easy, yellow quality, blue long, red triangle in a corner for an unexpected event (illness, trip, ...).
@@ -112,7 +112,7 @@ Default: A.
 - **1 km per box** (owner, 13 Nov 2026: more boxes to colour, but the coloured area is the same). Not configurable.
 - The width covers the plan's highest planned week, rounded up to the next 10 km, with labels every 10 km.
 - Box width shrinks if the gauge would not fit the page.
-- The 80 % rule is shown minimally (Q-4): in each row, the border after the box where 80 % of that week's planned km is reached is one step heavier in the line hierarchy (D-024). No other marks.
+- *Removed by D-045 (owner, S8).* The 80 % rule is shown minimally (Q-4): in each row, the border after the box where 80 % of that week's planned km is reached is one step heavier in the line hierarchy (D-024). No other marks.
 
 *History:* a 1 km and a 2 km mock-up were compared on 13 Nov 2026 (140 mm gauge, 80 boxes of 1.75 mm). The owner chose 1 km. In the mock-up the 80 % line was too heavy, which led to D-024.
 
@@ -162,7 +162,7 @@ The ultra's race-specific block keeps the build rotation H → I → T; it is no
 The sheet is printed and kept on the wall for months, so it must look aesthetically pleasing, not just correct. All rules come from a small set of named line weights, used consistently across the whole table:
 
 1. **Outline:** the table border, the header separator, and the boundaries between column groups (week | calendar | gauge | phase | prescriptions).
-2. **Group:** month boundaries, the 10 km marks in the gauge, and the 80 % marker (D-019).
+2. **Group:** month boundaries, the 10 km marks in the gauge, and the 80 % marker (D-019; removed by D-045).
 3. **Hairline:** everything else (day cells, 1 km boxes, rows).
 
 No other weights. The exact values (e.g. 1.5 / 0.75 / 0.25 pt) and greys are chosen in T-08 and approved by the owner on a printed page.
@@ -198,7 +198,7 @@ The fields are documented in PLAN §4. Every value the sheet prints is computed 
 
 ### D-028 Sheet fonts and drawing values (T-08) — Agreed
 - **Fonts:** *Libertinus Serif* for the calendar, titles and footer; *DejaVu Sans Mono* for the prescriptions (ER, QR, LR). Both ship inside the `typst` package, so the sheet looks the same on every machine. The reference was made in Excel with a Garamond-like serif; its font is not redistributable and not present on every machine.
-- **Line weights (D-024):** outline 1.5 pt black; group 0.75 pt black; hairline 0.25 pt, 55 % grey. They are named constants at the top of `src/ttg/plan.typ` (moved there in T-09, D-035). The 10 km marks, the month boundaries and the 80 % marker share the group weight; the phase boundaries use the group weight in the phase column only.
+- **Line weights (D-024):** outline 1.5 pt black; group 0.75 pt black; hairline 0.25 pt, 55 % grey. They are named constants at the top of `src/ttg/plan.typ` (moved there in T-09, D-035). The 10 km marks, the month boundaries and the 80 % marker (removed by D-045) share the group weight; the phase boundaries use the group weight in the phase column only.
 - **Geometry:** the gauge box is at most 1.2 mm wide (96 mm for 80 boxes; owner's request, 13 Nov 2026: smaller gauge, wider calendar) and shrinks further until the table fits the page width (A4 landscape, 8 mm margins). Day cells are 10 mm wide. Rows are 6.4 mm and shrink so that long plans stay on one page.
 
 *Owner, S5:* agrees with the printed look, the greys and the weights, and with this decision as written. Phase boundaries keep the group weight (an addition to D-024's list).
@@ -335,3 +335,8 @@ test-2027 is frozen as the snapshot `tests/fixtures/plan-test-2027.json` with th
 - **Every band label shrinks to fit its band**, with 0.6 mm clear of the lines at each end; one that fits keeps 8 pt. On the reference sheets only test-2027's one-week *oct* changes, 8 → 7.7 pt (it ran over its lines before); every other label stays at 8 pt.
 - **Below 5 pt, a phase band shows its short form** (owner's choice over an empty band or tiny text): *bld.*, *spec.*, *tap.*, *rec.*, *10k*, *half*, *42k*, *ult.*, shrunk to fit as well (about 5 pt in a one-week band at the smallest rows). Race types by distance, not *mar.*, which would read as March next to the month column. Months have no short form; three letters shrink at most to about 4 pt.
 - **Where the logic lives:** the short forms are printed text, so Python computes them (D-012): `plan.json` gains `weeks[].phase_short` and is `schema_version` 3. Which of the two the band shows depends on the band's printed length, which only the template knows, so the template chooses, like it groups the bands (PLAN §4).
+
+### D-045 No 80 % marker on the gauge; the success rule reworded — Agreed (owner, S8)
+*Owner, S8:* "I don't like the 80 % marks"; the sentence should be different, "something like *Week counts as fully done when completed at least on 80 %*".
+- **The gauge has no 80 % marker.** Each row keeps its 1 km boxes and the 10 km marks. `weeks[].box_80pct`, which only placed the marker, is dropped: `plan.json` 4. *Amends* D-019 and D-024 (the group weight no longer draws the marker).
+- **The success rule stays (D-006), in the footer only:** "A week counts as fully done at 80 % of its planned km." The 80 % comes from the same constant as before, `SUCCESS_SHARE`.

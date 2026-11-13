@@ -24,7 +24,7 @@ One row per week (plans longer than about 40 weeks continue on a second page), w
 | Month | The month a week belongs to (the month of its Thursday), spanning its weeks. |
 | Week | The week number, from 1. |
 | Mon–Sun | The day of the month: **one cell per day to colour after each run.** Race days are bold; the last week ends on the last race day. |
-| Gauge | One narrow box per km, labelled every 10 km. At the end of the week, colour as many boxes as km you ran. A heavier border marks 80 % of the week's planned km: **a week counts as done at ≥ 80 %.** |
+| Gauge | One narrow box per km, labelled every 10 km. At the end of the week, colour as many boxes as km you ran. **A week counts as fully done at 80 % of its planned km.** |
 | Phase | Where you are in the season: *build*, the race-specific block (*10 km*, *half*, *marathon*, *ultra*, or *specific* for a race of another distance, e.g. 30 km), *taper*, *recovery*. A label shrinks to fit a short band; a band too short for the word, such as a one-week recovery, shows a short form: *bld.*, *spec.*, *tap.*, *rec.*, *10k*, *half*, *42k*, *ult.* |
 | ER | The easy runs, km each: `12+12`, or `12+6` in a lighter week. |
 | QR | The quality run (codes below). |
@@ -43,7 +43,7 @@ Session codes:
 | `RACE 21 km` | A race in place of the session. |
 | `–` | No session. |
 
-The planned km assume a 10′ warm-up and a 10′ cool-down around every quality run. Below the table, the sheet prints the pace legend (e.g. `ER=5:37 [easy]; … I=4:18+2′ [hard]`, where `+2′` is the recovery jog), the races with their dates and priorities (and `hilly`), and the "life happens" rules: *Short on time: drop an easy run → intensity → long run. Tired or ill: drop intensity first.*
+The planned km assume a 10′ warm-up and a 10′ cool-down around every quality run. Below the table, the sheet prints the pace legend (e.g. `ER=5:37 [easy]; … I=4:18+2′ [hard]`, where `+2′` is the recovery jog), the races with their dates and priorities (and `hilly`), the "life happens" rules (*Short on time: drop an easy run → intensity → long run. Tired or ill: drop intensity first.*) and the success rule (*A week counts as fully done at 80 % of its planned km.*)
 
 The sheet is black and white, and the colours are yours. The reference season used green for easy, yellow for quality and blue for long runs, with a red triangle in a corner for an unexpected event (illness, a trip).
 
@@ -243,7 +243,7 @@ All logic is in Python. The Typst template only lays out `plan.json`, which alre
 | `render`, `plan.typ` | Write `plan.json`, compile the template to `plan.pdf`. |
 | `cli` | `ttg build`. |
 
-`plan.json` (`schema_version` 3) is the contract between the Python side and the template. Its fields are documented in [`docs/PLAN.md`](docs/PLAN.md) §4.
+`plan.json` (`schema_version` 4) is the contract between the Python side and the template. Its fields are documented in [`docs/PLAN.md`](docs/PLAN.md) §4.
 
 ## Development
 

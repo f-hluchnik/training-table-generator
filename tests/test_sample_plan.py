@@ -17,12 +17,11 @@ SAMPLES = [
     FIXTURES / "plan-test-2027.json",
 ]
 DAYS_PER_WEEK = 7
-SUCCESS_SHARE = 0.8  # D-006
 
 PLAN_KEYS = {"schema_version", "title", "paces", "gauge", "weeks", "footer", "warnings"}
 WEEK_KEYS = {
     "number", "days", "month", "kind", "phase", "phase_label", "phase_short", "easy", "quality", "long",
-    "planned_km", "box_80pct", "note",
+    "planned_km", "note",
 }  # fmt: skip
 
 
@@ -33,7 +32,7 @@ def plan(request):
 
 def test_top_level_keys(plan):
     assert set(plan) == PLAN_KEYS
-    assert plan["schema_version"] == 3
+    assert plan["schema_version"] == 4
 
 
 def test_week_keys(plan):
@@ -65,7 +64,6 @@ def test_planned_km_is_the_sum_of_the_sessions(plan):
     for week in plan["weeks"]:
         sessions = sum(week["easy"]["km"]) + week["quality"]["km"] + week["long"]["km"]
         assert week["planned_km"] == sessions
-        assert week["box_80pct"] == math.ceil(SUCCESS_SHARE * week["planned_km"])
 
 
 def test_gauge_covers_the_highest_week(plan):

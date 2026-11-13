@@ -197,15 +197,6 @@
   for x in range(col-gauge + label-every, col-phase, step: label-every) {
     all.push(table.vline(x: x, end: row-count, stroke: group))
   }
-  // The 80 % marker (D-019): the border after the box where 80 % of the week's km is reached.
-  for (index, week) in weeks.enumerate() {
-    all.push(table.vline(
-      x: col-gauge + week.box_80pct,
-      start: week-row(index),
-      end: week-row(index) + 1,
-      stroke: group,
-    ))
-  }
 
   // Outline: the frame, the header separator, the boundaries between column groups.
   all.push(table.hline(y: 0, end: framed, stroke: outline))

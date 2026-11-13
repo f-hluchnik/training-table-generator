@@ -221,7 +221,7 @@ Warnings go to the command line, not on the sheet. Implemented in `ttg.checks` (
 The owner's 2026 order was intensity first, then an easy run, then the long run. That order is right when the cause is fatigue or illness. When the cause is lack of time, the standard is to drop an easy run first and keep the quality run and the long run. The long run goes last either way. The owner agreed to the standard (D-008).
 
 Default footer (configurable):
-> Short on time: drop an easy run → intensity → long run. Tired or ill: drop intensity first. A week counts at ≥ 80 % of the planned km.
+> Short on time: drop an easy run → intensity → long run. Tired or ill: drop intensity first. A week counts as fully done at 80 % of its planned km.
 
 ## 9. Coach review of the 2026 plan
 
