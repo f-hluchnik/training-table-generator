@@ -2,8 +2,8 @@
 
 The season is what the runner writes in season.toml; the schema is documented
 in docs/PLAN.md §4 (D-025). Validation lives in `ttg.spec`; these classes only
-hold already-validated data. On the plan side, phases and warnings exist since
-T-04; weeks and the plan follow in T-06.
+hold already-validated data. The plan side (phases, weeks, the plan) is built by
+`ttg.layout` and `ttg.expand`.
 """
 
 from dataclasses import dataclass
@@ -201,8 +201,7 @@ class Season:
 class PhaseKind(StrEnum):
     """The phases the layout places (TRAINING_MODEL.md §4–§5).
 
-    Deload and race weeks are week kinds inside these phases, decided in T-06:
-    deloads inside build, the race week as the last week of a taper.
+    Deload and race weeks are week kinds inside these phases (`WeekKind`).
     """
 
     BUILD = "build"  # general preparation
@@ -223,6 +222,56 @@ class Phase:
         return self.first_week + self.weeks - 1
 
 
+class WeekKind(StrEnum):
+    """What a week is for (PLAN §4 `weeks[].kind`).
+
+    Build and specific weeks are the loading weeks of the 3:1 cycle; a deload can
+    fall inside either phase. The race week is the last week of a taper.
+    """
+
+    BUILD = "build"
+    DELOAD = "deload"
+    SPECIFIC = "specific"
+    TAPER = "taper"
+    RACE = "race"
+    RECOVERY = "recovery"
+
+    @property
+    def is_loading(self) -> bool:
+        return self in (WeekKind.BUILD, WeekKind.SPECIFIC)
+
+
+@dataclass(frozen=True)
+class LongRun:
+    km: int
+    mp_km: int = 0  # the last km at marathon pace, printed `28 km (10 MP)` (D-018)
+
+
+@dataclass(frozen=True)
+class Week:
+    number: int  # 1-based
+    days: tuple[date | None, ...]  # Monday to Sunday; None after the plan ends
+    month: int  # 1–12, the month of the week's Thursday
+    kind: WeekKind
+    phase: Phase
+    target: Race  # the A or B race the week works toward; decides the long-run cap
+    easy: tuple[int, ...]  # km of each easy run
+    quality: Session | Race  # a C race replaces the quality run (D-017)
+    quality_km: int  # estimate (TRAINING_MODEL.md §3); a C race counts its distance
+    long_run: LongRun | Race | None  # an A or B race replaces the long run; None: no long run
+    note: str | None = None  # override text for the last column (D-025)
+
+    @property
+    def long_run_km(self) -> int:
+        """Km of the long run; an A or B race is not counted (owner, S5)."""
+        return self.long_run.km if isinstance(self.long_run, LongRun) else 0
+
+    @property
+    def planned_km(self) -> int:
+        """The sum of all runs (D-006)."""
+        return sum(self.easy) + self.quality_km + self.long_run_km
+
+
 class WarningCode(StrEnum):
     """Check codes (TRAINING_MODEL.md §7)."""
 
@@ -237,3 +286,11 @@ class PlanWarning:
     code: WarningCode
     week: int | None
     message: str
+
+
+@dataclass(frozen=True)
+class Plan:
+    season: Season
+    paces: TrainingPaces  # overrides applied
+    weeks: tuple[Week, ...]
+    warnings: tuple[PlanWarning, ...]  # from the layout and the expansion; the checks add theirs (T-07)

@@ -1,8 +1,7 @@
-"""The hand-made sample plans (input of the renderer in T-08) follow the plan.json contract in
-docs/PLAN.md §4 and are internally consistent.
+"""The sample plans follow the plan.json contract in docs/PLAN.md §4 and are internally consistent.
 
-`weeks-1-4` is the first month of 2026. `full` is the whole 2026 reference table, transcribed
-for layout tests only: the MP km inside its long runs are placeholders."""
+`sample-plan-2026-weeks-1-4` is hand-made (T-02, the renderer's first input in T-08); `plan-2026`
+and `plan-test-2027` are the generated snapshots (tests/test_snapshots.py)."""
 
 import json
 import math
@@ -12,7 +11,11 @@ from pathlib import Path
 import pytest
 
 FIXTURES = Path(__file__).parent / "fixtures"
-SAMPLES = [FIXTURES / "sample-plan-2026-weeks-1-4.json", FIXTURES / "sample-plan-2026-full.json"]
+SAMPLES = [
+    FIXTURES / "sample-plan-2026-weeks-1-4.json",
+    FIXTURES / "plan-2026.json",
+    FIXTURES / "plan-test-2027.json",
+]
 DAYS_PER_WEEK = 7
 SUCCESS_SHARE = 0.8  # D-006
 

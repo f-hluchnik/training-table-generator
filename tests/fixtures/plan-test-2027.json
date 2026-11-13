@@ -1,0 +1,2084 @@
+{
+  "schema_version": 1,
+  "title": "training plan",
+  "paces": [
+    {
+      "code": "ER",
+      "pace": "5:37",
+      "label": "easy"
+    },
+    {
+      "code": "I",
+      "pace": "4:18+2'",
+      "label": "hard"
+    },
+    {
+      "code": "T",
+      "pace": "4:40+2'",
+      "label": "comfortably hard"
+    },
+    {
+      "code": "MP",
+      "pace": "4:59",
+      "label": ""
+    },
+    {
+      "code": "LR",
+      "pace": "5:37",
+      "label": "easy"
+    }
+  ],
+  "gauge": {
+    "km_per_box": 1,
+    "boxes": 80,
+    "label_every_km": 10
+  },
+  "weeks": [
+    {
+      "number": 1,
+      "days": [
+        {
+          "date": "2027-03-01",
+          "text": "1",
+          "race": false
+        },
+        {
+          "date": "2027-03-02",
+          "text": "2",
+          "race": false
+        },
+        {
+          "date": "2027-03-03",
+          "text": "3",
+          "race": false
+        },
+        {
+          "date": "2027-03-04",
+          "text": "4",
+          "race": false
+        },
+        {
+          "date": "2027-03-05",
+          "text": "5",
+          "race": false
+        },
+        {
+          "date": "2027-03-06",
+          "text": "6",
+          "race": false
+        },
+        {
+          "date": "2027-03-07",
+          "text": "7",
+          "race": false
+        }
+      ],
+      "month": "mar",
+      "kind": "build",
+      "phase_label": "build",
+      "easy": {
+        "km": [
+          12,
+          12
+        ],
+        "text": "12+12"
+      },
+      "quality": {
+        "type": "H",
+        "km": 6,
+        "text": "H: 6x1'"
+      },
+      "long": {
+        "km": 15,
+        "mp_km": 0,
+        "text": "15 km"
+      },
+      "planned_km": 45,
+      "box_80pct": 36,
+      "note": "45"
+    },
+    {
+      "number": 2,
+      "days": [
+        {
+          "date": "2027-03-08",
+          "text": "8",
+          "race": false
+        },
+        {
+          "date": "2027-03-09",
+          "text": "9",
+          "race": false
+        },
+        {
+          "date": "2027-03-10",
+          "text": "10",
+          "race": false
+        },
+        {
+          "date": "2027-03-11",
+          "text": "11",
+          "race": false
+        },
+        {
+          "date": "2027-03-12",
+          "text": "12",
+          "race": false
+        },
+        {
+          "date": "2027-03-13",
+          "text": "13",
+          "race": false
+        },
+        {
+          "date": "2027-03-14",
+          "text": "14",
+          "race": false
+        }
+      ],
+      "month": "mar",
+      "kind": "build",
+      "phase_label": "build",
+      "easy": {
+        "km": [
+          12,
+          12
+        ],
+        "text": "12+12"
+      },
+      "quality": {
+        "type": "I",
+        "km": 8,
+        "text": "I: 5x3'"
+      },
+      "long": {
+        "km": 17,
+        "mp_km": 0,
+        "text": "17 km"
+      },
+      "planned_km": 49,
+      "box_80pct": 40,
+      "note": "49"
+    },
+    {
+      "number": 3,
+      "days": [
+        {
+          "date": "2027-03-15",
+          "text": "15",
+          "race": false
+        },
+        {
+          "date": "2027-03-16",
+          "text": "16",
+          "race": false
+        },
+        {
+          "date": "2027-03-17",
+          "text": "17",
+          "race": false
+        },
+        {
+          "date": "2027-03-18",
+          "text": "18",
+          "race": false
+        },
+        {
+          "date": "2027-03-19",
+          "text": "19",
+          "race": false
+        },
+        {
+          "date": "2027-03-20",
+          "text": "20",
+          "race": false
+        },
+        {
+          "date": "2027-03-21",
+          "text": "21",
+          "race": false
+        }
+      ],
+      "month": "mar",
+      "kind": "build",
+      "phase_label": "build",
+      "easy": {
+        "km": [
+          12,
+          12
+        ],
+        "text": "12+12"
+      },
+      "quality": {
+        "type": "T",
+        "km": 9,
+        "text": "T: 3x8'"
+      },
+      "long": {
+        "km": 19,
+        "mp_km": 0,
+        "text": "19 km"
+      },
+      "planned_km": 52,
+      "box_80pct": 42,
+      "note": "52"
+    },
+    {
+      "number": 4,
+      "days": [
+        {
+          "date": "2027-03-22",
+          "text": "22",
+          "race": false
+        },
+        {
+          "date": "2027-03-23",
+          "text": "23",
+          "race": false
+        },
+        {
+          "date": "2027-03-24",
+          "text": "24",
+          "race": false
+        },
+        {
+          "date": "2027-03-25",
+          "text": "25",
+          "race": false
+        },
+        {
+          "date": "2027-03-26",
+          "text": "26",
+          "race": false
+        },
+        {
+          "date": "2027-03-27",
+          "text": "27",
+          "race": false
+        },
+        {
+          "date": "2027-03-28",
+          "text": "28",
+          "race": false
+        }
+      ],
+      "month": "mar",
+      "kind": "deload",
+      "phase_label": "build",
+      "easy": {
+        "km": [
+          12,
+          6
+        ],
+        "text": "12+6"
+      },
+      "quality": {
+        "type": "S",
+        "km": 6,
+        "text": "S"
+      },
+      "long": {
+        "km": 14,
+        "mp_km": 0,
+        "text": "14 km"
+      },
+      "planned_km": 38,
+      "box_80pct": 31,
+      "note": "38"
+    },
+    {
+      "number": 5,
+      "days": [
+        {
+          "date": "2027-03-29",
+          "text": "29",
+          "race": false
+        },
+        {
+          "date": "2027-03-30",
+          "text": "30",
+          "race": false
+        },
+        {
+          "date": "2027-03-31",
+          "text": "31",
+          "race": false
+        },
+        {
+          "date": "2027-04-01",
+          "text": "1",
+          "race": false
+        },
+        {
+          "date": "2027-04-02",
+          "text": "2",
+          "race": false
+        },
+        {
+          "date": "2027-04-03",
+          "text": "3",
+          "race": false
+        },
+        {
+          "date": "2027-04-04",
+          "text": "4",
+          "race": true
+        }
+      ],
+      "month": "apr",
+      "kind": "build",
+      "phase_label": "build",
+      "easy": {
+        "km": [
+          12,
+          12
+        ],
+        "text": "12+12"
+      },
+      "quality": {
+        "type": "race",
+        "km": 21,
+        "text": "RACE"
+      },
+      "long": {
+        "km": 21,
+        "mp_km": 0,
+        "text": "21 km"
+      },
+      "planned_km": 66,
+      "box_80pct": 53,
+      "note": "66"
+    },
+    {
+      "number": 6,
+      "days": [
+        {
+          "date": "2027-04-05",
+          "text": "5",
+          "race": false
+        },
+        {
+          "date": "2027-04-06",
+          "text": "6",
+          "race": false
+        },
+        {
+          "date": "2027-04-07",
+          "text": "7",
+          "race": false
+        },
+        {
+          "date": "2027-04-08",
+          "text": "8",
+          "race": false
+        },
+        {
+          "date": "2027-04-09",
+          "text": "9",
+          "race": false
+        },
+        {
+          "date": "2027-04-10",
+          "text": "10",
+          "race": false
+        },
+        {
+          "date": "2027-04-11",
+          "text": "11",
+          "race": false
+        }
+      ],
+      "month": "apr",
+      "kind": "build",
+      "phase_label": "build",
+      "easy": {
+        "km": [
+          12,
+          12
+        ],
+        "text": "12+12"
+      },
+      "quality": {
+        "type": "H",
+        "km": 6,
+        "text": "H: 7x1'"
+      },
+      "long": {
+        "km": 23,
+        "mp_km": 0,
+        "text": "23 km"
+      },
+      "planned_km": 53,
+      "box_80pct": 43,
+      "note": "53"
+    },
+    {
+      "number": 7,
+      "days": [
+        {
+          "date": "2027-04-12",
+          "text": "12",
+          "race": false
+        },
+        {
+          "date": "2027-04-13",
+          "text": "13",
+          "race": false
+        },
+        {
+          "date": "2027-04-14",
+          "text": "14",
+          "race": false
+        },
+        {
+          "date": "2027-04-15",
+          "text": "15",
+          "race": false
+        },
+        {
+          "date": "2027-04-16",
+          "text": "16",
+          "race": false
+        },
+        {
+          "date": "2027-04-17",
+          "text": "17",
+          "race": false
+        },
+        {
+          "date": "2027-04-18",
+          "text": "18",
+          "race": false
+        }
+      ],
+      "month": "apr",
+      "kind": "build",
+      "phase_label": "build",
+      "easy": {
+        "km": [
+          12,
+          12
+        ],
+        "text": "12+12"
+      },
+      "quality": {
+        "type": "I",
+        "km": 10,
+        "text": "I: 6x3'"
+      },
+      "long": {
+        "km": 24,
+        "mp_km": 0,
+        "text": "24 km"
+      },
+      "planned_km": 58,
+      "box_80pct": 47,
+      "note": "58"
+    },
+    {
+      "number": 8,
+      "days": [
+        {
+          "date": "2027-04-19",
+          "text": "19",
+          "race": false
+        },
+        {
+          "date": "2027-04-20",
+          "text": "20",
+          "race": false
+        },
+        {
+          "date": "2027-04-21",
+          "text": "21",
+          "race": false
+        },
+        {
+          "date": "2027-04-22",
+          "text": "22",
+          "race": false
+        },
+        {
+          "date": "2027-04-23",
+          "text": "23",
+          "race": false
+        },
+        {
+          "date": "2027-04-24",
+          "text": "24",
+          "race": false
+        },
+        {
+          "date": "2027-04-25",
+          "text": "25",
+          "race": false
+        }
+      ],
+      "month": "apr",
+      "kind": "deload",
+      "phase_label": "build",
+      "easy": {
+        "km": [
+          12,
+          6
+        ],
+        "text": "12+6"
+      },
+      "quality": {
+        "type": "S",
+        "km": 6,
+        "text": "S"
+      },
+      "long": {
+        "km": 18,
+        "mp_km": 0,
+        "text": "18 km"
+      },
+      "planned_km": 42,
+      "box_80pct": 34,
+      "note": "42"
+    },
+    {
+      "number": 9,
+      "days": [
+        {
+          "date": "2027-04-26",
+          "text": "26",
+          "race": false
+        },
+        {
+          "date": "2027-04-27",
+          "text": "27",
+          "race": false
+        },
+        {
+          "date": "2027-04-28",
+          "text": "28",
+          "race": false
+        },
+        {
+          "date": "2027-04-29",
+          "text": "29",
+          "race": false
+        },
+        {
+          "date": "2027-04-30",
+          "text": "30",
+          "race": false
+        },
+        {
+          "date": "2027-05-01",
+          "text": "1",
+          "race": false
+        },
+        {
+          "date": "2027-05-02",
+          "text": "2",
+          "race": false
+        }
+      ],
+      "month": "apr",
+      "kind": "build",
+      "phase_label": "build",
+      "easy": {
+        "km": [
+          12,
+          12
+        ],
+        "text": "12+12"
+      },
+      "quality": {
+        "type": "T",
+        "km": 11,
+        "text": "T: 3x10'"
+      },
+      "long": {
+        "km": 24,
+        "mp_km": 0,
+        "text": "24 km"
+      },
+      "planned_km": 59,
+      "box_80pct": 48,
+      "note": "59"
+    },
+    {
+      "number": 10,
+      "days": [
+        {
+          "date": "2027-05-03",
+          "text": "3",
+          "race": false
+        },
+        {
+          "date": "2027-05-04",
+          "text": "4",
+          "race": false
+        },
+        {
+          "date": "2027-05-05",
+          "text": "5",
+          "race": false
+        },
+        {
+          "date": "2027-05-06",
+          "text": "6",
+          "race": false
+        },
+        {
+          "date": "2027-05-07",
+          "text": "7",
+          "race": false
+        },
+        {
+          "date": "2027-05-08",
+          "text": "8",
+          "race": false
+        },
+        {
+          "date": "2027-05-09",
+          "text": "9",
+          "race": false
+        }
+      ],
+      "month": "may",
+      "kind": "build",
+      "phase_label": "build",
+      "easy": {
+        "km": [
+          12,
+          12
+        ],
+        "text": "12+12"
+      },
+      "quality": {
+        "type": "H",
+        "km": 6,
+        "text": "H: 8x1'"
+      },
+      "long": {
+        "km": 24,
+        "mp_km": 0,
+        "text": "24 km"
+      },
+      "planned_km": 54,
+      "box_80pct": 44,
+      "note": "54"
+    },
+    {
+      "number": 11,
+      "days": [
+        {
+          "date": "2027-05-10",
+          "text": "10",
+          "race": false
+        },
+        {
+          "date": "2027-05-11",
+          "text": "11",
+          "race": false
+        },
+        {
+          "date": "2027-05-12",
+          "text": "12",
+          "race": false
+        },
+        {
+          "date": "2027-05-13",
+          "text": "13",
+          "race": false
+        },
+        {
+          "date": "2027-05-14",
+          "text": "14",
+          "race": false
+        },
+        {
+          "date": "2027-05-15",
+          "text": "15",
+          "race": false
+        },
+        {
+          "date": "2027-05-16",
+          "text": "16",
+          "race": false
+        }
+      ],
+      "month": "may",
+      "kind": "build",
+      "phase_label": "build",
+      "easy": {
+        "km": [
+          12,
+          12
+        ],
+        "text": "12+12"
+      },
+      "quality": {
+        "type": "I",
+        "km": 10,
+        "text": "I: 5x4'"
+      },
+      "long": {
+        "km": 24,
+        "mp_km": 0,
+        "text": "24 km"
+      },
+      "planned_km": 58,
+      "box_80pct": 47,
+      "note": "58"
+    },
+    {
+      "number": 12,
+      "days": [
+        {
+          "date": "2027-05-17",
+          "text": "17",
+          "race": false
+        },
+        {
+          "date": "2027-05-18",
+          "text": "18",
+          "race": false
+        },
+        {
+          "date": "2027-05-19",
+          "text": "19",
+          "race": false
+        },
+        {
+          "date": "2027-05-20",
+          "text": "20",
+          "race": false
+        },
+        {
+          "date": "2027-05-21",
+          "text": "21",
+          "race": false
+        },
+        {
+          "date": "2027-05-22",
+          "text": "22",
+          "race": false
+        },
+        {
+          "date": "2027-05-23",
+          "text": "23",
+          "race": false
+        }
+      ],
+      "month": "may",
+      "kind": "deload",
+      "phase_label": "build",
+      "easy": {
+        "km": [
+          12,
+          6
+        ],
+        "text": "12+6"
+      },
+      "quality": {
+        "type": "S",
+        "km": 6,
+        "text": "S"
+      },
+      "long": {
+        "km": 18,
+        "mp_km": 0,
+        "text": "18 km"
+      },
+      "planned_km": 42,
+      "box_80pct": 34,
+      "note": "42"
+    },
+    {
+      "number": 13,
+      "days": [
+        {
+          "date": "2027-05-24",
+          "text": "24",
+          "race": false
+        },
+        {
+          "date": "2027-05-25",
+          "text": "25",
+          "race": false
+        },
+        {
+          "date": "2027-05-26",
+          "text": "26",
+          "race": false
+        },
+        {
+          "date": "2027-05-27",
+          "text": "27",
+          "race": false
+        },
+        {
+          "date": "2027-05-28",
+          "text": "28",
+          "race": false
+        },
+        {
+          "date": "2027-05-29",
+          "text": "29",
+          "race": false
+        },
+        {
+          "date": "2027-05-30",
+          "text": "30",
+          "race": false
+        }
+      ],
+      "month": "may",
+      "kind": "build",
+      "phase_label": "build",
+      "easy": {
+        "km": [
+          12,
+          12
+        ],
+        "text": "12+12"
+      },
+      "quality": {
+        "type": "T",
+        "km": 11,
+        "text": "T: 4x8'"
+      },
+      "long": {
+        "km": 24,
+        "mp_km": 0,
+        "text": "24 km"
+      },
+      "planned_km": 59,
+      "box_80pct": 48,
+      "note": "59"
+    },
+    {
+      "number": 14,
+      "days": [
+        {
+          "date": "2027-05-31",
+          "text": "31",
+          "race": false
+        },
+        {
+          "date": "2027-06-01",
+          "text": "1",
+          "race": false
+        },
+        {
+          "date": "2027-06-02",
+          "text": "2",
+          "race": false
+        },
+        {
+          "date": "2027-06-03",
+          "text": "3",
+          "race": false
+        },
+        {
+          "date": "2027-06-04",
+          "text": "4",
+          "race": false
+        },
+        {
+          "date": "2027-06-05",
+          "text": "5",
+          "race": false
+        },
+        {
+          "date": "2027-06-06",
+          "text": "6",
+          "race": false
+        }
+      ],
+      "month": "jun",
+      "kind": "build",
+      "phase_label": "build",
+      "easy": {
+        "km": [
+          12,
+          12
+        ],
+        "text": "12+12"
+      },
+      "quality": {
+        "type": "H",
+        "km": 7,
+        "text": "H: 9x1'"
+      },
+      "long": {
+        "km": 24,
+        "mp_km": 0,
+        "text": "24 km"
+      },
+      "planned_km": 55,
+      "box_80pct": 44,
+      "note": "55"
+    },
+    {
+      "number": 15,
+      "days": [
+        {
+          "date": "2027-06-07",
+          "text": "7",
+          "race": false
+        },
+        {
+          "date": "2027-06-08",
+          "text": "8",
+          "race": false
+        },
+        {
+          "date": "2027-06-09",
+          "text": "9",
+          "race": false
+        },
+        {
+          "date": "2027-06-10",
+          "text": "10",
+          "race": false
+        },
+        {
+          "date": "2027-06-11",
+          "text": "11",
+          "race": false
+        },
+        {
+          "date": "2027-06-12",
+          "text": "12",
+          "race": false
+        },
+        {
+          "date": "2027-06-13",
+          "text": "13",
+          "race": false
+        }
+      ],
+      "month": "jun",
+      "kind": "build",
+      "phase_label": "build",
+      "easy": {
+        "km": [
+          12,
+          12
+        ],
+        "text": "12+12"
+      },
+      "quality": {
+        "type": "I",
+        "km": 11,
+        "text": "I: 6x4'"
+      },
+      "long": {
+        "km": 24,
+        "mp_km": 0,
+        "text": "24 km"
+      },
+      "planned_km": 59,
+      "box_80pct": 48,
+      "note": "59"
+    },
+    {
+      "number": 16,
+      "days": [
+        {
+          "date": "2027-06-14",
+          "text": "14",
+          "race": false
+        },
+        {
+          "date": "2027-06-15",
+          "text": "15",
+          "race": false
+        },
+        {
+          "date": "2027-06-16",
+          "text": "16",
+          "race": false
+        },
+        {
+          "date": "2027-06-17",
+          "text": "17",
+          "race": false
+        },
+        {
+          "date": "2027-06-18",
+          "text": "18",
+          "race": false
+        },
+        {
+          "date": "2027-06-19",
+          "text": "19",
+          "race": false
+        },
+        {
+          "date": "2027-06-20",
+          "text": "20",
+          "race": false
+        }
+      ],
+      "month": "jun",
+      "kind": "deload",
+      "phase_label": "build",
+      "easy": {
+        "km": [
+          12,
+          6
+        ],
+        "text": "12+6"
+      },
+      "quality": {
+        "type": "S",
+        "km": 6,
+        "text": "S"
+      },
+      "long": {
+        "km": 18,
+        "mp_km": 0,
+        "text": "18 km"
+      },
+      "planned_km": 42,
+      "box_80pct": 34,
+      "note": "42"
+    },
+    {
+      "number": 17,
+      "days": [
+        {
+          "date": "2027-06-21",
+          "text": "21",
+          "race": false
+        },
+        {
+          "date": "2027-06-22",
+          "text": "22",
+          "race": false
+        },
+        {
+          "date": "2027-06-23",
+          "text": "23",
+          "race": false
+        },
+        {
+          "date": "2027-06-24",
+          "text": "24",
+          "race": false
+        },
+        {
+          "date": "2027-06-25",
+          "text": "25",
+          "race": false
+        },
+        {
+          "date": "2027-06-26",
+          "text": "26",
+          "race": false
+        },
+        {
+          "date": "2027-06-27",
+          "text": "27",
+          "race": false
+        }
+      ],
+      "month": "jun",
+      "kind": "build",
+      "phase_label": "build",
+      "easy": {
+        "km": [
+          12,
+          12
+        ],
+        "text": "12+12"
+      },
+      "quality": {
+        "type": "T",
+        "km": 13,
+        "text": "T: 4x10'"
+      },
+      "long": {
+        "km": 24,
+        "mp_km": 0,
+        "text": "24 km"
+      },
+      "planned_km": 61,
+      "box_80pct": 49,
+      "note": "61"
+    },
+    {
+      "number": 18,
+      "days": [
+        {
+          "date": "2027-06-28",
+          "text": "28",
+          "race": false
+        },
+        {
+          "date": "2027-06-29",
+          "text": "29",
+          "race": false
+        },
+        {
+          "date": "2027-06-30",
+          "text": "30",
+          "race": false
+        },
+        {
+          "date": "2027-07-01",
+          "text": "1",
+          "race": false
+        },
+        {
+          "date": "2027-07-02",
+          "text": "2",
+          "race": false
+        },
+        {
+          "date": "2027-07-03",
+          "text": "3",
+          "race": false
+        },
+        {
+          "date": "2027-07-04",
+          "text": "4",
+          "race": false
+        }
+      ],
+      "month": "jul",
+      "kind": "build",
+      "phase_label": "build",
+      "easy": {
+        "km": [
+          12,
+          12
+        ],
+        "text": "12+12"
+      },
+      "quality": {
+        "type": "H",
+        "km": 7,
+        "text": "H: 5x2'"
+      },
+      "long": {
+        "km": 24,
+        "mp_km": 0,
+        "text": "24 km"
+      },
+      "planned_km": 55,
+      "box_80pct": 44,
+      "note": "55"
+    },
+    {
+      "number": 19,
+      "days": [
+        {
+          "date": "2027-07-05",
+          "text": "5",
+          "race": false
+        },
+        {
+          "date": "2027-07-06",
+          "text": "6",
+          "race": false
+        },
+        {
+          "date": "2027-07-07",
+          "text": "7",
+          "race": false
+        },
+        {
+          "date": "2027-07-08",
+          "text": "8",
+          "race": false
+        },
+        {
+          "date": "2027-07-09",
+          "text": "9",
+          "race": false
+        },
+        {
+          "date": "2027-07-10",
+          "text": "10",
+          "race": false
+        },
+        {
+          "date": "2027-07-11",
+          "text": "11",
+          "race": false
+        }
+      ],
+      "month": "jul",
+      "kind": "build",
+      "phase_label": "build",
+      "easy": {
+        "km": [
+          12,
+          12
+        ],
+        "text": "12+12"
+      },
+      "quality": {
+        "type": "I",
+        "km": 11,
+        "text": "I: 5x5'"
+      },
+      "long": {
+        "km": 24,
+        "mp_km": 0,
+        "text": "24 km"
+      },
+      "planned_km": 59,
+      "box_80pct": 48,
+      "note": "59"
+    },
+    {
+      "number": 20,
+      "days": [
+        {
+          "date": "2027-07-12",
+          "text": "12",
+          "race": false
+        },
+        {
+          "date": "2027-07-13",
+          "text": "13",
+          "race": false
+        },
+        {
+          "date": "2027-07-14",
+          "text": "14",
+          "race": false
+        },
+        {
+          "date": "2027-07-15",
+          "text": "15",
+          "race": false
+        },
+        {
+          "date": "2027-07-16",
+          "text": "16",
+          "race": false
+        },
+        {
+          "date": "2027-07-17",
+          "text": "17",
+          "race": false
+        },
+        {
+          "date": "2027-07-18",
+          "text": "18",
+          "race": false
+        }
+      ],
+      "month": "jul",
+      "kind": "deload",
+      "phase_label": "build",
+      "easy": {
+        "km": [
+          12,
+          6
+        ],
+        "text": "12+6"
+      },
+      "quality": {
+        "type": "S",
+        "km": 6,
+        "text": "S"
+      },
+      "long": {
+        "km": 18,
+        "mp_km": 0,
+        "text": "18 km"
+      },
+      "planned_km": 42,
+      "box_80pct": 34,
+      "note": "42"
+    },
+    {
+      "number": 21,
+      "days": [
+        {
+          "date": "2027-07-19",
+          "text": "19",
+          "race": false
+        },
+        {
+          "date": "2027-07-20",
+          "text": "20",
+          "race": false
+        },
+        {
+          "date": "2027-07-21",
+          "text": "21",
+          "race": false
+        },
+        {
+          "date": "2027-07-22",
+          "text": "22",
+          "race": false
+        },
+        {
+          "date": "2027-07-23",
+          "text": "23",
+          "race": false
+        },
+        {
+          "date": "2027-07-24",
+          "text": "24",
+          "race": false
+        },
+        {
+          "date": "2027-07-25",
+          "text": "25",
+          "race": false
+        }
+      ],
+      "month": "jul",
+      "kind": "build",
+      "phase_label": "build",
+      "easy": {
+        "km": [
+          12,
+          12
+        ],
+        "text": "12+12"
+      },
+      "quality": {
+        "type": "T",
+        "km": 14,
+        "text": "T: 5x8'"
+      },
+      "long": {
+        "km": 24,
+        "mp_km": 0,
+        "text": "24 km"
+      },
+      "planned_km": 62,
+      "box_80pct": 50,
+      "note": "62"
+    },
+    {
+      "number": 22,
+      "days": [
+        {
+          "date": "2027-07-26",
+          "text": "26",
+          "race": false
+        },
+        {
+          "date": "2027-07-27",
+          "text": "27",
+          "race": false
+        },
+        {
+          "date": "2027-07-28",
+          "text": "28",
+          "race": false
+        },
+        {
+          "date": "2027-07-29",
+          "text": "29",
+          "race": false
+        },
+        {
+          "date": "2027-07-30",
+          "text": "30",
+          "race": false
+        },
+        {
+          "date": "2027-07-31",
+          "text": "31",
+          "race": false
+        },
+        {
+          "date": "2027-08-01",
+          "text": "1",
+          "race": false
+        }
+      ],
+      "month": "jul",
+      "kind": "build",
+      "phase_label": "build",
+      "easy": {
+        "km": [
+          12,
+          12
+        ],
+        "text": "12+12"
+      },
+      "quality": {
+        "type": "H",
+        "km": 7,
+        "text": "H: 6x2'"
+      },
+      "long": {
+        "km": 24,
+        "mp_km": 0,
+        "text": "24 km"
+      },
+      "planned_km": 55,
+      "box_80pct": 44,
+      "note": "55"
+    },
+    {
+      "number": 23,
+      "days": [
+        {
+          "date": "2027-08-02",
+          "text": "2",
+          "race": false
+        },
+        {
+          "date": "2027-08-03",
+          "text": "3",
+          "race": false
+        },
+        {
+          "date": "2027-08-04",
+          "text": "4",
+          "race": false
+        },
+        {
+          "date": "2027-08-05",
+          "text": "5",
+          "race": false
+        },
+        {
+          "date": "2027-08-06",
+          "text": "6",
+          "race": false
+        },
+        {
+          "date": "2027-08-07",
+          "text": "7",
+          "race": false
+        },
+        {
+          "date": "2027-08-08",
+          "text": "8",
+          "race": false
+        }
+      ],
+      "month": "aug",
+      "kind": "build",
+      "phase_label": "build",
+      "easy": {
+        "km": [
+          12,
+          12
+        ],
+        "text": "12+12"
+      },
+      "quality": {
+        "type": "I",
+        "km": 12,
+        "text": "I: 6x5'"
+      },
+      "long": {
+        "km": 24,
+        "mp_km": 0,
+        "text": "24 km"
+      },
+      "planned_km": 60,
+      "box_80pct": 48,
+      "note": "60"
+    },
+    {
+      "number": 24,
+      "days": [
+        {
+          "date": "2027-08-09",
+          "text": "9",
+          "race": false
+        },
+        {
+          "date": "2027-08-10",
+          "text": "10",
+          "race": false
+        },
+        {
+          "date": "2027-08-11",
+          "text": "11",
+          "race": false
+        },
+        {
+          "date": "2027-08-12",
+          "text": "12",
+          "race": false
+        },
+        {
+          "date": "2027-08-13",
+          "text": "13",
+          "race": false
+        },
+        {
+          "date": "2027-08-14",
+          "text": "14",
+          "race": false
+        },
+        {
+          "date": "2027-08-15",
+          "text": "15",
+          "race": false
+        }
+      ],
+      "month": "aug",
+      "kind": "deload",
+      "phase_label": "build",
+      "easy": {
+        "km": [
+          12,
+          6
+        ],
+        "text": "12+6"
+      },
+      "quality": {
+        "type": "S",
+        "km": 6,
+        "text": "S"
+      },
+      "long": {
+        "km": 18,
+        "mp_km": 0,
+        "text": "18 km"
+      },
+      "planned_km": 42,
+      "box_80pct": 34,
+      "note": "42"
+    },
+    {
+      "number": 25,
+      "days": [
+        {
+          "date": "2027-08-16",
+          "text": "16",
+          "race": false
+        },
+        {
+          "date": "2027-08-17",
+          "text": "17",
+          "race": false
+        },
+        {
+          "date": "2027-08-18",
+          "text": "18",
+          "race": false
+        },
+        {
+          "date": "2027-08-19",
+          "text": "19",
+          "race": false
+        },
+        {
+          "date": "2027-08-20",
+          "text": "20",
+          "race": false
+        },
+        {
+          "date": "2027-08-21",
+          "text": "21",
+          "race": false
+        },
+        {
+          "date": "2027-08-22",
+          "text": "22",
+          "race": false
+        }
+      ],
+      "month": "aug",
+      "kind": "specific",
+      "phase_label": "marathon",
+      "easy": {
+        "km": [
+          12,
+          12
+        ],
+        "text": "12+12"
+      },
+      "quality": {
+        "type": "MP",
+        "km": 13,
+        "text": "MP: 3x3 km"
+      },
+      "long": {
+        "km": 26,
+        "mp_km": 6,
+        "text": "26 km (6 MP)"
+      },
+      "planned_km": 63,
+      "box_80pct": 51,
+      "note": "63"
+    },
+    {
+      "number": 26,
+      "days": [
+        {
+          "date": "2027-08-23",
+          "text": "23",
+          "race": false
+        },
+        {
+          "date": "2027-08-24",
+          "text": "24",
+          "race": false
+        },
+        {
+          "date": "2027-08-25",
+          "text": "25",
+          "race": false
+        },
+        {
+          "date": "2027-08-26",
+          "text": "26",
+          "race": false
+        },
+        {
+          "date": "2027-08-27",
+          "text": "27",
+          "race": false
+        },
+        {
+          "date": "2027-08-28",
+          "text": "28",
+          "race": false
+        },
+        {
+          "date": "2027-08-29",
+          "text": "29",
+          "race": false
+        }
+      ],
+      "month": "aug",
+      "kind": "specific",
+      "phase_label": "marathon",
+      "easy": {
+        "km": [
+          12,
+          12
+        ],
+        "text": "12+12"
+      },
+      "quality": {
+        "type": "MP",
+        "km": 17,
+        "text": "MP: 4x3 km"
+      },
+      "long": {
+        "km": 28,
+        "mp_km": 8,
+        "text": "28 km (8 MP)"
+      },
+      "planned_km": 69,
+      "box_80pct": 56,
+      "note": "69"
+    },
+    {
+      "number": 27,
+      "days": [
+        {
+          "date": "2027-08-30",
+          "text": "30",
+          "race": false
+        },
+        {
+          "date": "2027-08-31",
+          "text": "31",
+          "race": false
+        },
+        {
+          "date": "2027-09-01",
+          "text": "1",
+          "race": false
+        },
+        {
+          "date": "2027-09-02",
+          "text": "2",
+          "race": false
+        },
+        {
+          "date": "2027-09-03",
+          "text": "3",
+          "race": false
+        },
+        {
+          "date": "2027-09-04",
+          "text": "4",
+          "race": false
+        },
+        {
+          "date": "2027-09-05",
+          "text": "5",
+          "race": true
+        }
+      ],
+      "month": "sep",
+      "kind": "specific",
+      "phase_label": "marathon",
+      "easy": {
+        "km": [
+          12,
+          12
+        ],
+        "text": "12+12"
+      },
+      "quality": {
+        "type": "race",
+        "km": 10,
+        "text": "RACE"
+      },
+      "long": {
+        "km": 30,
+        "mp_km": 10,
+        "text": "30 km (10 MP)"
+      },
+      "planned_km": 64,
+      "box_80pct": 52,
+      "note": "64"
+    },
+    {
+      "number": 28,
+      "days": [
+        {
+          "date": "2027-09-06",
+          "text": "6",
+          "race": false
+        },
+        {
+          "date": "2027-09-07",
+          "text": "7",
+          "race": false
+        },
+        {
+          "date": "2027-09-08",
+          "text": "8",
+          "race": false
+        },
+        {
+          "date": "2027-09-09",
+          "text": "9",
+          "race": false
+        },
+        {
+          "date": "2027-09-10",
+          "text": "10",
+          "race": false
+        },
+        {
+          "date": "2027-09-11",
+          "text": "11",
+          "race": false
+        },
+        {
+          "date": "2027-09-12",
+          "text": "12",
+          "race": false
+        }
+      ],
+      "month": "sep",
+      "kind": "deload",
+      "phase_label": "marathon",
+      "easy": {
+        "km": [
+          12,
+          6
+        ],
+        "text": "12+6"
+      },
+      "quality": {
+        "type": "S",
+        "km": 6,
+        "text": "S"
+      },
+      "long": {
+        "km": 23,
+        "mp_km": 0,
+        "text": "23 km"
+      },
+      "planned_km": 47,
+      "box_80pct": 38,
+      "note": "47"
+    },
+    {
+      "number": 29,
+      "days": [
+        {
+          "date": "2027-09-13",
+          "text": "13",
+          "race": false
+        },
+        {
+          "date": "2027-09-14",
+          "text": "14",
+          "race": false
+        },
+        {
+          "date": "2027-09-15",
+          "text": "15",
+          "race": false
+        },
+        {
+          "date": "2027-09-16",
+          "text": "16",
+          "race": false
+        },
+        {
+          "date": "2027-09-17",
+          "text": "17",
+          "race": false
+        },
+        {
+          "date": "2027-09-18",
+          "text": "18",
+          "race": false
+        },
+        {
+          "date": "2027-09-19",
+          "text": "19",
+          "race": false
+        }
+      ],
+      "month": "sep",
+      "kind": "specific",
+      "phase_label": "marathon",
+      "easy": {
+        "km": [
+          12,
+          12
+        ],
+        "text": "12+12"
+      },
+      "quality": {
+        "type": "MP",
+        "km": 20,
+        "text": "MP: 5x3 km"
+      },
+      "long": {
+        "km": 32,
+        "mp_km": 12,
+        "text": "32 km (12 MP)"
+      },
+      "planned_km": 76,
+      "box_80pct": 61,
+      "note": "76"
+    },
+    {
+      "number": 30,
+      "days": [
+        {
+          "date": "2027-09-20",
+          "text": "20",
+          "race": false
+        },
+        {
+          "date": "2027-09-21",
+          "text": "21",
+          "race": false
+        },
+        {
+          "date": "2027-09-22",
+          "text": "22",
+          "race": false
+        },
+        {
+          "date": "2027-09-23",
+          "text": "23",
+          "race": false
+        },
+        {
+          "date": "2027-09-24",
+          "text": "24",
+          "race": false
+        },
+        {
+          "date": "2027-09-25",
+          "text": "25",
+          "race": false
+        },
+        {
+          "date": "2027-09-26",
+          "text": "26",
+          "race": false
+        }
+      ],
+      "month": "sep",
+      "kind": "specific",
+      "phase_label": "marathon",
+      "easy": {
+        "km": [
+          12,
+          12
+        ],
+        "text": "12+12"
+      },
+      "quality": {
+        "type": "MP",
+        "km": 23,
+        "text": "MP: 6x3 km"
+      },
+      "long": {
+        "km": 32,
+        "mp_km": 14,
+        "text": "32 km (14 MP)"
+      },
+      "planned_km": 79,
+      "box_80pct": 64,
+      "note": "79"
+    },
+    {
+      "number": 31,
+      "days": [
+        {
+          "date": "2027-09-27",
+          "text": "27",
+          "race": false
+        },
+        {
+          "date": "2027-09-28",
+          "text": "28",
+          "race": false
+        },
+        {
+          "date": "2027-09-29",
+          "text": "29",
+          "race": false
+        },
+        {
+          "date": "2027-09-30",
+          "text": "30",
+          "race": false
+        },
+        {
+          "date": "2027-10-01",
+          "text": "1",
+          "race": false
+        },
+        {
+          "date": "2027-10-02",
+          "text": "2",
+          "race": false
+        },
+        {
+          "date": "2027-10-03",
+          "text": "3",
+          "race": false
+        }
+      ],
+      "month": "sep",
+      "kind": "taper",
+      "phase_label": "taper",
+      "easy": {
+        "km": [
+          12,
+          6
+        ],
+        "text": "12+6"
+      },
+      "quality": {
+        "type": "T",
+        "km": 11,
+        "text": "T: 6x1 km"
+      },
+      "long": {
+        "km": 19,
+        "mp_km": 0,
+        "text": "19 km"
+      },
+      "planned_km": 48,
+      "box_80pct": 39,
+      "note": "taper"
+    },
+    {
+      "number": 32,
+      "days": [
+        {
+          "date": "2027-10-04",
+          "text": "4",
+          "race": false
+        },
+        {
+          "date": "2027-10-05",
+          "text": "5",
+          "race": false
+        },
+        {
+          "date": "2027-10-06",
+          "text": "6",
+          "race": false
+        },
+        {
+          "date": "2027-10-07",
+          "text": "7",
+          "race": false
+        },
+        {
+          "date": "2027-10-08",
+          "text": "8",
+          "race": false
+        },
+        {
+          "date": "2027-10-09",
+          "text": "9",
+          "race": false
+        },
+        {
+          "date": "2027-10-10",
+          "text": "10",
+          "race": true
+        }
+      ],
+      "month": "oct",
+      "kind": "race",
+      "phase_label": "taper",
+      "easy": {
+        "km": [
+          12,
+          6
+        ],
+        "text": "12+6"
+      },
+      "quality": {
+        "type": "none",
+        "km": 0,
+        "text": "–"
+      },
+      "long": {
+        "km": 0,
+        "mp_km": 0,
+        "text": "RACE"
+      },
+      "planned_km": 18,
+      "box_80pct": 15,
+      "note": "race"
+    }
+  ],
+  "footer": {
+    "colours": [
+      {
+        "colour": "green",
+        "shape": "fill",
+        "label": "easy run"
+      },
+      {
+        "colour": "yellow",
+        "shape": "fill",
+        "label": "quality run"
+      },
+      {
+        "colour": "blue",
+        "shape": "fill",
+        "label": "long run"
+      },
+      {
+        "colour": "red",
+        "shape": "triangle",
+        "label": "unexpected event"
+      }
+    ],
+    "rules": [
+      "Short on time: drop an easy run → intensity → long run.",
+      "Tired or ill: drop intensity first."
+    ],
+    "success": "A week counts at ≥ 80 % of the planned km."
+  },
+  "warnings": []
+}

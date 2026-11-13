@@ -14,7 +14,11 @@ import typst
 from ttg.render import TEMPLATE, render_file, render_pdf
 
 FIXTURES = Path(__file__).parent / "fixtures"
-SAMPLES = [FIXTURES / "sample-plan-2026-weeks-1-4.json", FIXTURES / "sample-plan-2026-full.json"]
+SAMPLES = [
+    FIXTURES / "sample-plan-2026-weeks-1-4.json",
+    FIXTURES / "plan-2026.json",
+    FIXTURES / "plan-test-2027.json",
+]
 FOUR_EASY_RUNS = {"km": [12, 12, 12, 12], "text": "12+12+12+12"}  # D-016: 6 runs a week
 
 

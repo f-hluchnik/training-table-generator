@@ -6,7 +6,7 @@ Everything here is a pure function of an occurrence index; which week gets which
 session is decided by `expand` (T-06).
 """
 
-from collections.abc import Callable
+import math
 
 from ttg.model import EasyRuns, Session, SessionType
 from ttg.paces import SECONDS_PER_MINUTE, Pace, TrainingPaces
@@ -30,6 +30,12 @@ MAX_THRESHOLD_MINUTES = 40
 MP_START_REPS, MP_REP_KM = 3, 3  # marathon-pace repeats, +1 rep a week [2026]
 # The last MP km of a marathon-specific long run: 6, 8, 10, … [default].
 LONG_RUN_MP_START_KM, LONG_RUN_MP_STEP_KM = 6, 2
+# Daniels: one session holds at most the lesser of 90 min or 16 miles at M pace [source 20].
+# The 16 miles (25.7 km) only binds below 3:21/km, so the minutes are the cap here.
+MAX_MARATHON_PACE_MINUTES = 90
+# The quality run of the taper weeks before the race week: short threshold work,
+# T 6 × 1 km [2026; "intensity is kept short", source 8].
+TAPER_THRESHOLD_REPS, TAPER_THRESHOLD_REP_KM = 6, 1
 
 # Quality rotation of the build phase [2026]: each type progresses each time it occurs.
 BUILD_ROTATION = (SessionType.HILLS, SessionType.INTERVALS, SessionType.THRESHOLD)
@@ -72,14 +78,24 @@ def _uncapped_threshold_session(occurrence: int) -> Session:
     )
 
 
-def marathon_pace_session(occurrence: int) -> Session:
-    """3×3 km at MP, +1 rep a week."""
-    return Session(SessionType.MARATHON_PACE, reps=MP_START_REPS + occurrence, km=MP_REP_KM)
+def marathon_pace_session(occurrence: int, mp: Pace) -> Session:
+    """3×3 km at MP, +1 rep a week, held at the most reps that fit the MP cap."""
+    reps = min(MP_START_REPS + occurrence, max(1, _max_marathon_pace_km(mp) // MP_REP_KM))
+    return Session(SessionType.MARATHON_PACE, reps=reps, km=MP_REP_KM)
 
 
-def marathon_long_run_mp_km(occurrence: int) -> int:
-    """The MP km at the end of the long run of the `occurrence`-th marathon-specific week."""
-    return LONG_RUN_MP_START_KM + LONG_RUN_MP_STEP_KM * occurrence
+def marathon_long_run_mp_km(occurrence: int, mp: Pace) -> int:
+    """The MP km at the end of the `occurrence`-th marathon-specific long run: 6, 8, … up to the MP cap."""
+    return min(LONG_RUN_MP_START_KM + LONG_RUN_MP_STEP_KM * occurrence, _max_marathon_pace_km(mp))
+
+
+def _max_marathon_pace_km(mp: Pace) -> int:
+    """Whole km that fit into the MP cap."""
+    return math.floor(MAX_MARATHON_PACE_MINUTES * _km_per_minute(mp))
+
+
+def taper_session() -> Session:
+    return Session(SessionType.THRESHOLD, reps=TAPER_THRESHOLD_REPS, km=TAPER_THRESHOLD_REP_KM)
 
 
 def strides_session() -> Session:
@@ -90,18 +106,23 @@ def no_session() -> Session:
     return Session(SessionType.NONE)
 
 
-def build_session(build_week_index: int) -> Session:
-    """The quality session of the `build_week_index`-th build week that is not a deload (from 0)."""
-    occurrence, position = divmod(build_week_index, len(BUILD_ROTATION))
-    return PROGRESSIONS[BUILD_ROTATION[position]](occurrence)
+def progression_session(session_type: SessionType, occurrence: int, paces: TrainingPaces) -> Session:
+    """The `occurrence`-th session (from 0) of a progressing type: H, I, T or MP."""
+    match session_type:
+        case SessionType.HILLS:
+            return hill_session(occurrence)
+        case SessionType.INTERVALS:
+            return interval_session(occurrence)
+        case SessionType.THRESHOLD:
+            return threshold_session(occurrence)
+        case SessionType.MARATHON_PACE:
+            return marathon_pace_session(occurrence, paces.mp)
+    raise ValueError(f"{session_type} has no progression")
 
 
-PROGRESSIONS: dict[SessionType, Callable[[int], Session]] = {
-    SessionType.HILLS: hill_session,
-    SessionType.INTERVALS: interval_session,
-    SessionType.THRESHOLD: threshold_session,
-    SessionType.MARATHON_PACE: marathon_pace_session,
-}
+def round_km(km: float) -> int:
+    """Whole km as printed on the sheet (D-025), halves rounded up."""
+    return math.floor(km + 0.5)
 
 
 def half_easy_run_km(easy_run_km: int) -> int:

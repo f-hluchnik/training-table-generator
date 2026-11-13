@@ -209,3 +209,28 @@ Proposed by the architect, agreed by the owner. Details and sources in `TRAINING
 - **Default lengths calibrated:** unchanged except the recovery after a half marathon, 1 → 2 weeks.
 - **Calendar:** a week belongs to the month of its Thursday (ISO 8601). A race's week is the week of its first day; the plan ends on the last race's last day, so a multi-day race running from Sunday into Monday adds a short last week. Without `start` or `weeks`, the plan starts next Monday, or today if today is a Monday. Two A or B races in the same week share one race week, the earlier race gets no recovery, and C1 warns.
 - `weeks = N` gives a plan of exactly N weeks, ending with the week of the last race day.
+
+---
+
+## Session S5 (13 Nov 2026)
+
+### D-030 Week expansion rules (T-06)
+How `ttg.expand` turns phases into weeks. The numbers are named constants in `ttg.expand`, `ttg.long_run` and `ttg.sessions`; sources in `TRAINING_MODEL.md` §4 and §6.
+
+*Agreed with the owner in S5:*
+- **No overrides only to copy the reference.** `seasons/2026.toml` keeps the overrides of S1; every other difference from the reference sheet is listed in `tests/test_golden_2026.py` with its reason (amends the plan in D-020 and `TRAINING_MODEL.md` §4 to override the 2026 deload depth).
+- **Build cap:** build weeks grow the long run only up to 75 % of the race's cap; the race-specific block grows it to the full cap. Without it, a 32-week marathon plan would hold 32 km for 17 weeks.
+- **Restart after a race:** the first loading week after a race starts the long run at 75 % of the previous peak, but never above the next race's build cap. That is how a big race is accounted for: after the 40 km ultra peak the marathon block restarts at 24 km, not 30. *Owner:* asked whether this could be configurable; a week override already covers a one-off, so no new field.
+- **Races in planned km:** a C race counts its distance (it replaces the quality run and is training load); an A or B race does not (as in the reference; a 101 km ultra would also swamp the gauge). In plan.json the C race is a quality run of type `race`; the A or B race is a long run with `km` 0.
+- **Long-run growth stays +2 km per loading week.** *Owner:* "the growth should be around 10 %?" The 10 % rule is about weekly volume, and its only randomised trial found no fewer injuries (Buist et al. 2008, source 21); long-run guidance is usually an absolute 1–2 miles a week (source 22). A percentage would put the biggest steps near the peak. The weekly 10 % stays a warning (C3). *Open:* the owner may still prefer 10 %; it is one function (`long_run.grow`).
+
+*Proposed (review in the T-06 pull request):*
+- **3:1 cycle:** a deload after every three consecutive loading weeks (build or specific); any taper, race or recovery week restarts the count. This places 2026's deloads in weeks 4, 8 and 12, and none in the two marathon weeks after the recovery. "Counted from the plan start" (`TRAINING_MODEL.md` §4) would have put one in week 20.
+- **Quality rotation:** each type keeps its own progression for the whole plan; a rotation (build H → I → T, which the ultra block continues; I/T for 10 km) continues where it stopped. A C race takes the quality run's place without advancing the rotation.
+- **Taper:** in the weeks before the race week, the quality run is T 6 × 1 km and the long run is 60 % of the peak since the last race in the week just before the race week, 75 % earlier. No MP km in the taper's long run. Race week: no quality run; the race replaces the long run.
+- **Recovery:** easy runs only in the first week; later recovery weeks add a long run of one easy-run length (2026's 12 km "flush").
+- **MP cap:** at most 90 minutes at marathon pace in one session (Daniels), for both the MP repeats and the MP km of a long run. A 6-week marathon block would otherwise reach 8 × 3 km.
+- **A long run is never shorter than an easy run** when it is reduced (deload, taper, restart).
+- **Overrides change only their own week.** Later weeks, the deload and the taper are computed from the rules, not from the overridden values (2026: the taper reduces from the computed 35 km peak, not from week 14's 40 km override).
+- **Last column:** the planned km in build, deload and specific weeks; the words *taper*, *race*, *recovery* otherwise, as on the reference sheet. A `note` override replaces either.
+- **Notation:** `MP: 3x3 km` with a colon, like every other session (the reference printed `MP 3x3 km`).
