@@ -13,7 +13,7 @@ Every number here becomes a named constant in code, with the same tag (CLAUDE.md
 | Code | Session | Notes |
 |---|---|---|
 | ER | easy run | easy pace |
-| S | easy run with strides | e.g. 6 × 20″ fast, relaxed; replaces the quality run in deload weeks |
+| S | easy run with strides | *e*/2 km with e.g. 6 × 20″ fast, relaxed; replaces the quality run in deload weeks |
 | H | hill repeats | effort-based, no pace; recovery = jog down (≈ effort duration) [2026] |
 | I | intervals (VO₂max) | I pace, 2′ jog recovery [2026] |
 | T | threshold intervals | T pace, 2′ jog recovery [2026] |
@@ -41,7 +41,7 @@ McMillan names the same intensities Endurance, Stamina and Speed, and also start
 
 ## 3. Week structure (D-016)
 
-Four runs: ER, ER, quality run, LR. The weekly planned km is their sum (D-006). Quality-run km are estimated as follows **[2026, prototype]**: 10′ warm-up + reps × work + (reps − 1) × recovery + 10′ cool-down, everything at easy pace except the work itself (hill efforts also counted at easy pace). This reproduces the 2026 numbers (e.g. T 3 × 8′ ≈ 10 km).
+Four runs: ER, ER, quality run, LR. Easy runs are a regular pair *e*+*e* or a reduced pair *e*+*e*/2, never growing (D-022). The weekly planned km is the sum of the four runs (D-006). Quality-run km are estimated as follows **[2026, prototype]**: 10′ warm-up + reps × work + (reps − 1) × recovery + 10′ cool-down, everything at easy pace except the work itself (hill efforts also counted at easy pace). This reproduces the 2026 numbers (e.g. T 3 × 8′ ≈ 10 km).
 
 ## 4. Phase kinds
 
@@ -52,10 +52,12 @@ Four runs: ER, ER, quality run, LR. The weekly planned km is their sum (D-006). 
   - I: 5×3′ → 6×3′ → 5×4′ → 6×4′ → 5×5′ …
   - T: 3×8′ → 3×10′ → 4×8′ → 4×10′, capped at **40′ total at T** (tempo work is 15–40 min) **[source 5]**.
 - **LR:** +2 km per build week **[2026: +2–3 km]**, up to the cap (§6).
-- **Easy runs:** fixed from input (open question Q-3).
+- **Easy runs:** the regular pair *e*+*e* (D-022).
+- **Labels:** one per 4-week cycle: base, strength, volume, volume … (D-021).
 
 ### deload (every 4th build week)
-- The quality run becomes S, the LR is set to **70 %** of the last build LR, and the easy runs are unchanged. That gives about 75–80 % of the previous week, matching the usual 10–30 % cut **[source 6, 7]** **[default 70 %]**.
+- The easy runs drop to the reduced pair (12+6), the quality run becomes S (6 km), and the LR is set to **80 %** of the last build LR **[default]**.
+- That gives about 75 % of the previous week, matching the usual 10–30 % cut **[source 6, 7]**. Checked on the 2026 numbers: 54 → 40, 61 → 45, 67 → 50 km.
 - The week still feels like rest: no intensity and a clearly shorter long run.
 - 2026 cut to about 50–55 % (61 → 33 km). That is deeper than standard, which is acceptable but not the default; it is an override in the reference season.
 
@@ -73,6 +75,8 @@ Elevation (vertical metres) is out of scope in v1 (Q-5).
 ### taper (ends with the race week)
 - **Marathon (2 weeks including race week):** about 70–75 % of peak volume, then 40–50 % in race week **[source 8]**. Intensity is kept short (e.g. T 6×1 km **[2026]**), and the last LR is about 60 % of the peak LR. 2026 did 69 % and 35 %: close to the guidance.
 - Other distances: see §5 lengths.
+
+Taper, race and recovery weeks all use the reduced easy pair (D-022).
 
 ### race week
 The race replaces the LR. The race day prints bold in the calendar, and the week's row ends on race day.
@@ -145,12 +149,10 @@ Warnings go to the command line, not on the sheet.
 
 ## 8. "Life happens" rules (D-008)
 
-Footer default, from the owner: **drop intensity first, then an easy run, then the long run.**
+The owner's 2026 order was intensity first, then an easy run, then the long run. That order is right when the cause is fatigue or illness. When the cause is lack of time, the standard is to drop an easy run first and keep the quality run and the long run. The long run goes last either way. The owner agreed to the standard (D-008).
 
-Coach comment: that order is right when the cause is fatigue or illness. When the cause is lack of time, most coaches drop an easy run first and keep the quality run and the long run. The long run goes last either way.
-
-Suggested two-line footer (the owner decides; the text is configurable):
-> Tired or ill: intensity → an easy run → long run. Short on time: an easy run → intensity → long run. A week counts at ≥ 80 % of the planned km.
+Default footer (configurable):
+> Short on time: drop an easy run → intensity → long run. Tired or ill: drop intensity first. A week counts at ≥ 80 % of the planned km.
 
 ## 9. Coach review of the 2026 plan
 
@@ -160,7 +162,7 @@ Suggested two-line footer (the owner decides; the text is configurable):
 | Threshold pace | 4:30 | about 10 s/km fast | derived ≈ 4:40 |
 | Threshold volume | up to 4×10′ | within McMillan's 15–40′ | cap 40′ |
 | Interval volume | up to 6×4′ | within guidance | C7 |
-| Deload depth | 50–55 % | deeper than standard | 75–80 % |
+| Deload depth | 50–55 % | deeper than standard | ≈ 75 % |
 | Long-run share | up to 54 % | high, a result of 4 runs a week | warning > 50 % |
 | Long run peak | 40 km (ultra) | fine for an ultra | cap per race (§6) |
 | Marathon block | 2 weeks of MP work | thin, forced by the race dates | compression + warning |

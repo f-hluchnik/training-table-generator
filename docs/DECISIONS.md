@@ -3,7 +3,7 @@
 Status values: **Agreed** (confirmed by the owner), **Proposed** (architect's recommendation, waiting for the owner's yes/no), **Superseded**.
 Record new decisions at the end. Never renumber.
 
-Origin of D-001 to D-020: architecture review session, 13 Nov 2026.
+Origin of D-001 to D-022: architecture review session, 13 Nov 2026. D-011 to D-020 were proposed by the architect and confirmed by the owner the same day.
 
 ---
 
@@ -37,7 +37,8 @@ The planned km of a week is the sum of its planned sessions (quality sessions es
 The tool tracks nothing; it only prints the empty sheet and the colour legend.
 
 ### D-008 "Life happens" rules printed on the sheet
-The order in which sessions are dropped is printed in the footer (default: 1. intensity, 2. an easy run, 3. the long run). The text is configurable. For the coach's comment on the order, see `TRAINING_MODEL.md` §8.
+The order in which sessions are dropped is printed in the footer. The text is configurable.
+*Amended 13 Nov 2026:* the default follows the standard order. Short on time: an easy run first, then intensity, then the long run. Tired or ill: intensity first. The owner's original order was intensity first in both cases (`TRAINING_MODEL.md` §8).
 
 ### D-009 Phases are laid out automatically, backward from the races
 The owner gives races and the start; the compiler places race weeks, tapers, race-specific blocks, recovery and general build weeks (`TRAINING_MODEL.md` §5). Phase lengths can be overridden.
@@ -48,11 +49,11 @@ Where the owner has no opinion (deload depth, long-run share, taper shape, ...),
 
 ---
 
-## Proposed
+## Agreed (proposed by the architect, confirmed by the owner)
 
 ### D-011 Season file in TOML
 One `season.toml` per plan. Python reads it with stdlib `tomllib` (Python ≥ 3.11), so there is no parser dependency. Alternative: YAML (needs PyYAML, and has implicit-typing pitfalls).
-*Depends on:* Q-1 (Python version on the owner's Mac).
+Python ≥ 3.11 (the owner has 3.11 and 3.12), always in a virtual environment (`.venv`, git-ignored).
 
 ### D-012 Three-stage pipeline with `plan.json` as a build artefact
 `season.toml` → **expand** → `plan.json` → **render** → `plan.pdf`.
@@ -103,7 +104,7 @@ Default: A.
 - The width covers the plan's highest planned week, rounded up to the next 10 km, with labels every 10 km.
 - Box width shrinks if the gauge would not fit the page.
 
-*Owner decides (Q-4):* an extra 80 % tick per row.
+- The 80 % rule is shown minimally (Q-4): in each row, the border after the box where 80 % of that week's planned km is reached is drawn thicker. No other marks.
 
 ### D-020 Reference seasons as acceptance tests
 - `seasons/2026.toml` must reproduce the reference table, using overrides where 2026 differs from the new defaults. This tests expressiveness.
@@ -113,9 +114,24 @@ Default: A.
 
 ## Open questions (need the owner)
 
-- **Q-1** What Python version is on your Mac (`python3 --version`)? ≥ 3.11 is needed for D-011 as proposed.
-- **Q-2** Are *base / strength / volume* more than names? In 2026 they used the same rotation; the only change was the second easy run going 6 → 12 km in week 5. Proposal: one *build* kind, with display names taken from its position (base, strength, volume, ...).
-- **Q-3** Should easy runs grow by default? Proposal: the easy runs from the input stay fixed, except the shorter one grows by 2 km per 4-week cycle up to the longer one. The rest of the volume growth comes from the long run and the quality session.
-- **Q-4** Do you want an 80 % tick in each gauge row (a thick line where 80 % of that week's planned km ends), making the success rule visible on paper?
+- **Q-1** *Answered:* Python 3.11 and 3.12 available; work in a virtual environment → D-011.
+- **Q-2** *Answered:* only labels → D-021.
+- **Q-3** *Answered:* easy runs don't grow → D-022.
+- **Q-4** *Answered:* a thicker line, minimal → D-019.
 - **Q-5** Mountain ultras: should v1 handle elevation (vertical metres per week, hill-heavy long runs) or only km? Proposal: km only in v1. An ultra uses the marathon rules with a higher long-run cap and hills as the quality session; elevation is a later ticket.
 - **Q-6** Website route, later: (a) the Python core in the browser via Pyodide plus a Typst WebAssembly build, which works as a static site on GitHub Pages; (b) port the core to TypeScript; (c) a small server, which cannot run on GitHub Pages. No decision needed now; D-013 keeps (a) and (b) open. Typst-in-browser is not yet verified.
+
+---
+
+## Agreed later in the session
+
+### D-021 Phase names are display labels only
+All general-preparation weeks are one phase kind, *build*, with the same rules. The rotated phase label on the sheet is a mental map for the runner. Build blocks are labelled by position, one label per 4-week cycle: *base*, *strength*, *volume*, then *volume* again. The labels are configurable in `[sheet]`. Specific, taper, race and recovery phases have their own default labels.
+
+### D-022 Easy runs: two fixed pairs, no growth
+The input gives one easy-run length *e* (2026: 12 km).
+- **Regular weeks:** two runs of *e* (12+12).
+- **Reduced weeks** (deload, taper, race and recovery): *e* + *e*/2 (12+6), rounded to whole km.
+
+Easy runs never grow; volume growth comes from the long run and the quality session. Any week can be overridden (2026 weeks 1–3 used the reduced pair).
+

@@ -5,7 +5,7 @@ How the tickets are grouped into working sessions, with the prompt that starts e
 | Session | Tickets | Prerequisite |
 |---|---|---|
 | S0 | — architecture review | done 13 Nov 2026 |
-| S1 | T-01, T-02 | owner answered Q-1–Q-4 and confirmed D-011–D-020 |
+| S1 | T-01, T-02 | — (all decisions made) |
 | S2 | T-03, T-05 | S1 |
 | S3 | T-04 | S1 |
 | S4 | T-08 | S1 (can run in parallel with S2/S3) |
@@ -15,7 +15,7 @@ How the tickets are grouped into working sessions, with the prompt that starts e
 ## Prompts
 
 **S1**
-> Read CLAUDE.md and docs/. Check that the open questions Q-1–Q-4 are answered and D-011–D-020 are decided in DECISIONS.md; if not, stop and ask. Then do T-01 and T-02 on their branches. In T-02, propose the exact season.toml and plan.json schemas before writing code.
+> Read CLAUDE.md and docs/. Then do T-01 and T-02 on their branches. In T-02, propose the exact season.toml and plan.json schemas before writing code.
 
 **S2**
 > Read CLAUDE.md and docs/. Do T-03 (paces) and T-05 (sessions and progressions). Verify the VDOT paces against Daniels' published tables and report any deviation.

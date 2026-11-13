@@ -41,7 +41,7 @@ Modules of the package `ttg`. Everything marked *pure* follows D-013.
 
 **Errors vs warnings:** invalid input (unparsable date, start after the last race, negative km) is an error and nothing is built. Questionable input is a warning, and the plan is still built.
 
-**Dependencies:** `typst` from PyPI (pinned; the Typst compiler bundled, no separate install), `pytest` for development. Nothing else. Python ≥ 3.11 if D-011 holds.
+**Dependencies:** `typst` from PyPI (pinned; the Typst compiler bundled, no separate install), `pytest` for development. Nothing else. Python ≥ 3.11, in a virtual environment (D-011).
 
 ## 4. Data contracts
 
@@ -61,8 +61,8 @@ distance_km = 42.195          # priority = "A" by default
 [paces]
 race_result = { distance_km = 42.195, time = "3:30:02" }   # anchor for defaults
 
-[load]                        # required: the current easy runs and long run
-easy_runs_km = [12, 6]
+[load]                        # required: what you run now
+easy_run_km = 12              # regular weeks 12+12, reduced weeks 12+6 (D-022)
 long_run_km = 15
 ```
 
@@ -83,15 +83,15 @@ threshold = "4:30"
 [phases]                       # length overrides (weeks)
 recovery_after = { "Beskydská sedmička" = 2 }
 
-[overrides.5]                  # week 5
-easy_runs_km = [12, 12]
+[overrides.1]                  # reduced easy pair (likewise weeks 2 and 3)
+easy = "reduced"
 [overrides.13]
 quality = "H 10x1'"
 [overrides.14]
 long_run_km = 40
 
 [sheet]
-rules = ["drop intensity", "drop an easy run", "drop the long run"]
+phase_labels = ["base", "strength", "volume"]
 ```
 
 The exact schema is fixed in T-02. Every field beyond the minimal example needs a decision (CLAUDE.md §3).
@@ -110,7 +110,7 @@ The exact schema is fixed in T-02. Every field beyond the minimal example needs 
     "easy": {"km": [12, 6], "text": "12+6"},
     "quality": {"code": "H", "km": 8, "text": "H: 6x1'"},
     "long": {"km": 15, "mp_km": 0, "text": "15 km"},
-    "planned_km": 41, "note": ""
+    "planned_km": 41, "box_80pct": 17, "note": ""
   }],
   "footer": {"legend": "...", "rules": ["..."], "success": "≥ 80 % of planned km"},
   "warnings": ["..."]

@@ -2,7 +2,7 @@
 
 Status: **todo**, **in progress**, **done**, **blocked (reason)**. One branch per ticket, named `t-NN-short-name`.
 
-Before T-01: the owner answers the open questions Q-1 to Q-4 and confirms or rejects the proposed decisions D-011 to D-020 (`DECISIONS.md`). Q-5 and Q-6 can wait.
+All decisions needed for T-01–T-10 are made (D-001–D-022). Q-5 and Q-6 are for the later tickets.
 
 ```
 T-01 ─▶ T-02 ─┬─▶ T-03 ─┐
@@ -14,7 +14,8 @@ T-01 ─▶ T-02 ─┬─▶ T-03 ─┐
 ---
 
 ### T-01 Project skeleton — todo
-- `pyproject.toml`: package `ttg`, Python version per Q-1, `typst` pinned, `pytest` as a dev dependency, console script `ttg`.
+- `pyproject.toml`: package `ttg`, `requires-python >= 3.11` (D-011), `typst` pinned, `pytest` as a dev dependency, console script `ttg`.
+- Development in a virtual environment: `python3 -m venv .venv && . .venv/bin/activate && pip install -e '.[dev]'`, documented in the README.
 - `src/ttg/` layout, `tests/`, `seasons/`, `templates/`.
 - `.gitignore` covers `__pycache__`, `.venv` and build output (`out/`).
 - GitHub Actions workflow running `pytest` on push.
@@ -51,14 +52,14 @@ T-01 ─▶ T-02 ─┬─▶ T-03 ─┐
 - start after the race (error).
 
 ### T-05 Sessions and progressions — todo
-- Session catalogue (`TRAINING_MODEL.md` §1).
+- Session catalogue (`TRAINING_MODEL.md` §1); the regular and reduced easy pairs (D-022).
 - H/I/T progressions salvaged from the prototype, MP repeats, LR with MP km, strides.
 - Quality km estimate; T cap.
 
 **Done when:** tests reproduce the 2026 quality sessions and their km.
 
 ### T-06 Week expansion and overrides — todo
-- Phase rules → weeks, the 3:1 cycle, LR progression and caps, deload, taper, race and recovery weeks.
+- Phase rules → weeks, the 3:1 cycle, phase labels (D-021), LR progression and caps, deload, taper, race and recovery weeks.
 - `[overrides]`; `export` to `plan.json`.
 
 **Done when:** golden test: `seasons/2026.toml` produces the reference table week for week (intentional differences listed in the test). `test-2027` is reviewed by the owner and frozen as a snapshot.
@@ -69,7 +70,7 @@ Warnings C1–C8 (`TRAINING_MODEL.md` §7), each a small function with a named t
 **Done when:** each check has a firing and a non-firing test; 2026 produces the expected warnings (C4, C8, shortened specific block).
 
 ### T-08 Typst renderer — todo (can start after T-02)
-- `templates/plan.typ` reproducing the reference sheet from `plan.json` (PLAN §5); gauge per D-019.
+- `templates/plan.typ` reproducing the reference sheet from `plan.json` (PLAN §5); gauge per D-019, including the thicker 80 % border.
 - Fonts: choose ones bundled or commonly available, and document the choice.
 
 **Done when:** the hand-made sample renders, and later the full 2026 plan. Compare a page image side by side with the reference PDF; the owner approves the look.
