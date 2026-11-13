@@ -32,6 +32,7 @@ HILLS_LABEL = "hard uphill effort, jog down"
 NO_SESSION = "–"
 RACE_TEXT = "RACE"
 STRIDES_TEXT = "S"
+HILLY_TEXT = "hilly"  # in the footer's race list, so the hill repeats of its block make sense (D-041)
 
 # The last column shows a word instead of the planned km in these weeks, as in the reference.
 NOTE_WORDS = {WeekKind.TAPER: "taper", WeekKind.RACE: "race", WeekKind.RECOVERY: "recovery"}
@@ -60,10 +61,15 @@ def export(plan: Plan) -> dict[str, Any]:
 
 
 def phase_label(phase: Phase) -> str:
-    """D-026: build, the race type for a specific block, taper, recovery."""
+    """D-026: build, taper, recovery, and the race type for a specific block.
+
+    A specific block names its race type only when the race is that distance; otherwise it is
+    `specific`, so a 30 km race, which trains as a marathon, is not labelled `marathon` (D-042).
+    """
     if phase.kind is PhaseKind.SPECIFIC:
         assert phase.race is not None  # a specific block belongs to its race
-        return str(phase.race.type)
+        if phase.race.is_its_types_distance:
+            return str(phase.race.type)
     return str(phase.kind)
 
 
@@ -73,8 +79,9 @@ def race_cell_text(race: Race) -> str:
 
 
 def race_text(race: Race) -> str:
-    """The footer's entry: `Prague Marathon 10 oct (A)`, `Beskydská sedmička 28–29 aug (B)`."""
-    return f"{race.name} {_date_range(race.date, race.last_day)} ({race.priority})"
+    """The footer's entry: `Prague Marathon 10 oct (A)`, `Beskydská sedmička 28–29 aug (B, hilly)`."""
+    hilly = f", {HILLY_TEXT}" if race.hilly else ""
+    return f"{race.name} {_date_range(race.date, race.last_day)} ({race.priority}{hilly})"
 
 
 def quality_text(quality: Session | Race) -> str:

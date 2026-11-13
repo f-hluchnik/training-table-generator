@@ -1,4 +1,4 @@
-"""Warnings C3–C8 (T-07): each check fires and stays quiet; 2026 gives the expected warnings."""
+"""Warnings C3–C9 (T-07, D-043): each check fires and stays quiet; 2026 gives the expected warnings."""
 
 from dataclasses import replace
 from datetime import date
@@ -7,6 +7,7 @@ import pytest
 
 from ttg.checks import (
     check,
+    hill_volume,
     interval_volume,
     long_run_above_cap,
     long_run_share,
@@ -122,6 +123,30 @@ def test_c6_fires_above_40_minutes_also_for_km_repeats():
     by_km = Session(SessionType.THRESHOLD, reps=5, km=2)  # 10 km at 4:40 = 47′
     plan = plan_of(WeekOverride(3, quality=by_minutes), WeekOverride(7, quality=by_km))
     assert weeks_of(threshold_volume(plan)) == [3, 7]
+
+
+# --- C9 hill volume ------------------------------------------------------------------------
+
+
+def test_c9_quiet_for_the_whole_hill_progression_and_at_the_limits():
+    at_the_limits = Session(SessionType.HILLS, reps=10, minutes=2)  # 2′ reps, 20′ in all
+    assert list(hill_volume(plan_of(WeekOverride(3, quality=at_the_limits)))) == []
+    assert list(hill_volume(plan_of())) == []
+
+
+@pytest.mark.parametrize(
+    ("session", "message"),
+    [
+        (Session(SessionType.HILLS, reps=5, minutes=4), "hill repeats: reps of 4′ (at most 2′)"),
+        (Session(SessionType.HILLS, reps=12, minutes=2), "hill repeats: 24′ in all (at most 20′)"),
+        (Session(SessionType.HILLS, reps=6, minutes=4), "reps of 4′ (at most 2′) and 24′ in all (at most 20′)"),
+        (Session(SessionType.HILLS, reps=5, km=0.5), "reps of 3′"),  # timed at easy pace, 5:37
+    ],
+)
+def test_c9_fires_above_the_hill_limits(session, message):
+    (warning,) = hill_volume(plan_of(WeekOverride(3, quality=session)))
+    assert (warning.code, warning.week) == (WarningCode.HILL_VOLUME, 3)
+    assert message in warning.message
 
 
 # --- C7 interval volume --------------------------------------------------------------------

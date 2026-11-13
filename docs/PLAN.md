@@ -34,7 +34,7 @@ Modules of the package `ttg`. Everything marked *pure* follows D-013.
 | `sessions` | session catalogue, progressions, km estimate (§1, §3, §4) | yes |
 | `long_run` | long-run growth, caps, deload, taper and restart (§4, §6) | yes |
 | `expand` | phase rules → weeks; applies `[overrides]` (D-030); collects every warning (D-037) | yes |
-| `checks` | warnings C3–C8 (§7); C1 and C2 come from the layout and the expansion | yes |
+| `checks` | warnings C3–C9 (§7); C1 and C2 come from the layout and the expansion | yes |
 | `export` | `Plan` → JSON-ready dict including display strings (D-012) | yes |
 | `spec` | read and validate `season.toml` → `Season` (errors for invalid input) | no |
 | `render` | write `plan.json`, call Typst with the template `src/ttg/plan.typ` (D-035) | no |
@@ -84,6 +84,7 @@ All fields:
 | `[[race]] taper_weeks` | integer ≥ 1 | by distance | Includes the race week (D-009). Not for C races. |
 | `[[race]] specific_weeks` | integer ≥ 0 | by distance | Race-specific block. Not for C races. |
 | `[[race]] recovery_weeks` | integer ≥ 0 | by distance | Recovery after the race. Not for C races. |
+| `[[race]] hilly` | `true`, `false` | `false` | Climbs, not a steady pace, decide the effort; the race-specific block leans into hill repeats (D-041). Not for C races. |
 | `[paces] race_result` | `{ distance_km, time }` | required | Anchor for the default paces (D-015); `time` is `"h:mm:ss"` or `"m:ss"`. |
 | `[paces] easy`, `mp`, `threshold`, `interval` | `"m:ss"` per km | derived | Overrides (D-005). |
 | `[load] easy_run_km` | integer ≥ 1 | required | Length of an easy run (D-022). |
@@ -149,11 +150,11 @@ Everything the sheet shows, computed in Python, including the display strings. T
 | `weeks[].month` | The month containing the week's Thursday. |
 | `weeks[].kind` | `build`, `deload`, `specific`, `taper`, `race`, `recovery`. |
 | `weeks[].phase` | The phase's number on the sheet, from 1; the phase column groups by it (D-037). |
-| `weeks[].phase_label` | The phase column text (D-026). |
+| `weeks[].phase_label` | The phase column text (D-026): *build*, *taper*, *recovery*, and for a race-specific block the race type, or *specific* when the race is not that distance (D-042). |
 | `weeks[].quality.type` | As in the season file: `H`, `I`, `T`, `MP`, `S`, `none`; or `race` for a C race up to 10 km, which replaces the quality run (D-017, D-030). |
 | `weeks[].quality.km` | The estimate of `TRAINING_MODEL.md` §3; a C race counts its distance (D-030). |
 | `weeks[].long.km` | The long run. A race replaces it in its race week, or a C race from the half marathon up; an A or B race counts 0, a C race its distance (D-030). |
-| `footer.races` | Every race, in date order, as printed under the pace legend: name, date(s), priority (D-030). |
+| `footer.races` | Every race, in date order, as printed under the pace legend: name, date(s), priority, `hilly` if marked (D-030, D-041). |
 | `weeks[].box_80pct` | The gauge box after which the 80 % border is drawn (D-019). |
 | `weeks[].note` | The text of the last column: the planned km in build, deload and specific weeks; *taper*, *race* or *recovery* otherwise; or the override's `note` (D-030). |
 | `warnings` | Not printed on the sheet; `week` may be `null`. |

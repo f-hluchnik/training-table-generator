@@ -183,7 +183,7 @@ The fields and their validation are documented in PLAN §4. Choices beyond PLAN'
 ### D-026 Phase labels are derived, never typed
 *Owner:* labels should not be arbitrary; rather none than random ones. The phase column shows only labels the compiler derives from the phase:
 - general build weeks, deloads included → *build*;
-- the race-specific block → the race type: *10 km*, *half*, *marathon*, *ultra*;
+- the race-specific block → the race type: *10 km*, *half*, *marathon*, *ultra*; *specific* when the race is not that distance (amended by D-042);
 - the taper including the race week → *taper*;
 - recovery after a race → *recovery*.
 
@@ -303,3 +303,29 @@ test-2027 is frozen as the snapshot `tests/fixtures/plan-test-2027.json` with th
 
 ### D-040 Lint and type checks in CI — Agreed
 *Owner, S7: asked for the review's findings to be fixed.* `ruff check`, `ruff format --check` (120 columns) and `mypy --strict` on `src` run in CI before the tests. `ruff` and `mypy` are pinned development dependencies, like `typst`: a new release can add rules and break CI unannounced. The checks found no bugs, but required fields in `spec` and the optional repetitions of `Session` were typed as optional; both are now narrowed explicitly.
+
+---
+
+## Session S7: hilly races (T-15)
+
+### D-041 Hilly races lean their specific block into hills — Agreed (owner merged PR #20)
+*Owner, S7 (Q-8):* keep the race type by distance; add a "hilly" marker that leans into hill repeats, adjusted as an experienced coach would.
+- **Input:** `[[race]] hilly = true`, default `false`, not on C races (they have no specific block). *Hilly* means climbs, not a steady pace, decide the effort, as on a trail or mountain course; a rolling road marathon is not hilly. A boolean and not an elevation in metres: elevation stays parked (Q-7), and a threshold in m/km would be a number without a source.
+- **Rule:** the race keeps its type, phase lengths, caps and taper. In its race-specific block every other quality run is hill repeats (H); the others are the race's own intensity with threshold instead of marathon pace: H → I → H → T for 10 km and ultra, H → T for half and marathon. No MP km in its long runs. Details and sources in `TRAINING_MODEL.md` §4.
+- **The hill session itself is unchanged** (limited later to 2′ reps, D-043). Its progression lengthens the efforts (1′ → 2′ → 4′) and runs twice as fast in the block; its jog down gives the small downhill dose that is enough (source 26).
+- **The footer marks the race:** `Trail 10 oct (A, hilly)`, so the block's hills are explained on the sheet.
+
+*Owner's question: should every race have the H → I → T progression?* *Coach:* every plan already runs it through its build weeks. In the race-specific block a flat race narrows to its own intensity: specificity, the final phase is the race-specific one (sources 16, 30). Hills there would take the place of the flat race's most specific session, marathon pace above all. So no; `hilly` is the switch for races where hills are the specific demand.
+
+*Owner's question: how wrong is it to train for a hilly race without hills?* *Coach:* less wrong than it looks for the climbs: uphill running is mainly aerobic, and Koop's last word is that fitness matters most (source 26). The descents are the gap: they are muscular, so the quads need some downhill running, but a little goes a long way. A 30 km long run with 1,600 m of climbing is not needed; see `TRAINING_MODEL.md` §4 for what to do without hills.
+
+
+### D-042 A specific block names a distance only when the race is that distance — Agreed (owner, S8)
+*Owner, S8:* "nothing that isn't a marathon should be labeled marathon. It could say something like *specific*." The race type still comes from the distance (D-041 keeps that): a 30 km race trains as a marathon. Only the label changes. The race-specific block is labelled *10 km*, *half* or *marathon* when the race is within 0.1 km of that distance (the classification's slack, `TRAINING_MODEL.md` §5), *ultra* for any race beyond a marathon (an ultra is any distance beyond a marathon), and *specific* otherwise: a 5 km, 15 km or 30 km race. *Amends* D-026. Both reference seasons keep their labels.
+
+### D-043 Hill repeats: reps of at most 2′, at most 20′ of effort; warning C9 — Agreed (owner, S8)
+*Owner, S8:* add a cap (the T-15 check found 9 × 4′, 36′ of hard climbing, in a 52-week hilly plan, and the rule would go on to 5 × 8′); "we should never get past 2 minutes of uphill running"; an override past the limits warns.
+- **Rep length, at most 2′ [owner].** The progression stops lengthening the reps at 2′ and holds at its last step within the limits: 6–9 × 1′ → 5–9 × 2′, held at 9 × 2′. *Coach:* a sound choice. Hill repeats stay short, hard strength efforts. 2–4′ reps would be VO₂max work (source 31), which the I session already covers, and longer climbs belong to the long run's route (D-041).
+- **Total, at most 20′ of effort [source 31, 32]**: time at hard effort in one session tops out around 15–20′ (Koop), and long-hill sessions total 15–20′ of climbing. The progression stays below it (9 × 2′ = 18′); it bounds overrides such as 12 × 2′.
+- **C9:** an H session past either limit warns, naming the limit: `hill repeats: reps of 4′ (at most 2′) and 24′ in all (at most 20′)`. Only an override can pass them, as with C6 and C7. Reps given in km are timed at easy pace, as the km estimate counts hill efforts.
+- Both reference seasons are unchanged (2026 peaks at 10 × 1′, test-2027 at 6 × 2′).

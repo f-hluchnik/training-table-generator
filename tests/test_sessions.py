@@ -3,6 +3,8 @@ import pytest
 from ttg.model import EasyRuns, Session, SessionType
 from ttg.paces import Pace, TrainingPaces
 from ttg.sessions import (
+    MAX_HILL_MINUTES,
+    MAX_HILL_REP_MINUTES,
     MAX_THRESHOLD_MINUTES,
     easy_run_kms,
     hill_session,
@@ -38,6 +40,12 @@ def test_hills_add_a_rep_then_halve_the_reps_and_double_the_duration():
     assert [shape(hill_session(n)) for n in range(7)] == [
         (6, 1), (7, 1), (8, 1), (9, 1), (5, 2), (6, 2), (7, 2),
     ]  # fmt: skip
+
+
+def test_hills_hold_at_nine_times_two_minutes_within_the_limits():
+    assert [shape(hill_session(n)) for n in range(7, 11)] == [(8, 2), (9, 2), (9, 2), (9, 2)]
+    for reps, minutes in map(shape, map(hill_session, range(60))):
+        assert minutes <= MAX_HILL_REP_MINUTES and reps * minutes <= MAX_HILL_MINUTES
 
 
 def test_intervals_alternate_a_rep_and_a_minute():
