@@ -298,6 +298,7 @@ class WarningCode(StrEnum):
     THRESHOLD_VOLUME = "C6"
     INTERVAL_VOLUME = "C7"
     PACE_CONSISTENCY = "C8"
+    HILL_VOLUME = "C9"
 
 
 @dataclass(frozen=True)

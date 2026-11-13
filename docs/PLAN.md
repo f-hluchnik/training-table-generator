@@ -34,7 +34,7 @@ Modules of the package `ttg`. Everything marked *pure* follows D-013.
 | `sessions` | session catalogue, progressions, km estimate (§1, §3, §4) | yes |
 | `long_run` | long-run growth, caps, deload, taper and restart (§4, §6) | yes |
 | `expand` | phase rules → weeks; applies `[overrides]` (D-030); collects every warning (D-037) | yes |
-| `checks` | warnings C3–C8 (§7); C1 and C2 come from the layout and the expansion | yes |
+| `checks` | warnings C3–C9 (§7); C1 and C2 come from the layout and the expansion | yes |
 | `export` | `Plan` → JSON-ready dict including display strings (D-012) | yes |
 | `spec` | read and validate `season.toml` → `Season` (errors for invalid input) | no |
 | `render` | write `plan.json`, call Typst with the template `src/ttg/plan.typ` (D-035) | no |

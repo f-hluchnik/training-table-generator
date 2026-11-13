@@ -181,7 +181,7 @@ When there isn't enough time, blocks give way in this order, each one only as fa
 
 **Build weeks.** Three loading weeks, then a deload week, repeating. The count restarts after a race and runs on into the race-specific block. The quality run rotates hills → intervals → threshold, and each type progresses each time it comes round:
 
-- **Hills:** 6×1′, one rep more each time; at 10 reps, half the reps at double the length (5×2′, …), held at 5×4′ (at most 20′ of hill effort).
+- **Hills:** 6×1′, one rep more each time; at 10 reps, half the reps at double the length (5×2′, …), held at 9×2′: reps of at most 2′ and at most 20′ of hill effort.
 - **Intervals:** 5×3′ → 6×3′ → 5×4′ → 6×4′ → …, held at no more than 10 km or 8 % of the week at interval pace.
 - **Threshold:** 3×8′ → 3×10′ → 4×8′ → 4×10′ → 5×8′, at most 40′ in total.
 
@@ -218,6 +218,7 @@ Warnings never stop the build; they go to the terminal, not on the sheet.
 | C6 | More than 40′ at threshold pace in one session. |
 | C7 | More than 10 km, or 8 % of the week, at interval pace in one session. |
 | C8 | An overridden threshold pace is more than 10 s/km off the one derived from the race result. |
+| C9 | Hill reps longer than 2′, or more than 20′ of hill effort in one session. |
 
 ## How it works inside
 
@@ -237,7 +238,7 @@ All logic is in Python. The Typst template only lays out `plan.json`, which alre
 | `sessions` | Session catalogue, progressions and km estimates. |
 | `long_run` | Long-run growth, caps, deload, taper and restart. |
 | `expand` | Phases → weeks, then the overrides; collects all warnings. |
-| `checks` | Warnings C3–C8. |
+| `checks` | Warnings C3–C9. |
 | `export` | Plan → `plan.json`, including the display strings. |
 | `render`, `plan.typ` | Write `plan.json`, compile the template to `plan.pdf`. |
 | `cli` | `ttg build`. |

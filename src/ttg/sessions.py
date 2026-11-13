@@ -23,9 +23,11 @@ RECOVERY_JOG_MINUTES = 2  # between reps of I, T and MP; hill recovery lasts as 
 # Where each progression starts [2026].
 HILL_START_REPS, HILL_START_MINUTES = 6, 1
 HILL_REPS_BEFORE_SPLIT = 10  # at this many reps: halve the reps, double the duration
-# Hill repeats are VO₂max-type efforts: 2–4′ reps reach and hold that intensity, and the time at it
-# in one session tops out around 15–20′ [source 31, 32]. The hill progression holds at the last step
-# within 20′ in total, 5 × 4′ (D-043); without it a year-long hilly plan reached 9 × 4′, then 5 × 8′.
+# [owner, S8] A hill rep is at most 2′: short, hard uphill efforts. Longer climbs are the long run's
+# route; sustained hard climbing is threshold work, which the T session covers (D-043).
+MAX_HILL_REP_MINUTES = 2
+# Hard effort in one session tops out around 15–20′ [source 31, 32]. The progression stays below it
+# (9 × 2′ = 18′); it bounds overrides (C9, D-043).
 MAX_HILL_MINUTES = 20
 INTERVAL_START_REPS, INTERVAL_START_MINUTES = 5, 3
 THRESHOLD_START_REPS, THRESHOLD_START_MINUTES = 3, 8
@@ -56,8 +58,8 @@ BUILD_ROTATION = (SessionType.HILLS, SessionType.INTERVALS, SessionType.THRESHOL
 
 
 def hill_session(occurrence: int) -> Session:
-    """6×1′, +1 rep each time; at 10 reps: halve the reps, double the duration; held at 5×4′ by the cap."""
-    reps, minutes = _last_step_within(_uncapped_hill_shape, occurrence, MAX_HILL_MINUTES)
+    """6×1′, +1 rep each time; at 10 reps: halve the reps, double the duration; held at 9×2′ by the limits."""
+    reps, minutes = _last_step_within(_uncapped_hill_shape, occurrence, _is_within_hill_limits)
     return Session(SessionType.HILLS, reps=reps, minutes=minutes)
 
 
@@ -101,7 +103,7 @@ def interval_limit_km(week_km: int) -> int:
 
 def threshold_session(occurrence: int) -> Session:
     """3×8′ → 3×10′ → 4×8′ → 4×10′ → 5×8′, held there by the cap on minutes at T."""
-    reps, minutes = _last_step_within(_uncapped_threshold_shape, occurrence, MAX_THRESHOLD_MINUTES)
+    reps, minutes = _last_step_within(_uncapped_threshold_shape, occurrence, _is_within_threshold_cap)
     return Session(SessionType.THRESHOLD, reps=reps, minutes=minutes)
 
 
@@ -112,11 +114,22 @@ def _uncapped_threshold_shape(occurrence: int) -> tuple[int, int]:
     return reps, minutes
 
 
-def _last_step_within(shape: Callable[[int], tuple[int, int]], occurrence: int, max_minutes: int) -> tuple[int, int]:
-    """(reps, minutes per rep) of the `occurrence`-th step, or of the last earlier step within `max_minutes`."""
+def _is_within_hill_limits(reps: int, rep_minutes: float) -> bool:
+    """Reps of at most 2′, at most 20′ of effort in all (D-043)."""
+    return rep_minutes <= MAX_HILL_REP_MINUTES and reps * rep_minutes <= MAX_HILL_MINUTES
+
+
+def _is_within_threshold_cap(reps: int, rep_minutes: float) -> bool:
+    return reps * rep_minutes <= MAX_THRESHOLD_MINUTES
+
+
+def _last_step_within(
+    shape: Callable[[int], tuple[int, int]], occurrence: int, fits: Callable[[int, int], bool]
+) -> tuple[int, int]:
+    """(reps, minutes per rep) of the `occurrence`-th step, or of the last earlier step that `fits`."""
     for step in range(occurrence, 0, -1):
         reps, minutes = shape(step)
-        if reps * minutes <= max_minutes:
+        if fits(reps, minutes):
             return reps, minutes
     return shape(0)
 

@@ -1,4 +1,4 @@
-"""Warnings C3–C8 (TRAINING_MODEL.md §7, D-031).
+"""Warnings C3–C9 (TRAINING_MODEL.md §7, D-031, D-043).
 
 Each check is a small function of the plan with a named threshold. C1 and C2
 come from the layout (D-029) and the expansion; `ttg.expand` merges them with these.
@@ -7,12 +7,15 @@ Pure (D-013).
 """
 
 from collections.abc import Callable, Iterator
+from dataclasses import replace
 from itertools import pairwise
 
 from ttg import long_run
 from ttg.model import LongRun, Plan, PlanWarning, Session, SessionType, WarningCode, Week
 from ttg.paces import derive_paces
 from ttg.sessions import (
+    MAX_HILL_MINUTES,
+    MAX_HILL_REP_MINUTES,
     MAX_INTERVAL_KM,
     MAX_INTERVAL_SHARE_OF_WEEK,
     MAX_THRESHOLD_MINUTES,
@@ -34,10 +37,13 @@ MAX_THRESHOLD_SESSION_MINUTES = MAX_THRESHOLD_MINUTES
 # (`ttg.sessions`, D-030); only an override can pass it. Compared in whole km (D-031).
 # C8 [default]: an overridden threshold pace this far from the derived one.
 MAX_THRESHOLD_DEVIATION_SECONDS = 10
+# C9: the hill limits the H progression keeps (`ttg.sessions`, D-043): reps of at most 2′ [owner],
+# at most 20′ of effort [source 31, 32]. Only an override can pass them. Reps given in km are timed
+# at easy pace, as the km estimate counts hill efforts (TRAINING_MODEL.md §3).
 
 
 def check(plan: Plan) -> tuple[PlanWarning, ...]:
-    """Warnings C3–C8 of the plan's weeks and paces (not C1 and C2, which come with the plan)."""
+    """Warnings C3–C9 of the plan's weeks and paces (not C1 and C2, which come with the plan)."""
     warnings: list[PlanWarning] = []
     for weekly_check in _WEEKLY_CHECKS:
         warnings += weekly_check(plan)
@@ -114,6 +120,20 @@ def interval_volume(plan: Plan) -> Iterator[PlanWarning]:
             )
 
 
+def hill_volume(plan: Plan) -> Iterator[PlanWarning]:
+    """C9: one warning per session, naming each limit it passes."""
+    for week, session in _sessions_of(plan, SessionType.HILLS):
+        rep_minutes = work_minutes(replace(session, reps=1), plan.paces.easy)
+        total_minutes = work_minutes(session, plan.paces.easy)
+        passed = []
+        if rep_minutes > MAX_HILL_REP_MINUTES:
+            passed.append(f"reps of {rep_minutes:.0f}′ (at most {MAX_HILL_REP_MINUTES}′)")
+        if total_minutes > MAX_HILL_MINUTES:
+            passed.append(f"{total_minutes:.0f}′ in all (at most {MAX_HILL_MINUTES}′)")
+        if passed:
+            yield PlanWarning(WarningCode.HILL_VOLUME, week.number, f"hill repeats: {' and '.join(passed)}")
+
+
 def pace_consistency(plan: Plan) -> Iterator[PlanWarning]:
     """C8: compares an overridden threshold pace with the one derived from the race result."""
     paces = plan.season.paces
@@ -137,6 +157,7 @@ _WEEKLY_CHECKS: tuple[Callable[[Plan], Iterator[PlanWarning]], ...] = (
     long_run_above_cap,
     threshold_volume,
     interval_volume,
+    hill_volume,
 )
 
 
