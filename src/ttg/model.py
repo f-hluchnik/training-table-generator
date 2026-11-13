@@ -256,15 +256,13 @@ class Week:
     phase: Phase
     target: Race  # the A or B race the week works toward; decides the long-run cap
     easy: tuple[int, ...]  # km of each easy run
-    quality: Session | Race  # a C race replaces the quality run (D-017)
+    quality: Session | Race  # a C race up to 10 km replaces the quality run (D-017, D-030)
     quality_km: int  # estimate (TRAINING_MODEL.md §3); a C race counts its distance
-    long_run: LongRun | Race | None  # an A or B race replaces the long run; None: no long run
+    # A race replaces the long run: the A or B race of the week, or a C race from the half
+    # marathon up (D-030). None: no long run.
+    long_run: LongRun | Race | None
+    long_run_km: int  # a C race counts its distance, an A or B race does not (D-030)
     note: str | None = None  # override text for the last column (D-025)
-
-    @property
-    def long_run_km(self) -> int:
-        """Km of the long run; an A or B race is not counted (owner, S5)."""
-        return self.long_run.km if isinstance(self.long_run, LongRun) else 0
 
     @property
     def planned_km(self) -> int:

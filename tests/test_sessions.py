@@ -6,6 +6,7 @@ from ttg.sessions import (
     MAX_THRESHOLD_MINUTES,
     easy_run_kms,
     hill_session,
+    interval_limit_km,
     interval_session,
     marathon_long_run_mp_km,
     marathon_pace_session,
@@ -16,6 +17,8 @@ from ttg.sessions import (
     strides_session,
     taper_session,
     threshold_session,
+    work_km,
+    work_minutes,
 )
 
 H, I, T, MP = (SessionType.HILLS, SessionType.INTERVALS, SessionType.THRESHOLD, SessionType.MARATHON_PACE)
@@ -67,13 +70,38 @@ def test_long_run_mp_km_grows_by_two_up_to_90_minutes_at_mp():
     assert [marathon_long_run_mp_km(n, PACES_2026.mp) for n in range(8)] == [6, 8, 10, 12, 14, 16, 18, 18]
 
 
+def progression(session_type, occurrence, other_week_km=60):
+    return progression_session(session_type, occurrence, PACES_2026, EASY_RUN_KM_2026, other_week_km)
+
+
 def test_progression_session_dispatches_by_type():
-    assert progression_session(H, 2, PACES_2026) == hill_session(2)
-    assert progression_session(I, 2, PACES_2026) == interval_session(2)
-    assert progression_session(T, 2, PACES_2026) == threshold_session(2)
-    assert progression_session(MP, 2, PACES_2026) == marathon_pace_session(2, PACES_2026.mp)
+    assert progression(H, 2) == hill_session(2)
+    assert progression(I, 2) == interval_session(2)
+    assert progression(T, 2) == threshold_session(2)
+    assert progression(MP, 2) == marathon_pace_session(2, PACES_2026.mp)
     with pytest.raises(ValueError):
-        progression_session(SessionType.STRIDES, 0, PACES_2026)
+        progression(SessionType.STRIDES, 0)
+
+
+def test_intervals_hold_at_the_last_step_within_daniels_limit():
+    # Other km 60: 6 × 4′ at 4:15 is 5.6 km (6 whole km); its week is 71 km, 8 % = 5.7 (6). Fits.
+    assert progression(I, 3, other_week_km=60) == interval_session(3)
+    # Other km 45: the week is about 55 km, 8 % = 4.4 (4): 6 × 4′ (6 km) and 5 × 4′ (5 km) don't
+    # fit, 6 × 3′ (4 km) does …
+    assert progression(I, 3, other_week_km=45) == interval_session(1)
+    # … and a small week holds the first steps.
+    assert progression(I, 5, other_week_km=20) == interval_session(0)
+
+
+def test_interval_limit_is_the_lesser_of_10_km_and_8_percent_in_whole_km():
+    assert [interval_limit_km(km) for km in (44, 59, 150)] == [4, 5, 10]
+
+
+def test_work_km_and_minutes_for_minute_and_km_repeats():
+    assert work_km(Session(I, reps=5, minutes=3), PACES_2026.interval) == pytest.approx(15 / 4.25)
+    assert work_km(Session(T, reps=6, km=1), PACES_2026.threshold) == 6
+    assert work_minutes(Session(T, reps=6, km=1), PACES_2026.threshold) == pytest.approx(27)
+    assert work_minutes(Session(T, reps=3, minutes=8), PACES_2026.threshold) == 24
 
 
 def test_taper_session_is_short_threshold_work():
@@ -107,7 +135,7 @@ ESTIMATED_KM_2026 = [5.64, 8.62, 9.70, 6.00, 9.69, 11.03, 6.36, 9.80, 11.84, 6.7
 )
 def test_reproduces_the_2026_quality_sessions(index, reference, estimated):
     session_type, reps, minutes, reference_km = reference
-    session = progression_session(session_type, index // 3, PACES_2026)
+    session = {H: hill_session, I: interval_session, T: threshold_session}[session_type](index // 3)
     assert (session.type, session.reps, session.minutes) == (session_type, reps, minutes)
     km = session_km(session, PACES_2026, EASY_RUN_KM_2026)
     assert km == pytest.approx(estimated, abs=0.01)

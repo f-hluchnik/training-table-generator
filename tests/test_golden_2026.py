@@ -124,6 +124,11 @@ DIFFERENCES = (
     ),
     Difference(
         "long",
+        {17: "RACE 101 km", 23: "RACE 42 km"},
+        "A race prints its distance; the footer lists the races by name (owner, S5).",
+    ),
+    Difference(
+        "long",
         {22: "16 km"},
         "The last taper long run is 60 % of the peak (26 km) and has no MP km (D-030).",
     ),

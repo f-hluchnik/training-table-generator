@@ -128,10 +128,11 @@ Everything the sheet shows, computed in Python, including the display strings. T
     "phase_label": "taper",
     "easy": {"km": [12, 6], "text": "12+6"},
     "quality": {"type": "none", "km": 0, "text": "–"},
-    "long": {"km": 0, "mp_km": 0, "text": "RACE"},
+    "long": {"km": 0, "mp_km": 0, "text": "RACE 42 km"},
     "planned_km": 18, "box_80pct": 15, "note": "race"
   }, ...],
   "footer": {
+    "races": ["Beskydská sedmička 28–29 aug (B)", "Běhej Lesy Lednice 10 oct (A)"],
     "colours": [{"colour": "green", "shape": "fill", "label": "easy run"}, ..., {"colour": "red", "shape": "triangle", "label": "unexpected event"}],
     "rules": ["Short on time: …", "Tired or ill: …"],
     "success": "A week counts at ≥ 80 % of the planned km."
@@ -148,9 +149,10 @@ Everything the sheet shows, computed in Python, including the display strings. T
 | `weeks[].month` | The month containing the week's Thursday. |
 | `weeks[].kind` | `build`, `deload`, `specific`, `taper`, `race`, `recovery`. |
 | `weeks[].phase_label` | The phase column text (D-026). |
-| `weeks[].quality.type` | As in the season file: `H`, `I`, `T`, `MP`, `S`, `none`; or `race` for a C race, which replaces the quality run (D-017). |
+| `weeks[].quality.type` | As in the season file: `H`, `I`, `T`, `MP`, `S`, `none`; or `race` for a C race up to 10 km, which replaces the quality run (D-017, D-030). |
 | `weeks[].quality.km` | The estimate of `TRAINING_MODEL.md` §3; a C race counts its distance (D-030). |
-| `weeks[].long.km` | The long run; an A or B race replaces it and counts 0 (D-030). |
+| `weeks[].long.km` | The long run. A race replaces it in its race week, or a C race from the half marathon up; an A or B race counts 0, a C race its distance (D-030). |
+| `footer.races` | Every race, in date order, as printed under the pace legend: name, date(s), priority (D-030). |
 | `weeks[].box_80pct` | The gauge box after which the 80 % border is drawn (D-019). |
 | `weeks[].note` | The text of the last column: the planned km in build, deload and specific weeks; *taper*, *race* or *recovery* otherwise; or the override's `note` (D-030). |
 | `warnings` | Not printed on the sheet; `week` may be `null`. |

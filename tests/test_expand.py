@@ -26,7 +26,7 @@ from ttg.model import (
     WeekKind,
     WeekOverride,
 )
-from ttg.sessions import interval_session
+from ttg.sessions import capped_interval_session, interval_limit_km, interval_session, round_km, work_km
 from ttg.spec import load_season
 
 SEASONS = Path(__file__).parents[1] / "seasons"
@@ -123,10 +123,19 @@ def test_specific_block_quality_by_race_type(distance_km, expected):
 
 
 def test_specific_10k_alternation_continues_each_types_progression():
-    weeks = plan_of(replace(MARATHON, distance_km=10)).weeks
-    build_intervals = sum(1 for w in weeks if w.kind is BUILD and w.quality.type is I)
-    first_specific = next(w.quality for w in weeks if w.kind is SPECIFIC)
-    assert first_specific == interval_session(build_intervals)
+    plan = plan_of(replace(MARATHON, distance_km=10))
+    build_intervals = sum(1 for w in plan.weeks if w.kind is BUILD and w.quality.type is I)
+    first_specific = next(w for w in plan.weeks if w.kind is SPECIFIC)
+    other_km = sum(first_specific.easy) + first_specific.long_run_km
+    assert first_specific.quality == capped_interval_session(build_intervals, plan.paces, 12, other_km)
+
+
+def test_intervals_hold_within_daniels_limit_for_their_week():
+    plan = plan_of(MARATHON)
+    intervals = [w for w in plan.weeks if isinstance(w.quality, Session) and w.quality.type is I]
+    for week in intervals:
+        assert round_km(work_km(week.quality, plan.paces.interval)) <= interval_limit_km(week.planned_km)
+    assert intervals[-1].quality == interval_session(2)  # 5 × 4′: 6 × 4′ would be 6 km in a 59 km week
 
 
 def test_deload_taper_race_and_recovery_quality(plan_2026):
@@ -140,19 +149,37 @@ def test_deload_taper_race_and_recovery_quality(plan_2026):
 # --- C races -------------------------------------------------------------------------------
 
 
-TUNE_UP = Race("Tune-up half", START + timedelta(weeks=1, days=6), 21.0975, Priority.C)  # Sunday, week 2
+TUNE_UP = Race("Tune-up 10 km", START + timedelta(weeks=1, days=6), 10, Priority.C)  # Sunday, week 2
+TUNE_UP_HALF = replace(TUNE_UP, name="Tune-up half", distance_km=21.0975)
 
 
-def test_a_c_race_replaces_the_quality_run_and_counts_its_distance():
+def test_a_c_race_up_to_10_km_replaces_the_quality_run_and_counts_its_distance():
     week = plan_of(TUNE_UP, MARATHON).weeks[1]
     assert week.quality == TUNE_UP
-    assert week.quality_km == 21
-    assert week.planned_km == sum(week.easy) + 21 + week.long_run.km
+    assert week.quality_km == 10
+    assert week.long_run == LongRun(17)
+    assert week.planned_km == sum(week.easy) + 10 + 17
 
 
 def test_the_rotation_continues_with_the_session_a_c_race_replaced():
     loading = [week for week in plan_of(TUNE_UP, MARATHON).weeks if week.kind is BUILD]
     assert quality_types(loading[:4]) == [H, "race", I, T]
+
+
+def test_a_longer_c_race_replaces_the_long_run_and_the_quality_run():
+    weeks = plan_of(TUNE_UP_HALF, MARATHON).weeks
+    assert (weeks[1].quality, weeks[1].long_run, weeks[1].long_run_km) == (Session(NONE), TUNE_UP_HALF, 21)
+    assert weeks[1].planned_km == sum(weeks[1].easy) + 21
+    # Neither progression advanced: week 3 continues where week 1 stopped.
+    assert (weeks[2].quality.type, weeks[2].long_run) == (I, LongRun(17))
+
+
+def test_a_c_race_in_a_recovery_block_warns():
+    half = Race("Half", date(2027, 6, 27), 21.0975)  # recovery weeks 9–10
+    tune_up = replace(TUNE_UP, date=date(2027, 7, 4))  # Sunday of week 9
+    warnings = plan_of(half, tune_up, MARATHON).warnings
+    assert [(w.code, w.week) for w in warnings] == [(WarningCode.RACES_TOO_CLOSE, 9)]
+    assert '"Tune-up 10 km" falls in the recovery after "Half"' in warnings[0].message
 
 
 def test_two_c_races_in_one_week_warn_and_the_first_replaces_the_quality_run():
