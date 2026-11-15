@@ -43,7 +43,7 @@ Session codes:
 | `RACE 21 km` | A race in place of the session. |
 | `–` | No session. |
 
-The planned km assume a 10′ warm-up and a 10′ cool-down around every quality run. Below the table, the sheet prints the pace legend (e.g. **ER**: 5:37 *easy* | … | **I**: 4:18 + 2′ jog *hard*, the description in italic), the races, date first (**10 oct**: Marathon (A)), the "life happens" rules (*Short on time: drop an easy run → intensity → long run. Tired or ill: drop intensity first.*) and the success rule (*A week counts as fully done at 80 % of its planned km.*)
+The planned km assume a 10′ warm-up and a 10′ cool-down around every quality run. Below the table, the sheet prints the pace legend (e.g. **ER**: 5:37 *easy* | … | **I**: 4:18 + 2′ jog *hard*, the description in italic), the races, date first (**10 oct**: Marathon (A)), the "life happens" rules (*Short on time: drop an easy run → intensity → long run. Tired or ill: drop intensity first.*), two notes (*Vary the easy runs' length, same total. Re-check paces after A races and every 2–3 months: easy by heart rate, T and MP by a race or test.*) and the success rule (*A week counts as fully done at 80 % of its planned km.*)
 
 The sheet is black and white, and the colours are yours. The reference season used green for easy, yellow for quality and blue for long runs, with a red triangle in a corner for an unexpected event (illness, a trip).
 
@@ -168,7 +168,7 @@ The rules follow established coaching guidance (Daniels, Pfitzinger, McMillan, K
 
 **Paces.** Derived from your race result with Jack Daniels' VDOT formula: threshold at 88 % of VDOT, interval at 97.5 %, easy at 70 %, marathon pace at the race-equivalent marathon time. Hills go by effort. For example, a 3:30:02 marathon gives easy 5:37, MP 4:59, threshold 4:40 and interval 4:18 per km.
 
-**A week** has one quality run, one long run and the rest easy runs. Easy runs are all `easy_run_km` and never grow. In lighter weeks (deload, taper, race and recovery) the last one is halved. The week's planned km is the sum of all runs. A quality run's km are estimated from warm-up, work, recoveries and cool-down. The tool doesn't assign runs to days: you fill in the calendar.
+**A week** has one quality run, one long run and the rest easy runs. Easy runs are all `easy_run_km` and never grow. In lighter weeks (deload, taper, race and recovery) the last one is halved. The sheet prints them equal, but they are a baseline: vary them (one longer, one shorter) as long as the week's total holds. The week's planned km is the sum of all runs. A quality run's km are estimated from warm-up, work, recoveries and cool-down. The tool doesn't assign runs to days: you fill in the calendar.
 
 **Phases** are laid out backward from each A and B race: *build* (general preparation), then a *race-specific* block, then a *taper* ending with the race week, then *recovery*. The default lengths in weeks:
 
@@ -181,7 +181,7 @@ The rules follow established coaching guidance (Daniels, Pfitzinger, McMillan, K
 
 When there isn't enough time, blocks give way in this order, each one only as far as needed: build weeks, then the race-specific block, then the previous race's recovery (down to one week), then the taper (down to the race week), and last the rest of that recovery. Every shortened block gives a warning. Two A or B races in the same week share one race week.
 
-**Build weeks.** Three loading weeks, then a deload week, repeating. The count restarts after a race and runs on into the race-specific block. The quality run rotates hills → intervals → threshold, and each type progresses each time it comes round:
+**Build weeks.** Three loading weeks, then a deload week, repeating. The count restarts after the bridge week that follows a race (below) and runs on into the race-specific block. The quality run rotates hills → intervals → threshold, and each type progresses each time it comes round:
 
 - **Hills:** 6×1′, one rep more each time; at 10 reps, half the reps at double the length (5×2′, …), held at 9×2′: reps of at most 2′ and at most 20′ of hill effort.
 - **Intervals:** 5×3′ → 6×3′ → 5×4′ → 6×4′ → …, held at no more than 10 km or 8 % of the week at interval pace.
@@ -202,7 +202,9 @@ The long run grows by 2 km per loading week up to 75 % of the race's cap.
 
 A hilly race keeps its type, phase lengths and caps, and the footer marks it `(A, hilly)`. Its block has hill repeats every other week, and a hilly course has no steady pace to rehearse, so threshold takes the place of marathon pace. Without hills nearby, an incline treadmill or any short rise works for the climbs. The descents are what flat training can't give: a few days in hilly terrain 4–6 weeks before the race helps most.
 
-**Taper.** In the weeks before the race week: threshold 6 × 1 km and a long run of 75 % of the peak since the last race, 60 % in the week just before the race week. **Race week:** strides; the race takes the long run's place and its km aren't counted. **Recovery:** easy runs only in the first week, then a long run of one easy-run length. After that the long run restarts at 75 % of the previous peak. A shortened long run is never shorter than an easy run.
+**Taper.** In the weeks before the race week: threshold 6 × 1 km and a long run of 75 % of the peak since the last race, 60 % in the week just before the race week. **Race week:** strides; the race takes the long run's place and its km aren't counted. **Recovery:** easy runs only in the first week, then a long run of one easy-run length. **Bridge week:** the first week after the recovery, whatever its phase, eases back into training: full easy runs, the quality run the plan has for that week at half its reps (`T: 5×8′` becomes `T: 2×8′`), and the long run restarting at 75 % of the previous peak, without MP km. Then the 3:1 cycle starts afresh. Without a recovery block (`recovery_weeks = 0`) there is no bridge week. A shortened long run is never shorter than an easy run.
+
+**Paces over the season.** The paces come from one race result, so they don't follow your fitness by themselves. Re-check them after each A race and every 2–3 months: let the easy pace drift faster at the same heart rate, but change threshold and marathon pace only after a race or a test effort. Then update `race_result` (or `mp`) and rebuild: only the pace legend changes.
 
 **C races** are tune-ups inside the training. A C race up to 10 km takes the quality run's place. A longer C race takes the long run's place, and that week has no quality run. Either way its km count, and the progressions continue the next week as if nothing happened.
 
@@ -245,7 +247,7 @@ All logic is in Python. The Typst template only lays out `plan.json`, which alre
 | `render`, `plan.typ` | Write `plan.json`, compile the template to `plan.pdf`. |
 | `cli` | `ttg build`. |
 
-`plan.json` (`schema_version` 5) is the contract between the Python side and the template. Its fields are documented in [`docs/PLAN.md`](docs/PLAN.md) §4.
+`plan.json` (`schema_version` 6) is the contract between the Python side and the template. Its fields are documented in [`docs/PLAN.md`](docs/PLAN.md) §4.
 
 ## Development
 

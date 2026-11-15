@@ -124,6 +124,15 @@ Default: A.
 
 ---
 
+## Session S9 (15 Nov 2026): the 2027 coach review
+
+### D-050 Bridge week after a recovery block; two notes in the footer — Agreed (owner, S9)
+*Owner, S9:* an external coach's review of the 2027 plan found the jump from recovery straight into full load (30 → 54 km with T 5 × 8′ after an 18 km trail race), and the rigid 12 + 12 easy runs, and proposed pace re-tests. The owner wanted only the first in the plan's numbers; the others as notes.
+- **Bridge week.** The first week of a build or specific phase after a recovery block is `kind = "bridge"`: regular easy runs, the progression's session at half its reps (rounded down), the restart long run without MP km. Not a loading week: the 3:1 count starts after it, C3 skips it. *Owner:* half the session rather than strides; the bridge is kept even when it takes a week of a short specific block (2026 week 20). No bridge without a recovery block. Rules and sources: TRAINING_MODEL.md §4. *Amends* D-022 (the bridge has the regular easy runs) and D-030 (the cycle restarts after the bridge).
+- **Footer notes** (default rules, still configurable with `[sheet] rules`): vary the easy runs' length, same total; re-check paces after A races and every 2–3 months, easy by heart rate, T and MP by a race or test (coach: heart rate alone doesn't justify a faster threshold). The footer's rules now wrap between entries, never inside one.
+- `plan.json` 6: `weeks[].kind` can be `bridge`. No new season-file field.
+- *Not taken:* fixed easy-run variations in the plan's numbers (owner: notes are enough; D-022 stands).
+
 ## Open questions (need the owner)
 
 - **Q-1** *Answered:* Python 3.11 and 3.12 available; work in a virtual environment → D-011.

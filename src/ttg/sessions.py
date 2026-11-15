@@ -8,6 +8,7 @@ session is decided by `expand` (T-06).
 
 import math
 from collections.abc import Callable
+from dataclasses import replace
 
 from ttg.model import EasyRuns, Session, SessionType
 from ttg.paces import SECONDS_PER_MINUTE, Pace, TrainingPaces
@@ -48,6 +49,12 @@ MAX_MARATHON_PACE_MINUTES = 90
 # The quality run of the taper weeks before the race week: short threshold work,
 # T 6 × 1 km [2026; "intensity is kept short", source 8].
 TAPER_THRESHOLD_REPS, TAPER_THRESHOLD_REP_KM = 6, 1
+
+# The bridge week after a recovery block brings intensity back at half the volume: the session
+# the progression gives that week, at half its reps, rounded down [default, owner S9; a gradual
+# return after a race, source 9] (D-050).
+BRIDGE_REPS_SHARE = 0.5
+MIN_BRIDGE_REPS = 1  # a halved session keeps at least one rep
 
 # A strides run (S): an easy run of e/2 km with short, fast, relaxed strides
 # (TRAINING_MODEL.md §1) [default]. Only printed in the legend; the km are e/2.
@@ -152,6 +159,14 @@ def _max_marathon_pace_km(mp: Pace) -> int:
 
 def taper_session() -> Session:
     return Session(SessionType.THRESHOLD, reps=TAPER_THRESHOLD_REPS, km=TAPER_THRESHOLD_REP_KM)
+
+
+def bridge_session(session: Session) -> Session:
+    """The bridge week's quality run: the week's session at half its reps, rounded down (D-050)."""
+    if session.reps is None:
+        return session
+    reps = max(MIN_BRIDGE_REPS, math.floor(session.reps * BRIDGE_REPS_SHARE))
+    return replace(session, reps=reps)
 
 
 def strides_session() -> Session:

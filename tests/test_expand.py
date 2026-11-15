@@ -34,7 +34,7 @@ H, I, T, MP, S, NONE = (
     SessionType.MARATHON_PACE, SessionType.STRIDES, SessionType.NONE,
 )  # fmt: skip
 BUILD, DELOAD, SPECIFIC = WeekKind.BUILD, WeekKind.DELOAD, WeekKind.SPECIFIC
-TAPER, RACE, RECOVERY = WeekKind.TAPER, WeekKind.RACE, WeekKind.RECOVERY
+TAPER, RACE, RECOVERY, BRIDGE = WeekKind.TAPER, WeekKind.RACE, WeekKind.RECOVERY, WeekKind.BRIDGE
 
 START = date(2027, 5, 3)  # a Monday
 MARATHON = Race("Marathon", date(2027, 10, 10), 42.195)  # week 23 from START
@@ -80,9 +80,19 @@ def test_2026_week_kinds(plan_2026):
         SPECIFIC, SPECIFIC, SPECIFIC, DELOAD, SPECIFIC, SPECIFIC,  # ultra specific 9–14
         TAPER, TAPER, RACE,  # ultra taper 15–17
         RECOVERY, RECOVERY,  # 18–19
-        SPECIFIC, SPECIFIC,  # marathon specific 20–21: the cycle restarted after the race
+        BRIDGE, SPECIFIC,  # marathon specific 20–21: the bridge back after the recovery (D-050)
         TAPER, RACE,  # 22–23
     ]  # fmt: skip
+
+
+def test_the_cycle_restarts_after_the_bridge_week():
+    half = Race("Half", date(2027, 6, 27), 21.0975)  # week 8; recovery 9–10
+    assert kinds(plan_of(half, MARATHON))[8:15] == [RECOVERY, RECOVERY, BRIDGE, BUILD, BUILD, BUILD, DELOAD]
+
+
+def test_no_bridge_week_without_a_recovery_block():
+    half = Race("Half", date(2027, 6, 27), 21.0975, recovery_weeks=0)
+    assert BRIDGE not in kinds(plan_of(half, MARATHON))
 
 
 def test_the_cycle_continues_from_build_into_the_specific_block():
@@ -277,16 +287,41 @@ def test_long_run_restarts_after_a_race_at_the_next_races_build_cap(plan_2026):
 def test_long_run_restarts_at_three_quarters_of_a_smaller_previous_peak():
     half = Race("Half", date(2027, 6, 27), 21.0975)  # its specific block peaks at the 21 km cap
     weeks = plan_of(half, MARATHON).weeks
-    first_after = next(w for w in weeks if w.number > week_on(half.date) and w.kind.is_loading)
-    assert first_after.long_run.km == 16  # 75 % of 21, below the marathon's build cap (24)
+    bridge = next(w for w in weeks if w.kind is BRIDGE)
+    assert bridge.long_run.km == 16  # 75 % of 21, below the marathon's build cap (24)
+
+
+# --- the bridge week (D-050) -------------------------------------------------------------
+
+
+def test_the_bridge_has_the_weeks_session_at_half_its_reps(plan_2026):
+    bridge, after = plan_2026.weeks[19:21]
+    assert bridge.quality == Session(MP, reps=1, km=3)  # MP 3 × 3 km, halved and rounded down
+    assert after.quality == Session(MP, reps=4, km=3)  # the progression advanced as in any week
+
+
+def test_the_bridge_in_a_build_phase_halves_the_build_rotations_session():
+    half = Race("Half", date(2027, 6, 27), 21.0975)
+    weeks = plan_of(half, MARATHON).weeks
+    bridge = weeks[10]  # week 11, after the half's race week 8 and recovery 9–10
+    assert bridge.kind is BRIDGE
+    assert bridge.quality == Session(T, reps=2, minutes=10)  # the rotation's T 4 × 10′, halved
+
+
+def test_the_bridge_has_regular_easy_runs_and_a_long_run_without_mp_km(plan_2026):
+    bridge, after = plan_2026.weeks[19:21]
+    assert bridge.easy == (12, 12)
+    assert bridge.long_run == LongRun(24)
+    assert after.long_run.mp_km > 0  # the MP alternation starts after the bridge
 
 
 # --- easy runs -------------------------------------------------------------------------------
 
 
-def test_easy_runs_are_reduced_in_every_week_that_is_not_a_loading_week():
-    for week in plan_of(MARATHON).weeks:
-        assert week.easy == ((12, 12) if week.kind.is_loading else (12, 6))
+def test_easy_runs_are_reduced_in_every_week_that_is_not_a_loading_or_bridge_week():
+    half = Race("Half", date(2027, 6, 27), 21.0975)
+    for week in plan_of(half, MARATHON).weeks:
+        assert week.easy == ((12, 12) if week.kind in (BUILD, SPECIFIC, BRIDGE) else (12, 6))
 
 
 # --- target race ---------------------------------------------------------------------------
