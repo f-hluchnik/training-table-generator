@@ -45,7 +45,7 @@ Session codes:
 
 The planned km assume a 10′ warm-up and a 10′ cool-down around every quality run. Below the table, the sheet prints the pace legend (e.g. **ER**: 5:37 *easy* | … | **I**: 4:18 + 2′ jog *hard*, the description in italic), the races, date first (**10 oct**: Marathon (A)), the "life happens" rules (*Short on time: drop an easy run → intensity → long run. Tired or ill: drop intensity first.*), two notes (*Vary the easy runs' length, same total. Re-check paces after A races and every 2–3 months: easy by heart rate, T and MP by a race or test.*) and the success rule (*A week counts as fully done at 80 % of its planned km.*)
 
-The sheet is black and white, and the colours are yours. The reference season used green for easy, yellow for quality and blue for long runs, with a red triangle in a corner for an unexpected event (illness, a trip).
+The sheet is black and white, and the colours are yours. The reference season used green for easy, yellow for quality and blue for long runs, with a red triangle in a corner for an unexpected event (illness, a trip). The week's km boxes were green at 80 % of the planned km or more, yellow from 50 %, red below.
 
 ## Set-up
 
