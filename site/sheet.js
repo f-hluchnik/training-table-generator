@@ -2,7 +2,9 @@
 // typeset from, so the page never shows a sheet the generator would not print (D-051).
 // The visitor colours days and logs km the way a runner does on the printed sheet.
 
-const RUNS = ["easy", "quality", "long"]; // the order a press cycles through
+// A press cycles a day through these marks, then back to blank. "event" is the red corner for
+// something unexpected (illness, a trip), as on the author's sheets.
+const MARKS = ["easy", "quality", "long", "event"];
 const WEEKDAYS = ["mon", "tue", "wed", "thu", "fri", "sat", "sun"];
 
 // A month of a season already lived: four runs a week, intensity dropped when ill in week 3
@@ -68,10 +70,13 @@ function dayButton(day, weekday, week, text) {
     const event = "event" in button.dataset ? `, ${text.event}` : "";
     button.setAttribute("aria-label", `${text.weekdays[weekday]} ${day.text}: ${state}${event}`);
   };
+  const mark = () => ("event" in button.dataset ? "event" : button.dataset.run);
   button.addEventListener("click", () => {
-    const next = RUNS.indexOf(button.dataset.run) + 1;
-    if (next < RUNS.length) button.dataset.run = RUNS[next];
-    else delete button.dataset.run;
+    const next = MARKS[MARKS.indexOf(mark()) + 1];
+    delete button.dataset.run;
+    delete button.dataset.event;
+    if (next === "event") button.dataset.event = "";
+    else if (next) button.dataset.run = next;
     describe();
   });
   describe();
