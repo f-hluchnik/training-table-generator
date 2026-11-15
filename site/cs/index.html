@@ -30,6 +30,10 @@
             a připraví tabulku k&nbsp;vytištění: jeden řádek na týden, políčko na každý den. Pověste si ji na zeď a po každém běhu
             jedno políčko vybarvěte.
           </p>
+          <p class="needs">
+            Stačí znát termíny svých závodů, čas z&nbsp;jednoho nedávného závodu a to, kolik teď běháte. Pak
+            už jen asi deset minut v&nbsp;terminálu. <a href="#make">Sestavte si vlastní tabulku</a>
+          </p>
         </div>
 
         <figure class="sheet-figure" data-plan="../sample/plan.json" data-weeks="8">
@@ -70,37 +74,28 @@
           <p>Trénink intenzity se zapisuje krátkým kódem:</p>
           <dl class="codes">
             <dt>H: 6×1′</dt>
-            <dd>Kopce: šest tvrdých jednominutových úseků do kopce, dolů se vracíte klusem. Řiďte se úsilím, ne tempem.</dd>
+            <dd>Kopce: šest tvrdých jednominutových úseků do kopce, na pocit, ne na tempo; dolů klusem.</dd>
             <dt>I: 5×3′</dt>
-            <dd>Intervaly: pět tříminutových úseků v&nbsp;intervalovém tempu, mezi nimi dvě minuty klusu.</dd>
+            <dd>Intervaly: pět tříminutových úseků v&nbsp;intervalovém tempu.</dd>
             <dt>T: 3×8′</dt>
-            <dd>
-              Trénink prahové hodnoty: úseky v&nbsp;prahovém tempu (tvrdě, ale pod kontrolou), mezi nimi dvě minuty klusu.
-            </dd>
+            <dd>Trénink prahové hodnoty: úseky v&nbsp;prahovém tempu&nbsp;– náročné, ale pod kontrolou.</dd>
             <dt>MP: 3×3 km</dt>
-            <dd>Úseky v&nbsp;maratonském tempu, mezi nimi dvě minuty klusu.</dd>
+            <dd>Úseky v&nbsp;maratonském tempu.</dd>
             <dt>S</dt>
-            <dd>
-              Rovinky: kratší lehký běh a v&nbsp;něm šest rovinek, každá zhruba 20&nbsp;sekund. Rovinka je plynulé
-              zrychlení do rychlého, ale uvolněného běhu, žádný sprint; mezi rovinkami lehce klusejte. Rovinky
-              udržují nohy svižné i v&nbsp;lehčích týdnech.
-            </dd>
+            <dd>Rovinky: kratší lehký běh a v&nbsp;něm šest uvolněných zrychlení, každé asi dvacet sekund, žádný sprint.</dd>
             <dt>RACE 21 km</dt>
             <dd>Závod místo tréninku.</dd>
             <dt>–</dt>
             <dd>Tento týden bez tréninku intenzity.</dd>
           </dl>
-          <p>
-            Každý trénink intenzity začíná desetiminutovým rozklusem a končí desetiminutovým výklusem; obojí se
-            započítává do týdenních kilometrů.
-          </p>
+          <p>Mezi úseky se u&nbsp;intervalů, prahového i&nbsp;maratonského tempa dvě minuty klusá.</p>
 
           <h3>Tempa</h3>
           <p>
-            Tempa jsou vytištěná pod tabulkou. Počítají se z&nbsp;výsledku jednoho nedávného závodu podle vzorce
-            Jacka Danielse: z&nbsp;maratonu za 3:30:02 například vychází tempo lehkého běhu 5:37 na kilometr, prahové
-            tempo 4:40, intervalové 4:18 a maratonské 4:59. Kterékoli z&nbsp;nich si můžete nastavit sami, třeba cílové
-            maratonské tempo (viz <a href="#options">co všechno lze nastavit</a>).
+            Tempa jsou vytištěná pod tabulkou a počítají se z&nbsp;výsledku jednoho nedávného závodu podle vzorce
+            Jacka Danielse. Například z&nbsp;maratonu za 3:30:02 vychází lehký běh na 5:37&nbsp;min/km,
+            prahové tempo 4:40, intervalové 4:18 a maratonské 4:59. Kterékoli z&nbsp;nich si také můžete nastavit
+            sami.
           </p>
 
           <h3>Vybarvování</h3>
@@ -138,30 +133,15 @@
             <p>Únava nebo nemoc: vynechte nejdřív intenzitu.</p>
           </blockquote>
           <p>
-            <strong>Z&nbsp;praxe, ověřeno podle doporučení trenérů.</strong> Pravidla vznikla z&nbsp;autorova
-            vlastního tréninku, z&nbsp;plánu na jeho sezónu 2026. Každé z&nbsp;nich se pak porovnalo
-            s&nbsp;publikovanými doporučeními trenérů, a kde se od nich lišilo, upravilo se. Například tempa se počítají
-            podle vzorce Jacka Danielse; v&nbsp;prahovém tempu se v&nbsp;jednom tréninku běží nejvýš
-            40&nbsp;minut, což je horní hranice rozpětí, které pro tempové běhy uvádí Greg McMillan; vyladění před
-            maratonem trvá dva týdny, což je podle přehledové studie o&nbsp;vylaďování formy nejúčinnější délka. Všechna pravidla i jejich zdroje uvádí
+            <strong>Z&nbsp;praxe, s&nbsp;oporou v&nbsp;doporučeních trenérů.</strong> Tři zátěžové týdny, pak jeden lehčí.
+            Tréninky intenzity, které pokaždé o&nbsp;kousek přidají. Před každým důležitým závodem blok zaměřený
+            přímo na něj a pak vyladění; po závodě zotavení a lehčí týden na návrat do tréninku. Tato pravidla
+            vznikla z&nbsp;autorova vlastního plánu na sezónu 2026. Každé z&nbsp;nich pak autor porovnal
+            s&nbsp;publikovanými doporučeními trenérů, a kde se od nich lišilo, upravil ho. Autorovo prahové tempo
+            bylo například zhruba o&nbsp;10&nbsp;sekund na kilometr rychlejší, než odpovídalo jeho závodnímu
+            výsledku; generátor ho teď počítá podle vzorce Jacka Danielse. Všechna pravidla i jejich zdroje uvádí
             <a href="https://github.com/f-hluchnik/training-table-generator/blob/main/docs/TRAINING_MODEL.md">tréninkový
               model</a> (anglicky).
-          </p>
-          <p>
-            <strong>Stavba sezóny.</strong> Tři zátěžové týdny, pak jeden lehčí. Tréninky intenzity, které
-            pokaždé o&nbsp;kousek přidají. Před každým důležitým závodem blok zaměřený přímo na něj a pak vyladění; po závodě
-            zotavení a lehčí týden na návrat do tréninku.
-          </p>
-          <p>
-            <strong>Generátor nikdy neodmítne plán.</strong> Když jsou dva závody blízko sebe nebo sezóna začíná pozdě,
-            tabulku stejně sestaví, zkrátí, co je nutné, a upozorní vás, na co si dát pozor.
-          </p>
-          <p>
-            <strong>Tempa se budou měnit.</strong> Vycházejí z&nbsp;jednoho výsledku, takže se vaší formě samy
-            nepřizpůsobí. Zkontrolujte je po každém důležitém závodě a každé dva až tři měsíce: lehké běhy klidně
-            zrychlete, pokud vám při stejném tepu jdou rychleji; prahové a maratonské tempo ale měňte jen po
-            závodě nebo kontrolním běhu.
-            Pak tabulku sestavte znovu.
           </p>
         </section>
 
@@ -183,10 +163,10 @@ cd training-table-generator
 python3 -m venv .venv
 . .venv/bin/activate
 pip install -e .</code></pre>
-              <p>
-                Ve Windows je čtvrtý řádek <code>.venv\Scripts\activate</code>. V&nbsp;každém novém terminálu ho
-                před použitím generátoru spusťte znovu. Pokud systém <code>python3</code> nenajde, nainstalujte
-                Python z&nbsp;odkazu výše (ve Windows pište místo <code>python3</code> příkaz <code>py -3</code>).
+              <p class="aside">
+                Ve Windows má čtvrtý řádek podobu <code>.venv\Scripts\activate</code> a místo <code>python3</code>
+                napište <code>py -3</code>. V&nbsp;každém novém terminálu pak čtvrtý řádek před použitím generátoru
+                spusťte znovu.
               </p>
             </li>
             <li>
@@ -209,18 +189,16 @@ race_result = { distance_km = 42.195, time = "3:30:02" }
 [load]
 easy_run_km = 12                <span class="comment"># délka jednoho lehkého běhu</span>
 long_run_km = 15                <span class="comment"># váš současný dlouhý běh</span></code></pre>
-              <p>
-                Pro každý závod přidejte sekci <code>[[race]]</code>. Datum se píše bez uvozovek. Všechno ostatní je
-                nepovinné; viz <a href="#options">co všechno lze nastavit</a>.
-              </p>
+              <p>Víc generátor nepotřebuje. Datum pište bez uvozovek.</p>
             </li>
             <li>
               <h3>Sestavte tabulku</h3>
               <pre><code>ttg build muj-plan.toml</code></pre>
               <p>
-                PDF se objeví ve složce <code>out</code> vedle vašeho souboru. Na co si dát pozor, třeba na
-                příliš blízké závody, vypíše terminál. Když je v&nbsp;souboru chyba, hlášení uvede chybné pole
-                a nic se nezapíše.
+                PDF se objeví ve složce <code>out</code> vedle vašeho souboru. Generátor plán nikdy neodmítne: když
+                jsou dva závody blízko sebe nebo sezóna začíná pozdě, tabulku stejně sestaví, zkrátí, co je nutné,
+                a v&nbsp;terminálu vypíše upozornění. Pokud je v&nbsp;souboru chyba, hlášení ukáže, ve kterém poli, a nic
+                se nezapíše.
               </p>
             </li>
             <li>
@@ -231,21 +209,46 @@ long_run_km = 15                <span class="comment"># váš současný dlouhý
               </p>
             </li>
           </ol>
+
+          <h3 id="common">Časté úpravy</h3>
+          <p>Do souboru můžete přidat třeba:</p>
+          <ul class="changes">
+            <li>
+              <strong>Další závody.</strong> Pro každý přidejte sekci <code>[[race]]</code>. Přípravný závod
+              v&nbsp;rámci tréninku označte <code>priority = "C"</code>, důležitý závod, který není hlavním cílem,
+              <code>priority = "B"</code>.
+            </li>
+            <li><strong>Trailový nebo horský závod.</strong> Do jeho sekce přidejte <code>hilly = true</code>.</li>
+            <li><strong>Cílové maratonské tempo.</strong> Pod <code>[paces]</code> přidejte <code>mp = "4:55"</code>.</li>
+            <li><strong>Více běhů týdně.</strong> Pod <code>[load]</code> přidejte <code>runs_per_week = 5</code>; výchozí hodnota je 4.</li>
+            <li>
+              <strong>Jeden týden jinak.</strong> Přidejte sekci <code>[overrides]</code>, například s&nbsp;řádkem
+              <code>14 = { long_run_km = 30 }</code>.
+            </li>
+          </ul>
+          <p>Všechna pole a jejich výchozí hodnoty najdete v&nbsp;<a href="#fields">podrobnostech</a> níže.</p>
+
+          <h3 id="current">Průběžně kontrolujte tempa</h3>
+          <p>
+            Tempa vycházejí z&nbsp;jednoho výsledku, takže se vaší formě sama nepřizpůsobí. Zkontrolujte je po
+            každém důležitém závodě a jinak zhruba každé dva až tři měsíce: lehké tempo klidně zrychlete, když vám
+            stejný tep dovolí běžet rychleji; prahové a maratonské tempo ale měňte jen po závodě nebo kontrolním běhu. Pak
+            tabulku sestavte znovu.
+          </p>
         </section>
 
-        <section class="reference" aria-labelledby="options">
-          <details id="options-details">
-            <summary>
-              <h2 id="options">Co všechno lze nastavit</h2>
-              <span class="summary-note">Všechna pole souboru sezóny, úpravy jednotlivých týdnů, výchozí délky a upozornění.</span>
-            </summary>
+        <section class="reference" aria-labelledby="reference">
+          <h2 id="reference">Podrobnosti</h2>
+          <p>Všechno ostatní, co generátor umí. Podívejte se sem, až to budete potřebovat.</p>
 
+          <details id="fields">
+            <summary><h3>Všechna pole v&nbsp;souboru sezóny</h3></summary>
             <p>
               V&nbsp;souboru musí být jen pole označená jako <em>povinná</em>. Překlep v&nbsp;názvu pole se hlásí
               jako chyba, takže vám neunikne. Názvy polí se píšou anglicky, přesně tak, jak jsou uvedené.
             </p>
 
-            <h3>Plán</h3>
+            <h4>Plán</h4>
             <dl class="fields">
               <dt><code>start</code> <span>datum</span></dt>
               <dd>První týden plánu je ten (od pondělí do neděle), do kterého toto datum spadá.</dd>
@@ -255,7 +258,7 @@ long_run_km = 15                <span class="comment"># váš současný dlouhý
               </dd>
             </dl>
 
-            <h3>Závody: <code>[[race]]</code></h3>
+            <h4>Závody: <code>[[race]]</code></h4>
             <p>Každý závod má vlastní sekci; závodů může být libovolně mnoho, v&nbsp;libovolných termínech.</p>
             <dl class="fields">
               <dt><code>name</code> <span>text, povinné</span></dt>
@@ -276,8 +279,8 @@ long_run_km = 15                <span class="comment"># váš současný dlouhý
               </dd>
               <dt><code>taper_weeks</code>, <code>specific_weeks</code>, <code>recovery_weeks</code> <span>čísla</span></dt>
               <dd>
-                Mění délku vyladění (včetně závodního týdne), bloku zaměřeného na závod a zotavení. Výchozí
-                hodnoty jsou v&nbsp;tabulce níže. Neplatí pro závody C.
+                Mění délku vyladění (včetně závodního týdne), bloku zaměřeného na závod a zotavení; viz
+                <a href="#phases">délky jednotlivých fází</a>. Neplatí pro závody C.
               </dd>
               <dt><code>hilly</code> <span>true nebo false, výchozí false</span></dt>
               <dd>
@@ -287,7 +290,7 @@ long_run_km = 15                <span class="comment"># váš současný dlouhý
               </dd>
             </dl>
 
-            <h3>Tempa: <code>[paces]</code></h3>
+            <h4>Tempa: <code>[paces]</code></h4>
             <dl class="fields">
               <dt><code>race_result</code> <span>povinné</span></dt>
               <dd>
@@ -302,7 +305,7 @@ long_run_km = 15                <span class="comment"># váš současný dlouhý
               </dd>
             </dl>
 
-            <h3>Kolik teď běháte: <code>[load]</code></h3>
+            <h4>Kolik teď běháte: <code>[load]</code></h4>
             <dl class="fields">
               <dt><code>easy_run_km</code> <span>číslo, povinné</span></dt>
               <dd>Délka jednoho lehkého běhu. Celou sezónu zůstává stejná; v&nbsp;lehčích týdnech je poslední lehký běh týdne poloviční.</dd>
@@ -315,7 +318,7 @@ long_run_km = 15                <span class="comment"># váš současný dlouhý
               <dd>Vždy jeden trénink intenzity a jeden dlouhý běh; ostatní jsou lehké běhy.</dd>
             </dl>
 
-            <h3>Tabulka: <code>[sheet]</code></h3>
+            <h4>Tabulka: <code>[sheet]</code></h4>
             <dl class="fields">
               <dt><code>title</code> <span>text, výchozí "training plan"</span></dt>
               <dd>Nadpis nahoře na listu.</dd>
@@ -327,7 +330,7 @@ long_run_km = 15                <span class="comment"># váš současný dlouhý
               </dd>
             </dl>
 
-            <h3>Úpravy jednotlivých týdnů: <code>[overrides]</code></h3>
+            <h4>Úpravy jednotlivých týdnů: <code>[overrides]</code></h4>
             <p>
               Libovolný týden změníte podle jeho čísla. Změna platí jen pro ten týden; další týdny se plánují
               stejně jako předtím.
@@ -343,8 +346,10 @@ long_run_km = 15                <span class="comment"># váš současný dlouhý
               <code>"T"</code> nebo <code>"MP"</code>. Rovinky jsou <code>{ type = "S" }</code>, týden bez tréninku
               intenzity <code>{ type = "none" }</code>. Závod nahradit nelze.
             </p>
+          </details>
 
-            <h3>Výchozí délky fází</h3>
+          <details id="phases">
+            <summary><h3>Jak dlouhé jsou jednotlivé fáze</h3></summary>
             <p>
               Plán se skládá pozpátku od každého závodu A a B. Délky jsou v&nbsp;týdnech; dlouhý běh nikdy
               nepřekročí svou hranici.
@@ -372,27 +377,29 @@ long_run_km = 15                <span class="comment"># váš současný dlouhý
               Když se všechno nevejde, ustoupí nejdřív zátěžové týdny, pak blok zaměřený na závod, pak zotavení po
               předchozím závodě a nakonec vyladění. Na každý zkrácený blok generátor upozorní.
             </p>
+          </details>
 
-            <h3>Upozornění</h3>
+          <details id="warnings">
+            <summary><h3>Co znamenají upozornění</h3></summary>
             <p>Tabulka se sestaví vždy, i s&nbsp;upozorněními. Každé začíná kódem:</p>
             <dl class="fields compact">
-              <dt><code>C1</code></dt>
+              <dt id="c1"><code>C1</code></dt>
               <dd>Závody jsou blízko sebe: blok se zkrátil kvůli předchozímu závodu.</dd>
-              <dt><code>C2</code></dt>
+              <dt id="c2"><code>C2</code></dt>
               <dd>Plán začíná pro první hlavní závod příliš pozdě.</dd>
-              <dt><code>C3</code></dt>
+              <dt id="c3"><code>C3</code></dt>
               <dd>Lehké běhy a dlouhý běh narostou z&nbsp;týdne na týden o&nbsp;víc než 10&nbsp;%.</dd>
-              <dt><code>C4</code></dt>
+              <dt id="c4"><code>C4</code></dt>
               <dd>Dlouhý běh tvoří víc než polovinu týdenního objemu.</dd>
-              <dt><code>C5</code></dt>
+              <dt id="c5"><code>C5</code></dt>
               <dd>Dlouhý běh je nad hranicí pro daný závod.</dd>
-              <dt><code>C6</code></dt>
+              <dt id="c6"><code>C6</code></dt>
               <dd>Víc než 40&nbsp;minut v&nbsp;prahovém tempu v&nbsp;jednom tréninku.</dd>
-              <dt><code>C7</code></dt>
+              <dt id="c7"><code>C7</code></dt>
               <dd>Víc než 10&nbsp;km nebo 8&nbsp;% týdenního objemu v&nbsp;intervalovém tempu v&nbsp;jednom tréninku.</dd>
-              <dt><code>C8</code></dt>
+              <dt id="c8"><code>C8</code></dt>
               <dd>Vámi nastavené prahové tempo se od spočítaného liší o&nbsp;víc než 10&nbsp;sekund na kilometr.</dd>
-              <dt><code>C9</code></dt>
+              <dt id="c9"><code>C9</code></dt>
               <dd>Úseky do kopce delší než 2&nbsp;minuty nebo víc než 20&nbsp;minut běhu do kopce v&nbsp;jednom tréninku.</dd>
             </dl>
           </details>

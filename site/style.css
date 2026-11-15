@@ -174,6 +174,17 @@ h1 {
   line-height: 1.45;
 }
 
+/* What a newcomer needs to bring, said before anything else. */
+.needs {
+  max-width: var(--measure);
+  margin: 1.1rem 0 0;
+  font-size: var(--step-0);
+  color: var(--pencil);
+}
+.needs a {
+  color: var(--ink);
+}
+
 /* ---------------------------------------------------------------- the sheet */
 
 .sheet-figure {
@@ -508,6 +519,21 @@ strong {
   margin: 0 0 0.3rem;
 }
 
+/* Exceptions to the main path, set smaller. */
+.aside {
+  color: var(--pencil);
+  font-size: var(--step--1);
+}
+
+.changes {
+  margin: 0 0 1rem;
+  padding: 0;
+  list-style: none;
+}
+.changes li {
+  margin: 0 0 0.55rem;
+}
+
 /* Making a plan is a real sequence, so it is numbered. */
 .steps {
   margin: 1.5rem 0 0;
@@ -569,32 +595,37 @@ li code {
 .reference details > summary::-webkit-details-marker {
   display: none;
 }
-.reference summary h2 {
+/* Three folds, one per moment of need: writing the file, understanding the plan, reading a warning. */
+.reference details {
+  border-top: 1px solid var(--rule);
+}
+.reference details:last-of-type {
+  border-bottom: 1px solid var(--rule);
+}
+.reference summary {
+  padding: 0.85rem 0;
+}
+.reference summary h3 {
   display: inline;
   margin: 0;
+  font-size: var(--step-1);
+  font-weight: 400;
 }
-.reference summary h2::after {
+.reference summary h3::after {
   content: "+";
   display: inline-block;
   margin-left: 0.45em;
-  font-weight: 400;
 }
-.reference details[open] summary h2::after {
+.reference details[open] summary h3::after {
   content: "−";
 }
-.reference .summary-note {
-  display: block;
-  margin: 0.4rem 0 0;
-  color: var(--pencil);
-  font-size: var(--step--1);
+.reference details[open] {
+  padding-bottom: 1.5rem;
 }
-.reference details[open] > summary {
-  margin-bottom: 1.5rem;
-}
-.reference h3 {
-  margin: 2.5rem 0 0.75rem;
-  font-size: var(--step-1);
-  font-weight: 400;
+.reference h4 {
+  margin: 2rem 0 0.5rem;
+  font-size: var(--step-0);
+  font-weight: 600;
 }
 
 .fields {
@@ -687,9 +718,15 @@ li code {
   white-space: nowrap;
 }
 
-/* Short code in running text stays on one line. */
-p code,
-dd code,
-li code {
+/* Short code in running text stays on one line; code blocks keep their lines. */
+:not(pre) > code {
   white-space: nowrap;
+}
+
+/* After the numbered steps, the section's other headings take the steps' size. */
+section[aria-labelledby="make"] > h3 {
+  margin: 2.5rem 0 0.5rem;
+  font-size: var(--step-1);
+  font-weight: 400;
+  line-height: 1.2;
 }
