@@ -35,6 +35,7 @@ from ttg.model import (
 from ttg.paces import TrainingPaces
 from ttg.sessions import (
     BUILD_ROTATION,
+    bridge_session,
     easy_run_kms,
     marathon_long_run_mp_km,
     no_session,
@@ -109,6 +110,7 @@ class _Progress:
     previous_peak_km: int | None = None  # the peak before the last race
     mp_long_runs: int = 0  # marathon-specific long runs with MP km so far
     last_specific_long_run_had_mp: bool = False  # for the alternation (D-033)
+    previous_kind: WeekKind | None = None  # a bridge week follows a recovery block (D-050)
 
 
 class _Expander:
@@ -131,13 +133,14 @@ class _Expander:
         kind = self._kind(number, phase)
         target = self._target(number)
         c_race = self._c_race(number)
-        # Easy runs are reduced in every week that is not a loading week (D-022).
-        easy = self._easy_runs(EasyRuns.REGULAR if kind.is_loading else EasyRuns.REDUCED)
+        # Easy runs are reduced in every week that is not a loading or bridge week (D-022, D-050).
+        easy = self._easy_runs(EasyRuns.REGULAR if kind.has_regular_easy_runs else EasyRuns.REDUCED)
         # Order matters: both calls advance the progressions, and the I cap needs the long run's km.
         long = self._long_run(kind, number, phase, target, c_race)
         long_km = self._long_run_km(long)
-        quality = self._quality(kind, target, c_race, other_week_km=sum(easy) + long_km)
+        quality = self._quality(kind, phase, target, c_race, other_week_km=sum(easy) + long_km)
         self._progress.loading_streak = self._progress.loading_streak + 1 if kind.is_loading else 0
+        self._progress.previous_kind = kind
         calendar = self.layout.calendar
         return Week(
             number=number,
@@ -155,6 +158,8 @@ class _Expander:
 
     def _kind(self, number: int, phase: Phase) -> WeekKind:
         match phase.kind:
+            case PhaseKind.BUILD | PhaseKind.SPECIFIC if self._progress.previous_kind is WeekKind.RECOVERY:
+                return WeekKind.BRIDGE
             case PhaseKind.BUILD | PhaseKind.SPECIFIC if self._progress.loading_streak == LOADING_WEEKS_PER_DELOAD:
                 return WeekKind.DELOAD
             case PhaseKind.BUILD:
@@ -179,7 +184,8 @@ class _Expander:
             return c_race
         easy_run_km = self.season.load.easy_run_km
         match kind:
-            case WeekKind.BUILD | WeekKind.SPECIFIC:
+            case WeekKind.BUILD | WeekKind.SPECIFIC | WeekKind.BRIDGE:
+                # The bridge's long run is the restart after the race, without MP km (D-050).
                 return self._loading_long_run(kind, target, tune_up_week=c_race is not None)
             case WeekKind.DELOAD:
                 # Long C races can have taken the place of every loading long run since the last race.
@@ -193,16 +199,19 @@ class _Expander:
                 return None if first_week else LongRun(easy_run_km)
         raise ValueError(f"unknown week kind {kind}")
 
-    def _quality(self, kind: WeekKind, target: Race, c_race: Race | None, other_week_km: int) -> Session | Race:
+    def _quality(
+        self, kind: WeekKind, phase: Phase, target: Race, c_race: Race | None, other_week_km: int
+    ) -> Session | Race:
         """The week's quality run; advances the rotation unless a C race takes its place."""
         if c_race is not None:
             # A long C race took the long run's place; one hard effort a week is enough.
             return no_session() if _replaces_long_run(c_race) and kind is not WeekKind.RACE else c_race
         match kind:
-            case WeekKind.BUILD:
-                return self._next_quality(BUILD_ROTATION, other_week_km)
-            case WeekKind.SPECIFIC:
-                return self._next_quality(_specific_rotation(target), other_week_km)
+            case WeekKind.BUILD | WeekKind.SPECIFIC:
+                return self._next_quality(_rotation(phase, target), other_week_km)
+            case WeekKind.BRIDGE:
+                # The rotation advances as in any week of the phase, at half the volume (D-050).
+                return bridge_session(self._next_quality(_rotation(phase, target), other_week_km))
             case WeekKind.DELOAD:
                 return strides_session()
             case WeekKind.TAPER:
@@ -359,6 +368,11 @@ def _check_no_race_overridden(week: Week, override: WeekOverride) -> None:
                 f"overrides.{week.number}.{field_name}: the {cell} of week {week.number} is the race "
                 f'"{computed.name}", which cannot be overridden'
             )
+
+
+def _rotation(phase: Phase, target: Race) -> tuple[SessionType, ...]:
+    """The quality rotation of a build or specific phase."""
+    return _specific_rotation(target) if phase.kind is PhaseKind.SPECIFIC else BUILD_ROTATION
 
 
 def _specific_rotation(race: Race) -> tuple[SessionType, ...]:

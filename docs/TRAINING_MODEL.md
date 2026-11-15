@@ -127,7 +127,7 @@ Elevation (vertical metres) is out of scope in v1 (Q-5); it stays parked (Q-7).
 - **Rule for every distance (D-030):** each taper week before the race week has T 6 × 1 km **[2026]** and a LR of 75 % of the peak since the last race **[default]**, 60 % in the week just before the race week **[source 8]**, without MP km. The race week keeps strides (S) **[source 23]** (D-033).
 - Lengths: see §5.
 
-Taper, race and recovery weeks all use the reduced easy pair (D-022).
+Taper, race and recovery weeks all use the reduced easy pair (D-022); the bridge week uses the regular pair (D-050).
 
 ### race week
 The race replaces the LR and prints its distance, `RACE 42 km`; the footer lists the races by name (D-030). The quality run is strides (S) (D-033). The race day prints bold in the calendar, and the week's row ends on race day.
@@ -138,8 +138,16 @@ A C race up to 10 km replaces the week's quality run. From the half marathon up 
 ### recovery (after a race)
 - **Week 1:** easy runs only, no LR.
 - **Week 2 and later:** easy runs plus a LR of one easy run's length ("flush" in 2026, 12 km) **[2026]**.
-- After that, the next phase starts.
+- After that, the next phase starts with a bridge week (below).
 - Pfitzinger uses a 5-week return-to-running schedule after a marathon **[source 9]**. Our recovery block is shorter because the next phase starts gently anyway. The rules put no quality run into a recovery block; a C race inside it warns (C1). An override that adds quality is taken as is (D-030).
+
+### bridge (the first week after a recovery block, D-050)
+Going from recovery straight to full load (2027 test plan: 30 km → 54 km with T 5 × 8′, the top of the threshold progression) asks a lot of legs still recovering from the race, above all after a trail race's downhills. The first week of the next phase, build or specific, is a bridge **[default, owner and coach S9]**:
+- **Easy runs** regular: the volume returns first.
+- **Quality run:** the session the progression gives that week, at **half its reps, rounded down** (T 5 × 8′ → 2 × 8′, MP 3 × 3 km → 1 × 3 km). The rotation and progressions advance as in any week of the phase. A gradual return after a race is standard (Pfitzinger's post-marathon schedule takes 5 weeks **[source 9]**); the bridge week itself and its 50 % are our default (owner's choice over strides).
+- **Long run:** the restart (75 % of the previous peak, §4 build), without MP km; the MP alternation starts after it.
+- **Not a loading week:** the 3:1 count starts after it, and C3 does not compare it.
+- With `recovery_weeks = 0` there is no bridge. A bridge between two close races takes a week of the next race's specific block (owner, S9: kept over the specific week; 2026 week 20).
 
 ## 5. Phase layout (D-009, D-029)
 
@@ -221,7 +229,11 @@ Warnings go to the command line, not on the sheet. Implemented in `ttg.checks` (
 The owner's 2026 order was intensity first, then an easy run, then the long run. That order is right when the cause is fatigue or illness. When the cause is lack of time, the standard is to drop an easy run first and keep the quality run and the long run. The long run goes last either way. The owner agreed to the standard (D-008).
 
 Default footer (configurable):
-> Short on time: drop an easy run → intensity → long run. Tired or ill: drop intensity first. A week counts as fully done at 80 % of its planned km.
+> Short on time: drop an easy run → intensity → long run. Tired or ill: drop intensity first. Vary the easy runs' length, same total. Re-check paces after A races and every 2–3 months: easy by heart rate, T and MP by a race or test. A week counts as fully done at 80 % of its planned km.
+
+The two notes are advice, not numbers on the sheet (owner, S9; D-050):
+- **Easy runs:** the sheet prints them equal (D-022); varying them (e.g. 14 + 10 instead of 12 + 12) spreads the stress and keeps them fresh **[coach, S9]**.
+- **Paces:** they derive from one race result (§2), so they are re-checked at anchor points: after each A race and every 2–3 months in a long block **[coach, S9]**. The easy pace may drift faster at the same heart rate; threshold and marathon pace move only after a race or a test, because heart-rate drift alone is not evidence that the threshold moved. Updating `race_result` and rebuilding changes only the pace legend.
 
 ## 9. Coach review of the 2026 plan
 

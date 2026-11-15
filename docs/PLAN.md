@@ -117,7 +117,7 @@ Everything the sheet shows, computed in Python, including the display strings. T
 
 ```json
 {
-  "schema_version": 5,
+  "schema_version": 6,
   "title": "marathon training plan",
   "paces": [{"code": "I", "pace": "4:15 + 2′ jog", "label": "hard"}, ...],
   "gauge": {"boxes": 80, "label_every_km": 10},
@@ -149,7 +149,7 @@ Everything the sheet shows, computed in Python, including the display strings. T
 | `gauge.boxes` | The highest planned week rounded up to the next `label_every_km`; one box per km (D-019). |
 | `weeks[].days` | Always 7 entries, Monday to Sunday; `text` is the printed day of the month; `race` marks a race day (printed bold); `null` for days after the plan ends on the last race day. |
 | `weeks[].month` | The month containing the week's Thursday. |
-| `weeks[].kind` | `build`, `deload`, `specific`, `taper`, `race`, `recovery`. |
+| `weeks[].kind` | `build`, `deload`, `specific`, `bridge` (the first week after a recovery block, D-050), `taper`, `race`, `recovery`. |
 | `weeks[].phase` | The phase's number on the sheet, from 1; the phase column groups by it (D-037). |
 | `weeks[].phase_short` | The short form of `phase_label` (*bld.*, *spec.*, *tap.*, *rec.*, *10k*, *half*, *42k*, *ult.*), shown when the band is too short for the word at a readable size (D-044). |
 | `weeks[].phase_label` | The phase column text (D-026): *build*, *taper*, *recovery*, and for a race-specific block the race type, or *specific* when the race is not that distance (D-042). |

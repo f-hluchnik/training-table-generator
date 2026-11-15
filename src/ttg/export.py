@@ -17,7 +17,8 @@ from ttg.sessions import RECOVERY_JOG_MINUTES, STRIDES_COUNT, STRIDES_SECONDS, h
 # 3: `weeks[].phase_short` added (D-044).
 # 4: `weeks[].box_80pct` dropped: the gauge has no 80 % marker (D-045).
 # 5: `footer.races` entries are `{dates, name, details}`, so the sheet can set the dates apart (D-047).
-SCHEMA_VERSION = 5
+# 6: `weeks[].kind` can be `bridge`, the first week after a recovery block (D-050).
+SCHEMA_VERSION = 6
 
 # D-019: one box per km (not configurable), labels every 10 km; the gauge covers the highest planned week.
 GAUGE_LABEL_EVERY_KM = 10

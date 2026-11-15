@@ -25,6 +25,9 @@ DEFAULT_TITLE = "training plan"
 DEFAULT_RULES = (
     "Short on time: drop an easy run → intensity → long run.",
     "Tired or ill: drop intensity first.",
+    # [coach, owner S9] Notes, not numbers on the sheet (D-050).
+    "Vary the easy runs' length, same total.",
+    "Re-check paces after A races and every 2–3 months: easy by heart rate, T and MP by a race or test.",
 )
 
 
@@ -243,12 +246,14 @@ class WeekKind(StrEnum):
     """What a week is for (PLAN §4 `weeks[].kind`).
 
     Build and specific weeks are the loading weeks of the 3:1 cycle; a deload can
-    fall inside either phase. The race week is the last week of a taper.
+    fall inside either phase. The race week is the last week of a taper. A bridge
+    week is the first week of a build or specific phase after a recovery block (D-050).
     """
 
     BUILD = "build"
     DELOAD = "deload"
     SPECIFIC = "specific"
+    BRIDGE = "bridge"
     TAPER = "taper"
     RACE = "race"
     RECOVERY = "recovery"
@@ -256,6 +261,11 @@ class WeekKind(StrEnum):
     @property
     def is_loading(self) -> bool:
         return self in (WeekKind.BUILD, WeekKind.SPECIFIC)
+
+    @property
+    def has_regular_easy_runs(self) -> bool:
+        """Loading and bridge weeks; every other week has the reduced easy runs (D-022, D-050)."""
+        return self.is_loading or self is WeekKind.BRIDGE
 
 
 @dataclass(frozen=True)

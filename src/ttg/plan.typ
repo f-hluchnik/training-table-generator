@@ -279,7 +279,9 @@
 #let race-entry(race) = [#data(strong(race.dates)): #race.name #emph[(#race.details)]]
 #let race-list = plan.footer.races.map(race-entry).join(list-separator)
 
-#let footer-rules = (..plan.footer.rules, plan.footer.success).join(list-separator)
+// A footer line too long for the page breaks between its entries, never inside one (D-050).
+#let unbroken(entry) = box(entry)
+#let footer-rules = (..plan.footer.rules, plan.footer.success).map(unbroken).join(list-separator)
 
 // ---------------------------------------------------------------- page
 #set page(paper: "a4", flipped: true, margin: page-margin)

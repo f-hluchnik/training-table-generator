@@ -6,6 +6,7 @@ from ttg.sessions import (
     MAX_HILL_MINUTES,
     MAX_HILL_REP_MINUTES,
     MAX_THRESHOLD_MINUTES,
+    bridge_session,
     easy_run_kms,
     hill_session,
     interval_limit_km,
@@ -190,3 +191,16 @@ def test_easy_runs(runs, pattern, expected):
 def test_reduced_easy_run_rounds_up_to_whole_km():
     assert easy_run_kms(15, 4, EasyRuns.REDUCED) == (15, 8)
     assert easy_run_kms(1, 4, EasyRuns.REDUCED) == (1, 1)
+
+
+@pytest.mark.parametrize(
+    ("session", "expected"),
+    [
+        (Session(T, reps=5, minutes=8), Session(T, reps=2, minutes=8)),  # half, rounded down
+        (Session(H, reps=6, minutes=1), Session(H, reps=3, minutes=1)),
+        (Session(MP, reps=3, km=3), Session(MP, reps=1, km=3)),
+        (strides_session(), strides_session()),  # no reps: unchanged
+    ],
+)
+def test_bridge_session_halves_the_reps(session, expected):
+    assert bridge_session(session) == expected

@@ -147,6 +147,12 @@ Q-8 (b), owner S7: a `hilly` marker on a race leans its race-specific block into
 ### T-21 Smaller text for long plans — in review
 *Owner, S8:* the font should be a bit smaller for long plans (example: 40 weeks). The table's text shrinks in proportion to the row height, from 8 pt at full rows to 7 pt at the smallest (D-049); title and footer unchanged. Tested: 2026 (23 weeks) stays at 8 pt, 30 weeks between, 40 weeks at 7 pt; the 40-week plan still fits one page; sheet inspected. `plan.json` unchanged.
 
+### T-22 Bridge week and footer notes — in review
+*Owner, S9:* the 2027 coach review (D-050). The first week after a recovery block is a bridge: regular easy runs, the week's session at half its reps, the restart long run without MP km; the 3:1 count starts after it. Two footer notes: vary the easy runs; re-check paces. `plan.json` 6. Tested: kinds, quality, long run, easy runs and the cycle around a bridge; no bridge without recovery; `bridge_session` halving. 2026 golden: weeks 20–21 listed as differences (MP 1 × 3 km and 24 km in the bridge, MP km in week 21). Snapshots regenerated, diff reviewed. 2027 and 2026 sheets inspected; the footer now wraps onto two lines between entries.
+
+### T-23 Landing page — in progress
+*Owner, S9:* a small bilingual (Czech, English) GitHub Pages page for people who want to use the generator: purpose, philosophy, usage; less technical than the README. Design iterated with the owner before the PR.
+
 ### Later (not scheduled)
 - **T-12** Elevation for mountain ultras (Q-5). *Evaluated in S7; parked by the owner (Q-7).* The race-type gap it found is covered by T-15 (`hilly`).
 
