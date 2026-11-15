@@ -32,7 +32,7 @@ def plan(request):
 
 def test_top_level_keys(plan):
     assert set(plan) == PLAN_KEYS
-    assert plan["schema_version"] == 5
+    assert plan["schema_version"] == 6
 
 
 def test_week_keys(plan):

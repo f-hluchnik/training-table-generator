@@ -1,5 +1,5 @@
 {
-  "schema_version": 5,
+  "schema_version": 6,
   "title": "marathon training plan",
   "paces": [
     {
@@ -1299,7 +1299,7 @@
         }
       ],
       "month": "sep",
-      "kind": "specific",
+      "kind": "bridge",
       "phase": 5,
       "phase_label": "marathon",
       "phase_short": "42k",
@@ -1312,15 +1312,15 @@
       },
       "quality": {
         "type": "MP",
-        "km": 13,
-        "text": "MP: 3×3 km"
+        "km": 7,
+        "text": "MP: 1×3 km"
       },
       "long": {
         "km": 24,
-        "mp_km": 6,
-        "text": "24 km (6 MP)"
+        "mp_km": 0,
+        "text": "24 km"
       },
-      "planned_km": 61,
+      "planned_km": 55,
       "note": "check"
     },
     {
@@ -1381,8 +1381,8 @@
       },
       "long": {
         "km": 26,
-        "mp_km": 0,
-        "text": "26 km"
+        "mp_km": 6,
+        "text": "26 km (6 MP)"
       },
       "planned_km": 67,
       "note": "peak"
@@ -1527,7 +1527,9 @@
     ],
     "rules": [
       "Short on time: drop an easy run → intensity → long run.",
-      "Tired or ill: drop intensity first."
+      "Tired or ill: drop intensity first.",
+      "Vary the easy runs' length, same total.",
+      "Re-check paces after A races and every 2–3 months: easy by heart rate, T and MP by a race or test."
     ],
     "success": "A week counts as fully done at 80 % of its planned km."
   },

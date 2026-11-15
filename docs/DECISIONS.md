@@ -124,16 +124,25 @@ Default: A.
 
 ---
 
-## Session S9 (15 Nov 2026): landing page
+## Session S9 (15 Nov 2026): the 2027 coach review
 
-### D-051 A landing page, not a web app — Proposed (owner, S9), design under review
+### D-050 Bridge week after a recovery block; two notes in the footer — Agreed (owner, S9)
+*Owner, S9:* an external coach's review of the 2027 plan found the jump from recovery straight into full load (30 → 54 km with T 5 × 8′ after an 18 km trail race), and the rigid 12 + 12 easy runs, and proposed pace re-tests. The owner wanted only the first in the plan's numbers; the others as notes.
+- **Bridge week.** The first week of a build or specific phase after a recovery block is `kind = "bridge"`: regular easy runs, the progression's session at half its reps (rounded down), the restart long run without MP km. Not a loading week: the 3:1 count starts after it, C3 skips it. *Owner:* half the session rather than strides; the bridge is kept even when it takes a week of a short specific block (2026 week 20). No bridge without a recovery block. Rules and sources: TRAINING_MODEL.md §4. *Amends* D-022 (the bridge has the regular easy runs) and D-030 (the cycle restarts after the bridge).
+- **Footer notes** (default rules, still configurable with `[sheet] rules`): vary the easy runs' length, same total; re-check paces after A races and every 2–3 months, easy by heart rate, T and MP by a race or test (coach: heart rate alone doesn't justify a faster threshold). The footer's rules now wrap between entries, never inside one.
+- `plan.json` 6: `weeks[].kind` can be `bridge`. No new season-file field.
+- *Not taken:* fixed easy-run variations in the plan's numbers (owner: notes are enough; D-022 stands).
+
+## Session S9 (15 Nov 2026): landing page (T-23)
+
+### D-051 A landing page, not a web app — Agreed (owner, S9)
 *Owner, S9:* a small GitHub Pages page in this repository, in Czech and English, for people who just want to use the generator: purpose, philosophy, usage, less technical than the README.
 - **Not a reversal of D-036.** D-036 dropped running the generator in the browser (Pyodide, a server). This page only explains the command-line tool; the tool stays command-line only. *Amends* D-002 and D-036 in that sense.
 - **Where:** `site/`, plain HTML and CSS with a small script, no build step, no dependency. Kept apart from `docs/`, which holds the development documents and should not be published. `site/index.html` (English) and `site/cs/index.html` (Czech), each linking to the other.
 - **The example sheet is real:** the workflow `.github/workflows/pages.yml` builds `seasons/test-2027.toml` into `site/sample/` (git-ignored) on every push to `main`, and the page draws it from that `plan.json`: the first 8 weeks, the whole season on request, with the sheet's footer. The page cannot show a sheet the generator would not print. Visitors can colour days and log km, as on paper; the km are coloured as the author does: green from 80 % of the plan, yellow from 50 %, red below. No PDF download (owner, S9: no point once the whole season shows on the page).
 - **Design:** the sheet's own typefaces (Libertinus Serif, DejaVu Sans Mono, self-hosted under their licences in `site/fonts/`; the mono's Czech letters are a latin-ext subset of DejaVu Sans Mono 2.37, made with fontTools, as Fontsource ships only its latin subset), white paper and black ink, colour only for the runner's markers (green, yellow, blue, red, as on the 2026 sheet).
 - **Complete for users, quick to orient (owner, S9; web-designer review):** a newcomer sees what to bring (hero line), the four steps with the minimal season file, then *Common changes* (more races and priorities, hilly, goal pace, runs per week, one week different). Everything else sits in *Reference*, three folds by moment of need: every field, phase lengths, warnings (each warning has an anchor, `#c1`–`#c9`). The user never needs the README. To keep it from drifting, `tests/test_site.py` reads the field names from `ttg.spec` and fails if either language misses one. The README stays the reference for developers.
-- **Honest about sources (owner, S9):** the rules come from the author's own practice, checked against published coaching guidance; the page says so, gives three examples and links `docs/TRAINING_MODEL.md`.
+- **Honest about sources (owner, S9):** the rules come from the author's own practice, checked against published coaching guidance; the page says so, gives a real example (the author's threshold pace, about 10 s/km too fast for his race result) and links `docs/TRAINING_MODEL.md`.
 - **Czech terms (owner, S9):** lehký běh (easy run), trénink intenzity (quality run), trénink prahové hodnoty (threshold).
 - **Publishing** needs the owner: Settings → Pages → Source: GitHub Actions (CLAUDE.md §9).
 
