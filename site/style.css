@@ -1,0 +1,535 @@
+/* The landing page wears the sheet's own clothes: white paper, black ink, the sheet's two
+   typefaces, and colour only where a runner colours something in (D-051). */
+
+@font-face {
+  font-family: "Libertinus Serif";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url(fonts/libertinus-serif-latin-400-normal.woff2) format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329,
+    U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: "Libertinus Serif";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url(fonts/libertinus-serif-latin-ext-400-normal.woff2) format("woff2");
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329,
+    U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: "Libertinus Serif";
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: url(fonts/libertinus-serif-latin-400-italic.woff2) format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329,
+    U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: "Libertinus Serif";
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: url(fonts/libertinus-serif-latin-ext-400-italic.woff2) format("woff2");
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329,
+    U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: "Libertinus Serif";
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url(fonts/libertinus-serif-latin-600-normal.woff2) format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329,
+    U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: "Libertinus Serif";
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url(fonts/libertinus-serif-latin-ext-600-normal.woff2) format("woff2");
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329,
+    U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: "DejaVu Sans Mono";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url(fonts/dejavu-mono-latin-400-normal.woff2) format("woff2");
+}
+@font-face {
+  font-family: "DejaVu Sans Mono";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url(fonts/dejavu-mono-latin-700-normal.woff2) format("woff2");
+}
+
+:root {
+  /* The sheet: paper, ink, its grey rules and fills (D-048). */
+  --paper: #ffffff;
+  --ink: #000000;
+  --pencil: #5c5c5c; /* secondary text, the sheet's grey week numbers */
+  --rule: #b3b3b3;
+  --header-fill: #e6e6e6; /* the sheet's 90 % grey */
+  --band-fill: #f0f0f0; /* the sheet's 94 % grey */
+  /* The runner's markers, as on the 2026 reference sheet. */
+  --easy: #a6dc86;
+  --quality: #ffe45c;
+  --long: #9fcbf2;
+  --event: #e23b2e;
+  --pencil-fill: #a9a9a9;
+
+  --serif: "Libertinus Serif", "Iowan Old Style", "Palatino Linotype", Georgia, serif;
+  --mono: "DejaVu Sans Mono", Menlo, Consolas, monospace;
+
+  /* A 1.25 scale on an 19 px serif body. */
+  --step--1: 0.84rem;
+  --step-0: 1.1875rem;
+  --step-1: 1.48rem;
+  --step-2: 1.85rem;
+  --step-4: clamp(2.4rem, 1.6rem + 3.4vw, 3.9rem);
+
+  --measure: 36rem;
+  --gutter: clamp(1.25rem, 5vw, 4.5rem);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--serif);
+  font-size: 100%;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  font-size: var(--step-0);
+  line-height: 1.55;
+  font-kerning: normal;
+  font-variant-numeric: oldstyle-nums proportional-nums;
+}
+
+a {
+  color: inherit;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.18em;
+}
+a:hover {
+  text-decoration-thickness: 2px;
+}
+:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 3px;
+}
+
+.page {
+  padding: 0 var(--gutter);
+}
+
+/* ---------------------------------------------------------------- masthead */
+
+.masthead {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 1rem;
+  padding: 1.5rem 0 0;
+  font-size: var(--step--1);
+}
+.masthead .name {
+  font-weight: 600;
+  text-decoration: none;
+}
+
+/* ---------------------------------------------------------------- hero */
+
+.hero {
+  padding: clamp(3rem, 9vw, 7rem) 0 0;
+}
+h1 {
+  max-width: 13em;
+  margin: 0;
+  font-size: var(--step-4);
+  font-weight: 400;
+  line-height: 1.04;
+  letter-spacing: -0.012em;
+  font-variant-numeric: lining-nums;
+}
+.lede {
+  max-width: var(--measure);
+  margin: 1.6rem 0 0;
+  font-size: var(--step-1);
+  line-height: 1.45;
+}
+
+/* ---------------------------------------------------------------- the sheet */
+
+.sheet-figure {
+  margin: clamp(2.5rem, 6vw, 4.5rem) 0 0;
+}
+.sheet-scroll {
+  overflow-x: auto;
+  /* The sheet keeps the PDF's proportions and scrolls on narrow screens. */
+  padding: 0 0 0.75rem;
+}
+.sheet {
+  border-collapse: collapse;
+  font-family: var(--mono);
+  font-size: 0.8125rem;
+  line-height: 1;
+  font-variant-numeric: normal;
+  white-space: nowrap;
+}
+/* The frame, as on the sheet: around the table, not around the note column. */
+.sheet thead th:not(.note) {
+  border-top: 1.5px solid var(--ink);
+}
+.sheet .month {
+  border-left: 1.5px solid var(--ink);
+}
+.sheet .end {
+  border-right: 1.5px solid var(--ink);
+}
+.sheet tbody tr:last-child > :not(.note),
+.sheet .reaches-end {
+  border-bottom: 1.5px solid var(--ink);
+}
+.sheet th,
+.sheet td {
+  height: 1.9rem;
+  padding: 0 0.45rem;
+  border: 1px solid var(--rule);
+  font-weight: 400;
+  text-align: left;
+}
+.sheet thead th {
+  background: var(--header-fill);
+  border-bottom: 1.5px solid var(--ink);
+  text-align: center;
+}
+.sheet .month,
+.sheet .phase {
+  width: 1.7rem;
+  padding: 0;
+  background: var(--band-fill);
+  text-align: center;
+  vertical-align: middle;
+}
+.sheet .month span,
+.sheet .phase span {
+  display: inline-block;
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+}
+.sheet .week {
+  color: var(--pencil);
+  text-align: right;
+}
+.sheet .group {
+  border-left: 1.2px solid var(--ink);
+}
+.sheet .note {
+  border: 0;
+  padding-left: 0.6rem;
+  color: var(--pencil);
+  font-size: 0.75rem;
+  background: var(--paper);
+}
+.sheet thead .note {
+  background: var(--paper);
+  border-bottom: 0;
+}
+
+/* A day cell is a button: press it to colour the day. */
+.sheet .day {
+  padding: 0;
+  text-align: center;
+}
+.day button {
+  position: relative;
+  width: 2.35rem;
+  height: 100%;
+  min-height: 1.9rem;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+.day button.race {
+  font-weight: 700;
+}
+/* The colour is laid on like a marker stroke: a little short of the lines, a little crooked. */
+.day button::before {
+  content: "";
+  position: absolute;
+  inset: 2px 1px 3px 2px;
+  border-radius: 1px 4px 2px 6px / 3px 2px 5px 2px;
+  background: var(--marker, transparent);
+  transform: rotate(var(--tilt, 0deg));
+  mix-blend-mode: multiply;
+}
+.day button span {
+  position: relative;
+}
+.day button[data-run="easy"] {
+  --marker: var(--easy);
+}
+.day button[data-run="quality"] {
+  --marker: var(--quality);
+}
+.day button[data-run="long"] {
+  --marker: var(--long);
+}
+/* Something unexpected (illness, a trip): a red triangle in the corner. */
+.day button[data-event]::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  border-style: solid;
+  border-width: 0 0.6rem 0.6rem 0;
+  border-color: transparent var(--event) transparent transparent;
+}
+
+/* The gauge: one box per km, a heavier line every 10 km. */
+.sheet .gauge {
+  padding: 0;
+}
+.gauge-track {
+  display: grid;
+  grid-template-columns: repeat(var(--boxes), 0.36rem);
+  height: 1.9rem;
+  cursor: pointer;
+}
+.gauge-track span {
+  border-right: 1px solid #d4d4d4;
+}
+.gauge-track span:nth-child(10n) {
+  border-right-color: var(--ink);
+}
+.gauge-track span:last-child {
+  border-right: 0;
+}
+/* Logged km are coloured like the days, in pencil grey. */
+.gauge-track span.done {
+  background: var(--pencil-fill);
+}
+.gauge-head {
+  display: grid;
+  grid-template-columns: repeat(var(--labels), calc(0.36rem * 10));
+  font-size: 0.6875rem;
+}
+.gauge-head span {
+  text-align: right;
+  padding-right: 2px;
+}
+
+.sheet-caption {
+  max-width: var(--measure);
+  margin: 1rem 0 0;
+  font-size: var(--step--1);
+  font-style: italic;
+  line-height: 1.5;
+}
+.sheet-caption a {
+  font-style: normal;
+}
+.sheet-fallback {
+  max-width: var(--measure);
+  font-size: var(--step--1);
+}
+
+/* ---------------------------------------------------------------- sections */
+
+main section {
+  max-width: var(--measure);
+  padding: clamp(3.5rem, 8vw, 6rem) 0 0;
+}
+h2 {
+  margin: 0 0 1rem;
+  font-size: var(--step-2);
+  font-weight: 600;
+  line-height: 1.15;
+}
+h3 {
+  margin: 2rem 0 0.4rem;
+  font-size: var(--step-0);
+  font-weight: 600;
+}
+p {
+  margin: 0 0 1rem;
+  hyphens: auto;
+}
+strong {
+  font-weight: 600;
+}
+
+/* The session codes, as the sheet prints them. */
+.codes {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 0.35rem 1.25rem;
+  margin: 1.25rem 0 1.5rem;
+}
+.codes dt {
+  font-family: var(--mono);
+  font-size: 0.875rem;
+  line-height: 1.9;
+}
+.codes dd {
+  margin: 0;
+}
+
+.markers {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.4rem;
+  margin: 0 0 1rem;
+  padding: 0;
+  list-style: none;
+  font-size: var(--step--1);
+}
+.markers li::before {
+  content: "";
+  display: inline-block;
+  width: 1.1em;
+  height: 0.75em;
+  margin-right: 0.45em;
+  border-radius: 2px 3px 2px 4px;
+  background: var(--swatch);
+  vertical-align: -0.02em;
+  transform: rotate(-2deg);
+}
+.markers .easy {
+  --swatch: var(--easy);
+}
+.markers .quality {
+  --swatch: var(--quality);
+}
+.markers .long {
+  --swatch: var(--long);
+}
+.markers .event::before {
+  width: 0;
+  height: 0;
+  border-radius: 0;
+  border-style: solid;
+  border-width: 0 0.75em 0.75em 0;
+  border-color: transparent var(--event) transparent transparent;
+  background: none;
+  transform: none;
+}
+
+/* The printed rules, quoted as the sheet sets them. */
+.rule-quote {
+  margin: 1.25rem 0 1.5rem;
+  padding: 0 0 0 1.1rem;
+  border-left: 1.5px solid var(--ink);
+  font-style: italic;
+}
+.rule-quote p {
+  margin: 0 0 0.3rem;
+}
+
+/* Making a plan is a real sequence, so it is numbered. */
+.steps {
+  margin: 1.5rem 0 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: step;
+}
+.steps > li {
+  counter-increment: step;
+  position: relative;
+  padding: 0 0 1.75rem 2.4rem;
+}
+.steps > li::before {
+  content: counter(step);
+  position: absolute;
+  left: 0;
+  top: -0.05em;
+  font-size: var(--step-1);
+  line-height: 1.2;
+  font-variant-numeric: lining-nums;
+}
+.steps h3 {
+  margin: 0 0 0.4rem;
+  font-size: var(--step-1);
+  font-weight: 400;
+  line-height: 1.2;
+}
+
+pre,
+code {
+  font-family: var(--mono);
+  font-size: 0.8125rem;
+}
+pre {
+  margin: 0.75rem 0 1rem;
+  padding: 0.9rem 1rem;
+  overflow-x: auto;
+  border: 1px solid var(--rule);
+  border-left: 1.5px solid var(--ink);
+  line-height: 1.55;
+  font-variant-numeric: normal;
+}
+pre .comment {
+  color: var(--pencil);
+}
+p code,
+li code {
+  font-size: 0.85em;
+}
+
+/* ---------------------------------------------------------------- footer */
+
+.colophon {
+  max-width: var(--measure);
+  margin: clamp(4rem, 9vw, 7rem) 0 0;
+  padding: 1.25rem 0 3rem;
+  border-top: 1.5px solid var(--ink);
+  font-size: var(--step--1);
+  line-height: 1.6;
+}
+.colophon p {
+  margin: 0 0 0.4rem;
+}
+
+@media (max-width: 40rem) {
+  body {
+    font-size: 1.0625rem;
+  }
+  .steps > li {
+    padding-left: 1.9rem;
+  }
+}
+
+@media print {
+  .sheet-figure,
+  .masthead a[hreflang] {
+    display: none;
+  }
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}

@@ -1,0 +1,206 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Training table generator: your running season on one sheet</title>
+    <meta
+      name="description"
+      content="Describe your races in a short text file and get a printable training table: one row per week, a cell for every day, to put on the wall and colour in after each run."
+    />
+    <link rel="alternate" hreflang="cs" href="cs/" />
+    <link rel="alternate" hreflang="en" href="./" />
+    <link rel="preload" href="fonts/libertinus-serif-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="style.css" />
+    <script type="module" src="sheet.js"></script>
+  </head>
+  <body>
+    <div class="page">
+      <header class="masthead">
+        <a class="name" href="./">Training table generator</a>
+        <a href="cs/" hreflang="cs" lang="cs">Česky</a>
+      </header>
+
+      <main>
+        <div class="hero">
+          <h1>Your running season on one sheet of paper.</h1>
+          <p class="lede">
+            Write down your races and how much you run now. The generator lays out the weeks up to race day as a
+            printable table: one row per week, a cell for every day. Put it on the wall and colour a cell after
+            each run.
+          </p>
+        </div>
+
+        <figure class="sheet-figure" data-plan="sample/plan.json" data-weeks="8">
+          <div class="sheet-scroll"></div>
+          <p class="sheet-fallback" hidden>
+            The example sheet could not be shown here. <a href="sample/plan.pdf">Open it as a PDF</a> instead.
+          </p>
+          <figcaption class="sheet-caption">
+            The first weeks of the example season, a month in. Press a day to colour it, or press the boxes to
+            log the week’s kilometres. <a href="sample/plan.pdf">Download the whole example sheet (PDF)</a>
+          </figcaption>
+        </figure>
+        <script type="application/json" id="sheet-text">
+          {
+            "caption": "The first eight weeks of the example season",
+            "weekdays": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
+            "runs": { "easy": "easy run", "quality": "quality run", "long": "long run" },
+            "blank": "no run coloured",
+            "event": "marked as unexpected",
+            "kmText": "{km} of {planned} km",
+            "gaugeText": "Kilometres run in week {week}"
+          }
+        </script>
+
+        <section aria-labelledby="sheet">
+          <h2 id="sheet">How the sheet works</h2>
+          <p>
+            Each row is a week, Monday to Sunday. The columns on the right say what the week holds:
+            <strong>ER</strong>, the easy runs (<code>12+12</code> is two easy runs of 12&nbsp;km),
+            <strong>QR</strong>, one quality run, and <strong>LR</strong>, the long run. The grey number at the end
+            is the week’s planned distance.
+          </p>
+          <dl class="codes">
+            <dt>H: 6×1′</dt>
+            <dd>Hill repeats: six one-minute hard efforts uphill, jogging down between them.</dd>
+            <dt>I: 5×3′</dt>
+            <dd>Intervals: five three-minute repeats at a hard pace, two minutes of jogging between.</dd>
+            <dt>T: 3×8′</dt>
+            <dd>Threshold: repeats at a comfortably hard pace.</dd>
+            <dt>MP: 3×3 km</dt>
+            <dd>Repeats at your marathon pace.</dd>
+            <dt>S</dt>
+            <dd>A short easy run with a few fast, relaxed strides.</dd>
+          </dl>
+          <p>
+            The paces for each of them are printed below the table, worked out from a race you ran recently. You
+            decide on which day each run happens. When you’ve done one, colour its day. The sheet itself is black
+            and white, and the colours are yours; these are the ones the first sheet was coloured with:
+          </p>
+          <ul class="markers">
+            <li class="easy">easy run</li>
+            <li class="quality">quality run</li>
+            <li class="long">long run</li>
+            <li class="event">something unexpected: illness, a trip</li>
+          </ul>
+          <p>
+            At the end of the week, colour one box for every kilometre you ran. A week counts as fully done at
+            80&nbsp;% of its planned kilometres, so a missed run doesn’t spoil it.
+          </p>
+        </section>
+
+        <section aria-labelledby="idea">
+          <h2 id="idea">The idea behind it</h2>
+          <p>
+            <strong>An outline, not a prescription.</strong> No season goes to plan. You get ill, work runs late,
+            you travel. The sheet shows the shape of the season, and you adapt the details as you go. Two rules
+            printed on every sheet say what to give up first:
+          </p>
+          <blockquote class="rule-quote">
+            <p>Short on time: drop an easy run, then intensity, then the long run.</p>
+            <p>Tired or ill: drop intensity first.</p>
+          </blockquote>
+          <p>
+            <strong>Built on established coaching practice.</strong> The rules behind the plan follow well-known
+            coaches and their books: Jack Daniels, Pete Pfitzinger, Greg McMillan, Jason Koop. Three weeks of
+            building, then a lighter week. Quality sessions that grow a little each time they come round. Before
+            each important race, a block aimed at that race, then a taper; after it, time to recover before the
+            training picks up again.
+          </p>
+          <p>
+            <strong>It never refuses a plan.</strong> If two races are close together or the season starts late,
+            it still builds the sheet, shortens what has to give, and tells you what to keep an eye on.
+          </p>
+          <p>
+            <strong>Your paces will change.</strong> They come from one race result, so they don’t follow your
+            fitness on their own. Check them after each important race and every two or three months: let your
+            easy pace get faster at the same heart rate, but change threshold and marathon pace only after a race
+            or a test run. Then build the sheet again.
+          </p>
+        </section>
+
+        <section aria-labelledby="make">
+          <h2 id="make">Make your own</h2>
+          <p>
+            The generator runs on your own computer, from the terminal. You don’t need to know how to program, but
+            you will type a few commands. It takes about ten minutes the first time.
+          </p>
+          <ol class="steps">
+            <li>
+              <h3>Install it once</h3>
+              <p>
+                You need <a href="https://www.python.org/downloads/">Python</a> 3.11 or newer and Git. Then, in a
+                terminal:
+              </p>
+              <pre><code>git clone https://github.com/f-hluchnik/training-table-generator.git
+cd training-table-generator
+python3 -m venv .venv
+. .venv/bin/activate
+pip install -e .</code></pre>
+              <p>
+                On Windows, and if something goes wrong, see
+                <a href="https://github.com/f-hluchnik/training-table-generator#set-up">the set-up steps in the
+                  README</a>.
+              </p>
+            </li>
+            <li>
+              <h3>Describe your season</h3>
+              <p>
+                Create a text file, for example <code>my-season.toml</code>, with your races, a recent race result
+                and how far you run now:
+              </p>
+              <pre><code>start = 2027-05-03              <span class="comment"># the first week of the plan</span>
+
+[[race]]
+name = "Prague Marathon"
+date = 2027-10-10
+distance_km = 42.195
+
+[paces]
+<span class="comment"># a race you ran recently; all paces are worked out from it</span>
+race_result = { distance_km = 42.195, time = "3:30:02" }
+
+[load]
+easy_run_km = 12                <span class="comment"># the length of one easy run</span>
+long_run_km = 15                <span class="comment"># your long run now</span></code></pre>
+              <p>
+                Add a <code>[[race]]</code> section for every race. Mark each one A (your main goal), B (important,
+                a shorter taper) or C (a tune-up inside your training) with <code>priority = "B"</code>.
+              </p>
+            </li>
+            <li>
+              <h3>Build the sheet</h3>
+              <pre><code>ttg build my-season.toml</code></pre>
+              <p>
+                The PDF appears in a folder <code>out</code> next to your file. Anything worth a second look, such as
+                races too close together, is printed in the terminal.
+              </p>
+            </li>
+            <li>
+              <h3>Print it</h3>
+              <p>
+                On A4, landscape, at 100&nbsp;% (not “fit to page”), so the cells are big enough to colour. To change
+                the plan later, edit your file and build again.
+              </p>
+            </li>
+          </ol>
+          <p>
+            Overrides for single weeks, hilly races, more runs a week and every other option are described in
+            <a href="https://github.com/f-hluchnik/training-table-generator#the-season-file">the README</a>.
+          </p>
+        </section>
+      </main>
+
+      <footer class="colophon">
+        <p>
+          The generator is free and open source,
+          <a href="https://github.com/f-hluchnik/training-table-generator">on GitHub</a>. It began as one runner’s
+          hand-made marathon plan.
+        </p>
+        <p>The tables are an outline for healthy, experienced runners, not medical or coaching advice.</p>
+      </footer>
+    </div>
+  </body>
+</html>

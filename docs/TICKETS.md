@@ -147,6 +147,9 @@ Q-8 (b), owner S7: a `hilly` marker on a race leans its race-specific block into
 ### T-21 Smaller text for long plans — in review
 *Owner, S8:* the font should be a bit smaller for long plans (example: 40 weeks). The table's text shrinks in proportion to the row height, from 8 pt at full rows to 7 pt at the smallest (D-049); title and footer unchanged. Tested: 2026 (23 weeks) stays at 8 pt, 30 weeks between, 40 weeks at 7 pt; the 40-week plan still fits one page; sheet inspected. `plan.json` unchanged.
 
+### T-23 Landing page — in progress (design iterations with the owner)
+*Owner, S9:* a small bilingual (Czech, English) GitHub Pages page for people who want to use the generator: purpose, philosophy, usage; less technical than the README. Design iterated with the owner before the PR (D-051). Draft 1: `site/` with both languages, the example sheet drawn from the built `plan.json`, the Pages workflow. Checked: both pages at 1440 and 390 px; colouring a day and the km gauge by mouse and keyboard; no console errors. Not verifiable here: the workflow itself (needs Pages enabled).
+
 ### Later (not scheduled)
 - **T-12** Elevation for mountain ultras (Q-5). *Evaluated in S7; parked by the owner (Q-7).* The race-type gap it found is covered by T-15 (`hilly`).
 

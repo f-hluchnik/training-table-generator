@@ -124,6 +124,17 @@ Default: A.
 
 ---
 
+## Session S9 (15 Nov 2026): landing page
+
+### D-051 A landing page, not a web app — Proposed (owner, S9), design under review
+*Owner, S9:* a small GitHub Pages page in this repository, in Czech and English, for people who just want to use the generator: purpose, philosophy, usage, less technical than the README.
+- **Not a reversal of D-036.** D-036 dropped running the generator in the browser (Pyodide, a server). This page only explains the command-line tool; the tool stays command-line only. *Amends* D-002 and D-036 in that sense.
+- **Where:** `site/`, plain HTML and CSS with a small script, no build step, no dependency. Kept apart from `docs/`, which holds the development documents and should not be published. `site/index.html` (English) and `site/cs/index.html` (Czech), each linking to the other.
+- **The example sheet is real:** the workflow `.github/workflows/pages.yml` builds `seasons/test-2027.toml` into `site/sample/` (`plan.json`, `plan.pdf`; git-ignored) on every push to `main`, and the page draws its first weeks from that `plan.json`. The page cannot show a sheet the generator would not print. Visitors can colour days and log km, as on paper.
+- **Design:** the sheet's own typefaces (Libertinus Serif, DejaVu Sans Mono, self-hosted under their licences in `site/fonts/`), white paper and black ink, colour only for the runner's markers (green, yellow, blue, red, as on the 2026 sheet).
+- **Content drift:** the page explains at overview level and links to the README for set-up details and the season file; the README stays the reference.
+- **Publishing** needs the owner: Settings → Pages → Source: GitHub Actions (CLAUDE.md §9).
+
 ## Open questions (need the owner)
 
 - **Q-1** *Answered:* Python 3.11 and 3.12 available; work in a virtual environment → D-011.

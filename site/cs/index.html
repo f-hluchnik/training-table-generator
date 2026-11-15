@@ -1,0 +1,207 @@
+<!doctype html>
+<html lang="cs">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Generátor tréninkové tabulky: běžecká sezóna na jednom listu</title>
+    <meta
+      name="description"
+      content="Zapište své závody do krátkého textového souboru a získejte tréninkovou tabulku k vytištění: řádek na týden, políčko na každý den, na zeď a k vybarvování po každém běhu."
+    />
+    <link rel="alternate" hreflang="cs" href="./" />
+    <link rel="alternate" hreflang="en" href="../" />
+    <link rel="preload" href="../fonts/libertinus-serif-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="icon" href="../favicon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="../style.css" />
+    <script type="module" src="../sheet.js"></script>
+  </head>
+  <body>
+    <div class="page">
+      <header class="masthead">
+        <a class="name" href="./">Generátor tréninkové tabulky</a>
+        <a href="../" hreflang="en" lang="en">English</a>
+      </header>
+
+      <main>
+        <div class="hero">
+          <h1>Celá běžecká sezóna na jednom listu papíru.</h1>
+          <p class="lede">
+            Zapište své závody a kolik teď naběháte. Generátor rozvrhne týdny až do dne závodu do tabulky
+            k&nbsp;vytištění: jeden řádek na týden, políčko na každý den. Pověste si ji na zeď a po každém běhu
+            jedno políčko vybarvěte.
+          </p>
+        </div>
+
+        <figure class="sheet-figure" data-plan="../sample/plan.json" data-weeks="8">
+          <div class="sheet-scroll"></div>
+          <p class="sheet-fallback" hidden>
+            Ukázkovou tabulku se tu nepodařilo zobrazit. <a href="../sample/plan.pdf">Otevřete ji jako PDF</a>.
+          </p>
+          <figcaption class="sheet-caption">
+            První týdny ukázkové sezóny, měsíc po začátku. Klepnutím na den ho vybarvíte, klepnutím na políčka
+            zapíšete kilometry za týden. Tabulka je zatím anglicky.
+            <a href="../sample/plan.pdf">Stáhnout celou ukázkovou tabulku (PDF)</a>
+          </figcaption>
+        </figure>
+        <script type="application/json" id="sheet-text">
+          {
+            "caption": "Prvních osm týdnů ukázkové sezóny",
+            "weekdays": ["pondělí", "úterý", "středa", "čtvrtek", "pátek", "sobota", "neděle"],
+            "runs": { "easy": "volný běh", "quality": "intenzivní trénink", "long": "dlouhý běh" },
+            "blank": "nevybarveno",
+            "event": "označeno jako nečekaná událost",
+            "kmText": "{km} z {planned} km",
+            "gaugeText": "Naběhané kilometry v týdnu {week}"
+          }
+        </script>
+
+        <section aria-labelledby="sheet">
+          <h2 id="sheet">Jak tabulka funguje</h2>
+          <p>
+            Každý řádek je jeden týden, od pondělí do neděle. Sloupce vpravo říkají, co týden obsahuje:
+            <strong>ER</strong> jsou volné běhy (<code>12+12</code> znamená dva volné běhy po 12&nbsp;km),
+            <strong>QR</strong> jeden intenzivní trénink a <strong>LR</strong> dlouhý běh. Šedé číslo na konci je
+            plánovaný objem týdne.
+          </p>
+          <dl class="codes">
+            <dt>H: 6×1′</dt>
+            <dd>Kopce: šest minutových úseků tvrdě do kopce, mezi nimi klusem dolů.</dd>
+            <dt>I: 5×3′</dt>
+            <dd>Intervaly: pět tříminutových úseků v ostrém tempu, mezi nimi dvě minuty klusu.</dd>
+            <dt>T: 3×8′</dt>
+            <dd>Práh: úseky v tempu na hranici pohodlí.</dd>
+            <dt>MP: 3×3 km</dt>
+            <dd>Úseky ve vašem maratonském tempu.</dd>
+            <dt>S</dt>
+            <dd>Kratší volný běh s několika rychlými, uvolněnými rovinkami.</dd>
+          </dl>
+          <p>
+            Tempa ke všem jsou vytištěná pod tabulkou, spočítaná z&nbsp;vašeho nedávného závodu. Na který den
+            který běh připadne, rozhodujete vy. Když běh odběhnete, vybarvěte jeho den. Tabulka sama je černobílá
+            a barvy jsou na vás; tyhle použil první vybarvený list:
+          </p>
+          <ul class="markers">
+            <li class="easy">volný běh</li>
+            <li class="quality">intenzivní trénink</li>
+            <li class="long">dlouhý běh</li>
+            <li class="event">něco nečekaného: nemoc, cesta</li>
+          </ul>
+          <p>
+            Na konci týdne vybarvěte jedno políčko za každý uběhnutý kilometr. Týden se počítá jako splněný při
+            80&nbsp;% plánovaných kilometrů, takže ho jeden vynechaný běh nezkazí.
+          </p>
+        </section>
+
+        <section aria-labelledby="idea">
+          <h2 id="idea">Na čem stojí</h2>
+          <p>
+            <strong>Rámec, ne předpis.</strong> Žádná sezóna nejde přesně podle plánu. Onemocníte, v&nbsp;práci
+            se to protáhne, odjedete. Tabulka ukazuje tvar sezóny a podrobnosti přizpůsobujete za pochodu. Dvě
+            pravidla na každém listu říkají, čeho se vzdát nejdřív:
+          </p>
+          <blockquote class="rule-quote">
+            <p>Málo času: vynechte volný běh, pak intenzitu, nakonec dlouhý běh.</p>
+            <p>Únava nebo nemoc: vynechte nejdřív intenzitu.</p>
+          </blockquote>
+          <p>
+            <strong>Osvědčená trenérská praxe.</strong> Pravidla plánu vycházejí ze známých trenérů a jejich knih:
+            Jack Daniels, Pete Pfitzinger, Greg McMillan, Jason Koop. Tři týdny zatížení, pak lehčí týden.
+            Intenzivní tréninky, které pokaždé o kousek přidají. Před každým důležitým závodem blok zaměřený přímo
+            na něj a pak vyladění; po závodě čas na zotavení, než trénink znovu nabere obrátky.
+          </p>
+          <p>
+            <strong>Plán nikdy neodmítne.</strong> Když jsou dva závody blízko sebe nebo sezóna začíná pozdě,
+            tabulku stejně sestaví, zkrátí, co je nutné, a upozorní vás, na co si dát pozor.
+          </p>
+          <p>
+            <strong>Tempa se budou měnit.</strong> Vycházejí z&nbsp;jednoho výsledku, takže za vaší formou samy
+            nejdou. Zkontrolujte je po každém důležitém závodě a každé dva až tři měsíce: volné tempo nechte
+            zrychlit při stejném tepu, ale prahové a maratonské tempo měňte jen po závodě nebo testovacím běhu.
+            Pak tabulku sestavte znovu.
+          </p>
+        </section>
+
+        <section aria-labelledby="make">
+          <h2 id="make">Vlastní tabulka</h2>
+          <p>
+            Generátor běží na vašem počítači, v&nbsp;terminálu. Programovat umět nemusíte, ale pár příkazů
+            napíšete. Poprvé to zabere asi deset minut.
+          </p>
+          <ol class="steps">
+            <li>
+              <h3>Jednou nainstalujte</h3>
+              <p>
+                Potřebujete <a href="https://www.python.org/downloads/">Python</a> 3.11 nebo novější a Git. Pak
+                v&nbsp;terminálu:
+              </p>
+              <pre><code>git clone https://github.com/f-hluchnik/training-table-generator.git
+cd training-table-generator
+python3 -m venv .venv
+. .venv/bin/activate
+pip install -e .</code></pre>
+              <p>
+                Postup pro Windows a co dělat, když něco nefunguje, najdete
+                <a href="https://github.com/f-hluchnik/training-table-generator#set-up">v&nbsp;README</a>
+                (anglicky).
+              </p>
+            </li>
+            <li>
+              <h3>Popište svou sezónu</h3>
+              <p>
+                Vytvořte textový soubor, třeba <code>muj-plan.toml</code>, se svými závody, nedávným výsledkem a tím,
+                kolik teď běháte:
+              </p>
+              <pre><code>start = 2027-05-03              <span class="comment"># první týden plánu</span>
+
+[[race]]
+name = "Maraton Praha"
+date = 2027-10-10
+distance_km = 42.195
+
+[paces]
+<span class="comment"># nedávný závod; z něj se spočítají všechna tempa</span>
+race_result = { distance_km = 42.195, time = "3:30:02" }
+
+[load]
+easy_run_km = 12                <span class="comment"># délka jednoho volného běhu</span>
+long_run_km = 15                <span class="comment"># váš dlouhý běh teď</span></code></pre>
+              <p>
+                Pro každý závod přidejte sekci <code>[[race]]</code>. Označte ho jako A (hlavní cíl), B (důležitý,
+                s&nbsp;kratším vyladěním) nebo C (přípravný závod v&nbsp;rámci tréninku), třeba
+                <code>priority = "B"</code>.
+              </p>
+            </li>
+            <li>
+              <h3>Sestavte tabulku</h3>
+              <pre><code>ttg build muj-plan.toml</code></pre>
+              <p>
+                PDF se objeví ve složce <code>out</code> vedle vašeho souboru. Co stojí za druhý pohled, třeba
+                příliš blízké závody, vypíše terminál.
+              </p>
+            </li>
+            <li>
+              <h3>Vytiskněte ji</h3>
+              <p>
+                Na A4, na šířku, ve skutečné velikosti 100&nbsp;% (ne „přizpůsobit stránce“), aby byla políčka dost
+                velká na vybarvování. Chcete-li plán později změnit, upravte soubor a sestavte tabulku znovu.
+              </p>
+            </li>
+          </ol>
+          <p>
+            Úpravy jednotlivých týdnů, kopcovité závody, více běhů týdně a všechny další možnosti popisuje
+            <a href="https://github.com/f-hluchnik/training-table-generator#the-season-file">README</a> (anglicky).
+          </p>
+        </section>
+      </main>
+
+      <footer class="colophon">
+        <p>
+          Generátor je zdarma a s&nbsp;otevřeným kódem,
+          <a href="https://github.com/f-hluchnik/training-table-generator">na GitHubu</a>. Vznikl z&nbsp;ručně
+          psaného maratonského plánu jednoho běžce.
+        </p>
+        <p>Tabulky jsou rámcem pro zdravé, zkušené běžce, ne lékařskou ani trenérskou radou.</p>
+      </footer>
+    </div>
+  </body>
+</html>
