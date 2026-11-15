@@ -10,9 +10,22 @@ const WEEKDAYS = ["mon", "tue", "wed", "thu", "fri", "sat", "sun"];
 const DIARY = {
   1: { runs: { 1: "easy", 3: "quality", 5: "easy", 6: "long" }, km: 46 },
   2: { runs: { 1: "easy", 3: "quality", 4: "easy", 6: "long" }, km: 49 },
-  3: { runs: { 1: "easy", 5: "easy", 6: "long" }, event: 3, km: 43 },
+  3: { runs: { 1: "easy", 5: "easy", 6: "long" }, event: 3, km: 38 },
   4: { runs: { 1: "easy" } },
 };
+
+// The km are coloured by how much of the plan they reach: green from 80 %, the share at which a
+// week counts as done (D-006); yellow from 50 %; red below (the author's own colouring).
+const LEVELS = [
+  { share: 0.8, level: "full" },
+  { share: 0.5, level: "part" },
+  { share: 0, level: "low" },
+];
+
+function level(km, planned) {
+  if (km === 0 || planned === 0) return "";
+  return LEVELS.find(({ share }) => km >= share * planned).level;
+}
 
 function element(tag, attributes = {}, ...children) {
   const node = document.createElement(tag);
@@ -81,6 +94,7 @@ function gauge(week, boxes, text) {
   const set = (km) => {
     const value = Math.max(0, Math.min(boxes, km));
     track.dataset.km = value;
+    track.dataset.level = level(value, week.planned_km);
     cells.forEach((cell, index) => cell.classList.toggle("done", index < value));
     track.setAttribute("aria-valuenow", String(value));
     track.setAttribute("aria-valuetext", text.km(value, week.planned_km));
@@ -168,6 +182,38 @@ function body(plan, weeks, text) {
   return element("tbody", {}, ...rows);
 }
 
+// The lines under the table, as the sheet prints them: paces, races, rules.
+function footer(plan) {
+  const line = (entries) => element("p", {}, ...entries.flatMap((entry, index) => (index ? [element("span", { class: "separator", "aria-hidden": "true" }), entry] : [entry])));
+  const paces = plan.paces.map((pace) =>
+    element("span", { class: "entry" }, element("b", { class: "data" }, pace.code), ": ", element("span", { class: "data" }, pace.pace), " ", element("i", {}, pace.label))
+  );
+  const races = plan.footer.races.map((race) =>
+    element("span", { class: "entry" }, element("b", { class: "data" }, race.dates), `: ${race.name} `, element("i", {}, `(${race.details})`))
+  );
+  const rules = [...plan.footer.rules, plan.footer.success].map((rule) => element("span", { class: "entry" }, rule));
+  return element("div", { class: "sheet-footer" }, line(paces), line(races), line(rules));
+}
+
+// The whole season is drawn; until asked, only its first weeks show.
+function collapsible(figure, scroll, plan, text) {
+  const shown = Number(figure.dataset.weeks);
+  const toggle = figure.querySelector(".sheet-toggle");
+  const rows = scroll.querySelectorAll("tbody tr");
+  if (rows.length <= shown) return;
+  // Measured once, with every row laid out: the top of the first hidden week.
+  const height = rows[shown].getBoundingClientRect().top - scroll.getBoundingClientRect().top;
+  scroll.style.setProperty("--collapsed-height", `${height}px`);
+  const set = (collapsed) => {
+    scroll.classList.toggle("collapsed", collapsed);
+    toggle.setAttribute("aria-expanded", String(!collapsed));
+    toggle.textContent = collapsed ? text.showAll.replace("{weeks}", plan.weeks.length) : text.showFirst;
+  };
+  toggle.hidden = false;
+  toggle.addEventListener("click", () => set(!scroll.classList.contains("collapsed")));
+  set(true);
+}
+
 async function drawSheet(figure) {
   const text = JSON.parse(document.getElementById("sheet-text").textContent);
   text.km = (km, planned) => text.kmText.replace("{km}", km).replace("{planned}", planned);
@@ -175,10 +221,12 @@ async function drawSheet(figure) {
   const response = await fetch(figure.dataset.plan);
   if (!response.ok) throw new Error(`${figure.dataset.plan}: ${response.status}`);
   const plan = await response.json();
-  const weeks = plan.weeks.slice(0, Number(figure.dataset.weeks));
   const table = element("table", { class: "sheet" }, element("caption", { class: "visually-hidden" }, text.caption));
-  table.append(header(plan, text), body(plan, weeks, text));
-  figure.querySelector(".sheet-scroll").replaceChildren(table);
+  table.append(header(plan, text), body(plan, plan.weeks, text));
+  const scroll = figure.querySelector(".sheet-scroll");
+  // Table and footer share one width, as on the printed page.
+  scroll.replaceChildren(element("div", { class: "sheet-paper" }, table, footer(plan)));
+  collapsible(figure, scroll, plan, text);
 }
 
 const figure = document.querySelector(".sheet-figure");
@@ -188,3 +236,18 @@ if (figure) {
     figure.querySelector(".sheet-fallback").hidden = false;
   });
 }
+
+// A link to a part of the reference opens it: the reference is folded away by default.
+function openTarget() {
+  const target = location.hash && document.getElementById(location.hash.slice(1));
+  const details = target && target.closest("details");
+  if (details) details.open = true;
+}
+window.addEventListener("hashchange", openTarget);
+document.addEventListener("click", (event) => {
+  const link = event.target.closest('a[href^="#"]');
+  const target = link && document.getElementById(link.hash.slice(1));
+  const details = target && target.closest("details");
+  if (details) details.open = true;
+});
+openTarget();

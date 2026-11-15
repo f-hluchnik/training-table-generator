@@ -34,23 +34,28 @@
 
         <figure class="sheet-figure" data-plan="sample/plan.json" data-weeks="8">
           <div class="sheet-scroll"></div>
+          <button class="sheet-toggle" type="button" aria-expanded="false" hidden></button>
           <p class="sheet-fallback" hidden>
-            The example sheet could not be shown here. <a href="sample/plan.pdf">Open it as a PDF</a> instead.
+            The example sheet could not be shown here. It is built from
+            <a href="https://github.com/f-hluchnik/training-table-generator/blob/main/seasons/test-2027.toml">this
+              season file</a>.
           </p>
           <figcaption class="sheet-caption">
-            The first weeks of the example season, a month in. Press a day to colour it, or press the boxes to
-            log the week’s kilometres. <a href="sample/plan.pdf">Download the whole example sheet (PDF)</a>
+            An example season, a month in: two tune-up races and an autumn marathon. Press a day to colour it,
+            or press the boxes to log the week’s kilometres.
           </figcaption>
         </figure>
         <script type="application/json" id="sheet-text">
           {
-            "caption": "The first eight weeks of the example season",
+            "caption": "The example season's training table",
             "weekdays": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
             "runs": { "easy": "easy run", "quality": "quality run", "long": "long run" },
             "blank": "no run coloured",
             "event": "marked as unexpected",
             "kmText": "{km} of {planned} km",
-            "gaugeText": "Kilometres run in week {week}"
+            "gaugeText": "Kilometres run in week {week}",
+            "showAll": "Show the whole season, {weeks} weeks",
+            "showFirst": "Show only the first weeks"
           }
         </script>
 
@@ -60,24 +65,46 @@
             Each row is a week, Monday to Sunday. The columns on the right say what the week holds:
             <strong>ER</strong>, the easy runs (<code>12+12</code> is two easy runs of 12&nbsp;km),
             <strong>QR</strong>, one quality run, and <strong>LR</strong>, the long run. The grey number at the end
-            is the week’s planned distance.
+            is the week’s planned distance. You decide on which day each run happens.
           </p>
+          <p>The quality run is written as a short code:</p>
           <dl class="codes">
             <dt>H: 6×1′</dt>
-            <dd>Hill repeats: six one-minute hard efforts uphill, jogging down between them.</dd>
+            <dd>Hill repeats: six one-minute hard efforts uphill, jogging back down between them. By effort, not by pace.</dd>
             <dt>I: 5×3′</dt>
-            <dd>Intervals: five three-minute repeats at a hard pace, two minutes of jogging between.</dd>
+            <dd>Intervals: five three-minute repeats at interval pace, two minutes of jogging between.</dd>
             <dt>T: 3×8′</dt>
-            <dd>Threshold: repeats at a comfortably hard pace.</dd>
+            <dd>Threshold: repeats at threshold pace, comfortably hard, two minutes of jogging between.</dd>
             <dt>MP: 3×3 km</dt>
-            <dd>Repeats at your marathon pace.</dd>
+            <dd>Repeats at marathon pace, two minutes of jogging between.</dd>
             <dt>S</dt>
-            <dd>A short easy run with a few fast, relaxed strides.</dd>
+            <dd>
+              Strides: a shorter easy run with six strides of about 20 seconds. A stride is a smooth acceleration
+              to fast but relaxed running, never a sprint, with an easy jog between. It keeps the legs quick in
+              lighter weeks.
+            </dd>
+            <dt>RACE 21 km</dt>
+            <dd>A race in place of the session.</dd>
+            <dt>–</dt>
+            <dd>No session this week.</dd>
           </dl>
           <p>
-            The paces for each of them are printed below the table, worked out from a race you ran recently. You
-            decide on which day each run happens. When you’ve done one, colour its day. The sheet itself is black
-            and white, and the colours are yours; these are the ones the first sheet was coloured with:
+            Every quality run starts with a 10-minute warm-up and ends with a 10-minute cool-down, both included
+            in the week’s kilometres.
+          </p>
+
+          <h3>The paces</h3>
+          <p>
+            The paces are printed under the table. They are worked out from one race you ran recently, using Jack
+            Daniels’ formula: a 3:30:02 marathon, for example, gives easy runs at 5:37 per km, threshold at 4:40,
+            intervals at 4:18 and marathon pace at 4:59. You can set any of them yourself instead, for example a
+            goal marathon pace (see <a href="#options">everything you can set</a>).
+          </p>
+
+          <h3>Colouring it in</h3>
+          <p>
+            When you’ve done a run, colour its day. The sheet itself is black and white and the colours are yours;
+            these are the ones the author uses:
           </p>
           <ul class="markers">
             <li class="easy">easy run</li>
@@ -87,8 +114,14 @@
           </ul>
           <p>
             At the end of the week, colour one box for every kilometre you ran. A week counts as fully done at
-            80&nbsp;% of its planned kilometres, so a missed run doesn’t spoil it.
+            80&nbsp;% of its planned kilometres, so a missed run doesn’t spoil it. The colour says how the week
+            went:
           </p>
+          <ul class="markers">
+            <li class="easy">80&nbsp;% or more: done</li>
+            <li class="quality">50 to 80&nbsp;%</li>
+            <li class="low">under 50&nbsp;%</li>
+          </ul>
         </section>
 
         <section aria-labelledby="idea">
@@ -103,11 +136,19 @@
             <p>Tired or ill: drop intensity first.</p>
           </blockquote>
           <p>
-            <strong>Built on established coaching practice.</strong> The rules behind the plan follow well-known
-            coaches and their books: Jack Daniels, Pete Pfitzinger, Greg McMillan, Jason Koop. Three weeks of
-            building, then a lighter week. Quality sessions that grow a little each time they come round. Before
-            each important race, a block aimed at that race, then a taper; after it, time to recover before the
-            training picks up again.
+            <strong>Grown from practice, checked against coaching guidance.</strong> The rules started as the
+            author’s own training, the plan for his 2026 season. Each one was then checked against published
+            coaching guidance and changed where the two disagreed. For example, the paces come from Jack Daniels’
+            formula; threshold work stops at 40 minutes a session, the top of Greg McMillan’s range for tempo
+            runs; and a marathon taper lasts two weeks, the length a review of tapering studies found to work
+            best. Every rule and its source is listed in
+            <a href="https://github.com/f-hluchnik/training-table-generator/blob/main/docs/TRAINING_MODEL.md">the
+              training model</a>.
+          </p>
+          <p>
+            <strong>The shape of a season.</strong> Three weeks of building, then a lighter week. Quality sessions
+            that grow a little each time they come round. Before each important race, a block aimed at that race,
+            then a taper; after it, recovery and an easier week back into training.
           </p>
           <p>
             <strong>It never refuses a plan.</strong> If two races are close together or the season starts late,
@@ -131,8 +172,8 @@
             <li>
               <h3>Install it once</h3>
               <p>
-                You need <a href="https://www.python.org/downloads/">Python</a> 3.11 or newer and Git. Then, in a
-                terminal:
+                You need <a href="https://www.python.org/downloads/">Python</a> 3.11 or newer and
+                <a href="https://git-scm.com/downloads">Git</a>. Then, in a terminal on macOS or Linux:
               </p>
               <pre><code>git clone https://github.com/f-hluchnik/training-table-generator.git
 cd training-table-generator
@@ -140,9 +181,9 @@ python3 -m venv .venv
 . .venv/bin/activate
 pip install -e .</code></pre>
               <p>
-                On Windows, and if something goes wrong, see
-                <a href="https://github.com/f-hluchnik/training-table-generator#set-up">the set-up steps in the
-                  README</a>.
+                On Windows, the fourth line is <code>.venv\Scripts\activate</code>. In every new terminal, run
+                that line again before using the generator. If <code>python3</code> isn’t found, install Python
+                from the link above (on Windows, type <code>py -3</code> instead of <code>python3</code>).
               </p>
             </li>
             <li>
@@ -166,8 +207,8 @@ race_result = { distance_km = 42.195, time = "3:30:02" }
 easy_run_km = 12                <span class="comment"># the length of one easy run</span>
 long_run_km = 15                <span class="comment"># your long run now</span></code></pre>
               <p>
-                Add a <code>[[race]]</code> section for every race. Mark each one A (your main goal), B (important,
-                a shorter taper) or C (a tune-up inside your training) with <code>priority = "B"</code>.
+                Add a <code>[[race]]</code> section for every race. Dates are written without quotes. Everything
+                else is optional; see <a href="#options">everything you can set</a>.
               </p>
             </li>
             <li>
@@ -175,7 +216,8 @@ long_run_km = 15                <span class="comment"># your long run now</span>
               <pre><code>ttg build my-season.toml</code></pre>
               <p>
                 The PDF appears in a folder <code>out</code> next to your file. Anything worth a second look, such as
-                races too close together, is printed in the terminal.
+                races too close together, is printed in the terminal. If the file has a mistake, the message names
+                the field at fault and nothing is written.
               </p>
             </li>
             <li>
@@ -186,10 +228,168 @@ long_run_km = 15                <span class="comment"># your long run now</span>
               </p>
             </li>
           </ol>
-          <p>
-            Overrides for single weeks, hilly races, more runs a week and every other option are described in
-            <a href="https://github.com/f-hluchnik/training-table-generator#the-season-file">the README</a>.
-          </p>
+        </section>
+
+        <section class="reference" aria-labelledby="options">
+          <details id="options-details">
+            <summary>
+              <h2 id="options">Everything you can set</h2>
+              <span class="summary-note">Every field of the season file, single-week changes, default lengths and warnings.</span>
+            </summary>
+
+            <p>
+              Only the fields marked <em>required</em> must be in the file. A misspelled field is reported as an
+              error, so a typo is never silently ignored.
+            </p>
+
+            <h3>The plan</h3>
+            <dl class="fields">
+              <dt><code>start</code> <span>date</span></dt>
+              <dd>Week&nbsp;1 is the Monday-to-Sunday week that contains this date.</dd>
+              <dt><code>weeks</code> <span>number</span></dt>
+              <dd>
+                Instead of <code>start</code>: the plan’s length in weeks, ending with the week of the last race.
+                Give one of the two, not both. With neither, the plan starts next Monday.
+              </dd>
+            </dl>
+
+            <h3>Races: <code>[[race]]</code></h3>
+            <p>One section per race, as many as you like, on any dates.</p>
+            <dl class="fields">
+              <dt><code>name</code> <span>text, required</span></dt>
+              <dd>Printed under the table. Each race needs its own name.</dd>
+              <dt><code>date</code> <span>date, required</span></dt>
+              <dd>The race day, or the first day of a race over several days.</dd>
+              <dt><code>end</code> <span>date</span></dt>
+              <dd>The last day of a race over several days.</dd>
+              <dt><code>distance_km</code> <span>number, required</span></dt>
+              <dd>
+                Decides how the race is trained for: up to 10&nbsp;km, half marathon, marathon, or longer (ultra).
+              </dd>
+              <dt><code>priority</code> <span>"A", "B" or "C", default "A"</span></dt>
+              <dd>
+                A is a main goal, with a full taper and recovery. B is important, with a taper one week shorter. C
+                is a tune-up race inside your training, with no taper or recovery of its own: a C race up to
+                10&nbsp;km takes the place of the quality run, a longer one the place of the long run.
+              </dd>
+              <dt><code>taper_weeks</code>, <code>specific_weeks</code>, <code>recovery_weeks</code> <span>numbers</span></dt>
+              <dd>
+                Change the length of the race’s taper (including race week), its race-specific block and its
+                recovery. The defaults are in the table below. Not for C races.
+              </dd>
+              <dt><code>hilly</code> <span>true or false, default false</span></dt>
+              <dd>
+                For a course where climbs, not a steady pace, decide the effort, such as a trail or mountain race.
+                In the weeks aimed at it, every other quality run is hill repeats, threshold work replaces
+                marathon pace, and the long runs have no marathon-pace kilometres. Not for C races.
+              </dd>
+            </dl>
+
+            <h3>Paces: <code>[paces]</code></h3>
+            <dl class="fields">
+              <dt><code>race_result</code> <span>required</span></dt>
+              <dd>
+                A race you ran recently, as <code>{ distance_km = 21.1, time = "1:39:30" }</code>. The time is
+                <code>"h:mm:ss"</code> or <code>"m:ss"</code>. Every pace is worked out from it.
+              </dd>
+              <dt><code>easy</code>, <code>mp</code>, <code>threshold</code>, <code>interval</code> <span>"m:ss" per km</span></dt>
+              <dd>
+                Set a pace yourself instead of the worked-out one: easy runs, marathon pace, threshold, intervals.
+                <code>mp</code> is the place for a goal marathon pace. A threshold pace far from the worked-out one
+                gets a warning.
+              </dd>
+            </dl>
+
+            <h3>Your running now: <code>[load]</code></h3>
+            <dl class="fields">
+              <dt><code>easy_run_km</code> <span>number, required</span></dt>
+              <dd>The length of one easy run. It stays the same all season; in lighter weeks the last one is halved.</dd>
+              <dt><code>long_run_km</code> <span>number, required</span></dt>
+              <dd>The long run of the first week. It grows by 2&nbsp;km in each building week, up to a limit set by the race.</dd>
+              <dt><code>runs_per_week</code> <span>3 to 6, default 4</span></dt>
+              <dd>Always one quality run and one long run; the others are easy runs.</dd>
+            </dl>
+
+            <h3>The sheet: <code>[sheet]</code></h3>
+            <dl class="fields">
+              <dt><code>title</code> <span>text, default "training plan"</span></dt>
+              <dd>The title at the top of the sheet.</dd>
+              <dt><code>rules</code> <span>list of texts</span></dt>
+              <dd>
+                The rules printed under the table, such as <code>rules = ["Short on time: drop an easy run."]</code>.
+                Without it, the sheet prints its own.
+              </dd>
+            </dl>
+
+            <h3>Changing single weeks: <code>[overrides]</code></h3>
+            <p>
+              Change any week by its number. The change applies to that week only; the weeks after it are still
+              planned as before.
+            </p>
+            <pre><code>[overrides]
+1  = { easy = "reduced" }                                  <span class="comment"># "regular" or "reduced": the last easy run halved</span>
+13 = { quality = { type = "H", reps = 10, minutes = 1 } }  <span class="comment"># any quality session</span>
+14 = { long_run_km = 30 }                                  <span class="comment"># 0 = no long run</span>
+20 = { note = "holiday" }                                  <span class="comment"># replaces the grey number at the end</span></code></pre>
+            <p>
+              A quality session is <code>{ type, reps, minutes }</code> or <code>{ type, reps, km }</code>, with
+              <code>type</code> one of <code>"H"</code>, <code>"I"</code>, <code>"T"</code>, <code>"MP"</code>.
+              Strides are <code>{ type = "S" }</code>, no session is <code>{ type = "none" }</code>. A race can’t be
+              replaced.
+            </p>
+
+            <h3>Default phase lengths</h3>
+            <p>
+              The plan is laid out backwards from each A and B race. The lengths are in weeks; the long run never
+              goes above its limit.
+            </p>
+            <div class="table-scroll">
+              <table class="defaults">
+                <thead>
+                  <tr>
+                    <th scope="col">Race</th>
+                    <th scope="col">Taper, with race week</th>
+                    <th scope="col">Race-specific block</th>
+                    <th scope="col">Recovery</th>
+                    <th scope="col">Longest long run</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr><th scope="row">up to 10 km</th><td>1</td><td>3</td><td>1</td><td>16 km</td></tr>
+                  <tr><th scope="row">half marathon</th><td>2</td><td>4</td><td>2</td><td>21 km</td></tr>
+                  <tr><th scope="row">marathon</th><td>2</td><td>6</td><td>2</td><td>32 km</td></tr>
+                  <tr><th scope="row">ultra</th><td>3</td><td>6</td><td>3</td><td>40 km</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <p>
+              When there isn’t room for all of it, the build weeks give way first, then the race-specific block,
+              then the recovery after the previous race, then the taper. Each shortened block gets a warning.
+            </p>
+
+            <h3>Warnings</h3>
+            <p>Warnings never stop the build. Each starts with a code:</p>
+            <dl class="fields compact">
+              <dt><code>C1</code></dt>
+              <dd>Races are close together: a block was shortened because of the previous race.</dd>
+              <dt><code>C2</code></dt>
+              <dd>The plan starts too late for the first main race.</dd>
+              <dt><code>C3</code></dt>
+              <dd>The easy runs and the long run grow by more than 10&nbsp;% from one week to the next.</dd>
+              <dt><code>C4</code></dt>
+              <dd>The long run is more than half of the week.</dd>
+              <dt><code>C5</code></dt>
+              <dd>The long run is above the race’s limit.</dd>
+              <dt><code>C6</code></dt>
+              <dd>More than 40 minutes at threshold pace in one session.</dd>
+              <dt><code>C7</code></dt>
+              <dd>More than 10&nbsp;km, or 8&nbsp;% of the week, at interval pace in one session.</dd>
+              <dt><code>C8</code></dt>
+              <dd>A threshold pace you set is more than 10 seconds per km away from the worked-out one.</dd>
+              <dt><code>C9</code></dt>
+              <dd>Hill repeats longer than 2 minutes, or more than 20 minutes of hill effort in one session.</dd>
+            </dl>
+          </details>
         </section>
       </main>
 
@@ -197,7 +397,7 @@ long_run_km = 15                <span class="comment"># your long run now</span>
         <p>
           The generator is free and open source,
           <a href="https://github.com/f-hluchnik/training-table-generator">on GitHub</a>. It began as one runner’s
-          hand-made marathon plan.
+          hand-made plan.
         </p>
         <p>The tables are an outline for healthy, experienced runners, not medical or coaching advice.</p>
       </footer>

@@ -25,7 +25,7 @@ jobs:
         with:
           python-version: "3.12"
       - run: pip install .
-      # The page draws its sheet from this plan.json and links this PDF.
+      # The page draws its example sheet from this plan.json.
       - run: ttg build seasons/test-2027.toml -o site/sample
       - uses: actions/configure-pages@v6
       - uses: actions/upload-pages-artifact@v5

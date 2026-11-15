@@ -83,7 +83,7 @@
   --quality: #ffe45c;
   --long: #9fcbf2;
   --event: #e23b2e;
-  --pencil-fill: #a9a9a9;
+  --low: #f4a196; /* red, light enough to fill a row of boxes */
 
   --serif: "Libertinus Serif", "Iowan Old Style", "Palatino Linotype", Georgia, serif;
   --mono: "DejaVu Sans Mono", Menlo, Consolas, monospace;
@@ -324,9 +324,15 @@ h1 {
 .gauge-track span:last-child {
   border-right: 0;
 }
-/* Logged km are coloured like the days, in pencil grey. */
-.gauge-track span.done {
-  background: var(--pencil-fill);
+/* Logged km: green from 80 % of the plan, yellow from 50 %, red below. */
+.gauge-track[data-level="full"] span.done {
+  background: var(--easy);
+}
+.gauge-track[data-level="part"] span.done {
+  background: var(--quality);
+}
+.gauge-track[data-level="low"] span.done {
+  background: var(--low);
 }
 .gauge-head {
   display: grid;
@@ -336,6 +342,60 @@ h1 {
 .gauge-head span {
   text-align: right;
   padding-right: 2px;
+}
+
+.sheet-paper {
+  display: inline-block;
+}
+.sheet-scroll.collapsed {
+  max-height: var(--collapsed-height);
+  overflow-y: hidden;
+  -webkit-mask-image: linear-gradient(to bottom, #000 calc(100% - 2.5rem), transparent);
+  mask-image: linear-gradient(to bottom, #000 calc(100% - 2.5rem), transparent);
+}
+
+/* The sheet's footer: codes and dates in the mono, words in the serif, a thin rule between. */
+.sheet-footer {
+  padding: 0.9rem 0 0;
+  font-size: 0.8125rem;
+  line-height: 1.5;
+  text-align: center;
+  white-space: normal;
+}
+.sheet-footer p {
+  margin: 0 0 0.3rem;
+  hyphens: manual;
+}
+.sheet-footer .entry {
+  display: inline-block;
+}
+.sheet-footer .data {
+  font-family: var(--mono);
+  font-size: 0.88em;
+}
+.sheet-footer b.data {
+  font-weight: 700;
+}
+.sheet-footer .separator {
+  display: inline-block;
+  height: 0.75em;
+  margin: 0 0.55rem;
+  border-left: 1px solid var(--ink);
+}
+
+.sheet-toggle {
+  margin: 0.9rem 0 0;
+  padding: 0.35rem 0.8rem;
+  border: 1.5px solid var(--ink);
+  border-radius: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font: inherit;
+  font-size: var(--step--1);
+  cursor: pointer;
+}
+.sheet-toggle:hover {
+  background: var(--band-fill);
 }
 
 .sheet-caption {
@@ -423,6 +483,9 @@ strong {
 .markers .long {
   --swatch: var(--long);
 }
+.markers .low {
+  --swatch: var(--low);
+}
 .markers .event::before {
   width: 0;
   height: 0;
@@ -495,6 +558,96 @@ li code {
   font-size: 0.85em;
 }
 
+/* ---------------------------------------------------------------- reference */
+
+/* Everything you can set: folded away so the page stays short, complete when opened. */
+.reference details > summary {
+  display: block;
+  cursor: pointer;
+  list-style: none;
+}
+.reference details > summary::-webkit-details-marker {
+  display: none;
+}
+.reference summary h2 {
+  display: inline;
+  margin: 0;
+}
+.reference summary h2::after {
+  content: "+";
+  display: inline-block;
+  margin-left: 0.45em;
+  font-weight: 400;
+}
+.reference details[open] summary h2::after {
+  content: "−";
+}
+.reference .summary-note {
+  display: block;
+  margin: 0.4rem 0 0;
+  color: var(--pencil);
+  font-size: var(--step--1);
+}
+.reference details[open] > summary {
+  margin-bottom: 1.5rem;
+}
+.reference h3 {
+  margin: 2.5rem 0 0.75rem;
+  font-size: var(--step-1);
+  font-weight: 400;
+}
+
+.fields {
+  margin: 0 0 1rem;
+}
+.fields dt {
+  margin: 1.1rem 0 0.2rem;
+}
+.fields dt span {
+  margin-left: 0.4rem;
+  color: var(--pencil);
+  font-size: var(--step--1);
+  font-style: italic;
+}
+.fields dd {
+  margin: 0;
+}
+.fields.compact {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 0.4rem 1.1rem;
+}
+.fields.compact dt {
+  margin: 0;
+}
+
+.table-scroll {
+  overflow-x: auto;
+  margin: 0 0 1rem;
+}
+.defaults {
+  border-collapse: collapse;
+  font-size: var(--step--1);
+  font-variant-numeric: lining-nums tabular-nums;
+}
+.defaults th,
+.defaults td {
+  padding: 0.45rem 0.9rem 0.45rem 0;
+  border-bottom: 1px solid var(--rule);
+  text-align: left;
+  vertical-align: bottom;
+}
+.defaults thead th {
+  border-bottom: 1.5px solid var(--ink);
+  font-weight: 600;
+}
+.defaults tbody th {
+  font-weight: 400;
+}
+.defaults td {
+  text-align: right;
+}
+
 /* ---------------------------------------------------------------- footer */
 
 .colophon {
@@ -531,5 +684,12 @@ li code {
   height: 1px;
   overflow: hidden;
   clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* Short code in running text stays on one line. */
+p code,
+dd code,
+li code {
   white-space: nowrap;
 }
