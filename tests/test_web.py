@@ -12,9 +12,10 @@ from datetime import date
 
 import pytest
 
+from ttg.expand import expand
 from ttg.model import SeasonError
 from ttg.spec import load_season, parse_season
-from ttg.web import generate, generate_json, season_data, season_toml
+from ttg.web import MAX_WEEKS, generate, generate_json, season_data, season_toml
 
 from support import FIXTURES, SEASONS, TODAY
 
@@ -211,3 +212,31 @@ def test_the_module_runs_without_the_typst_compiler():
     """The page loads this module in a browser, where Typst is not installed."""
     code = "import sys; sys.modules['typst'] = None; import ttg.web"
     subprocess.run([sys.executable, "-c", code], check=True)
+
+
+# --- the page's limit on the length of a plan (D-053) -----------------------------
+
+
+def test_a_plan_of_the_longest_length_builds():
+    assert len(generate(a_form(start="", weeks=str(MAX_WEEKS)), TODAY).plan["weeks"]) == MAX_WEEKS
+
+
+@pytest.mark.parametrize(
+    ("form", "field"),
+    [
+        (a_form(start="", weeks=str(MAX_WEEKS + 1)), "weeks"),
+        (a_form(start="1900-01-01"), "start"),
+        (a_form(start="", race=[MARATHON | {"date": "2099-10-10"}]), "start"),
+    ],
+)
+def test_a_longer_plan_is_refused_before_it_is_built(form, field):
+    with pytest.raises(
+        SeasonError, match=rf"^{field}: the plan would be \d+ weeks long; this page makes plans of up to {MAX_WEEKS}"
+    ):
+        generate(form, TODAY)
+
+
+def test_the_limit_is_the_pages_and_not_the_cores():
+    """The command line never refuses a plan (D-001)."""
+    long_plan = parse_season(season_data(a_form(start="", weeks=str(MAX_WEEKS + 20))))
+    assert len(expand(long_plan, TODAY).weeks) == MAX_WEEKS + 20
