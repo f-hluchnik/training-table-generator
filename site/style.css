@@ -109,6 +109,9 @@
 
   --measure: 36rem;
   --gutter: clamp(1.25rem, 5vw, 4.5rem);
+  /* The page's width: the example sheet's (about 70.7rem) with a little air. The text keeps its
+     measure inside it, so text and sheet share one left edge (T-30). */
+  --page: 72rem;
 }
 
 *,
@@ -146,7 +149,10 @@ a:hover {
   outline-offset: 3px;
 }
 
+/* Centred on a wide screen, the text column flush left inside it. */
 .page {
+  max-width: calc(var(--page) + 2 * var(--gutter));
+  margin: 0 auto;
   padding: 0 var(--gutter);
 }
 
@@ -369,6 +375,11 @@ h1 {
 
 .sheet-paper {
   display: inline-block;
+}
+/* The first weeks, as wide as the text: the calendar and the sessions; the kilometre gauge comes
+   with the whole season (T-30). */
+.sheet-scroll.collapsed .gauge {
+  display: none;
 }
 .sheet-scroll.collapsed {
   max-height: var(--collapsed-height);
