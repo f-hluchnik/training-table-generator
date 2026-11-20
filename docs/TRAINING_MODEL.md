@@ -15,6 +15,7 @@ Every number here becomes a named constant in code, with the same tag (CLAUDE.md
 | ER | easy run | easy pace |
 | S | easy run with strides | *e*/2 km with e.g. 6 × 20″ fast, relaxed; replaces the quality run in deload weeks |
 | H | hill repeats | effort-based, no pace; recovery = jog down (≈ effort duration) [2026] |
+| F | fartlek | effort-based, *comfortably hard*, then walk or jog as long; a beginner's intervals (§11, D-054) |
 | I | intervals (VO₂max) | I pace, 2′ jog recovery [2026] |
 | T | threshold intervals | T pace, 2′ jog recovery [2026] |
 | MP | marathon-pace repeats | e.g. 3 × 3 km at MP [2026] |
@@ -221,8 +222,11 @@ Overrides above the cap are allowed and produce a warning.
 | C7 | interval volume | > 10 km or > 8 % of the week at I in one session, compared in whole km (D-031) | **[source 11]** |
 | C8 | pace consistency | overridden T more than 10 s/km off the derived T | default |
 | C9 | hill volume | hill reps longer than 2′, or more than 20′ of hill effort in one session (D-043) | owner; **[source 31, 32]** |
+| C10 | quality run longer than the long run | in a build, specific or bridge week, the quality run's estimate (warm-up and cool-down included) above the long run; not in a taper, whose short threshold run may be longer (D-054) | default, coach S11 |
+| C11 | below a starting level | the first long run below what novice plans start from for the first week's target race: 10 km 5 km, half 6 km, marathon and ultra 10 km; suggests the beginner mode (D-054) | **[source 35, 36, 39]** |
+| C12 | a beginner's marathon base | a beginner's plan for a marathon or longer whose biggest week stays under 30 km; the beginner's only warning, worded to encourage (D-054) | **[source 43]** |
 
-Warnings go to the command line, not on the sheet. Implemented in `ttg.checks` (T-07; C9 since S8); `ttg.expand` merges them with C1 and C2 from the layout, so `Plan.warnings` holds them all. The progressions stay within C6 and C7 (T at 40′, I within Daniels' limit, D-030), so those two fire only for overrides; so does C9, as the hill progression holds within its limits.
+A beginner's plan has only C12 (§11). Warnings go to the command line, not on the sheet. Implemented in `ttg.checks` (T-07; C9 since S8; C10–C12 since S11); `ttg.expand` merges them with C1 and C2 from the layout, so `Plan.warnings` holds them all. The progressions stay within C6 and C7 (T at 40′, I within Daniels' limit, D-030), so those two fire only for overrides; so does C9, as the hill progression holds within its limits.
 
 ## 8. "Life happens" rules (D-008)
 
@@ -288,4 +292,67 @@ The owner finished the season uninjured and ran the planned marathon pace. That 
 31. J. Koop (CTS), *Decoding Interval Workouts*: 2–4′ intervals reach and hold VO₂max intensity; cumulative time at it in one session tops out around 15–20′: <https://trainright.com/decoding-interval-workouts-for-ultramarathon-training/>, <https://trainright.com/?p=27142>
 32. Long hill repeats of 2–4′, 4–6 reps, about 15–20′ of climbing in total: <https://www.trainingplan.dev/blog/posts/hill-workout-long-hills>, <https://www.trainingplan.dev/blog/posts/hill-repeats-guide>
 
+Sources 33–49 were found and checked by the two coach reviews of S11 (§11).
+
+33. NHS, *Couch to 5K running plan*: 9 weeks, 3 runs a week, from run 1′ / walk 1½′ to 30′ continuous: <https://www.nhs.uk/better-health/get-active/get-running-with-couch-to-5k/couch-to-5k-running-plan>
+34. H. Higdon, *Novice 5K*: <https://www.halhigdon.com/training-programs/5k-training/novice-5k/>
+35. H. Higdon, *Novice 10K*: 3 runs a week, long run 3 → 5.5 mi, weekday runs 2.5–3 mi, no speed work, race week 3 + 2 mi: <https://www.halhigdon.com/training-programs/10k-training/novice-10k/>
+36. H. Higdon, *Novice 1 Half Marathon*: long run 4 → 10 mi, +1 mi every other week, weekday runs 3–5 mi: <https://www.halhigdon.com/training-programs/half-marathon-training/novice-1-half-marathon/>
+37. H. Higdon, *Novice 1 Marathon*: long run up to 20 mi, a step back every third week, 3-week taper: <https://www.halhigdon.com/training-programs/marathon-training/novice-1-marathon/>
+38. H. Higdon, *Novice Base Training*: <https://www.halhigdon.com/training-programs/base-training/novice-base-training/>
+39. TrainingPeaks, *Weekly mileage before starting a marathon training program* (Higdon: 6 mi comfortably, 15–25 mi a week): <https://www.trainingpeaks.com/blog/weekly-mileage-before-starting-a-marathon-training-program/>
+40. J. & B. Galloway, run-walk-run ratios (interview): <https://runnersconnect.net/running-interviews/run-walk-run-with-jeff-and-barbara-galloway/>
+41. Nielsen et al. (2014), excessive weekly progression and injury in novice runners: <https://vbn.aau.dk/da/publications/excessive-progression-in-weekly-running-distance-and-risk-of-runn>
+42. Damsted et al. (2018), review: limited evidence on changes in training load and running injury: <https://runsafe.au.dk/display/artikel/limited-evidence-on-changes-in-training-load-and-running-related-injury>
+43. Rasmussen et al. (2013), weekly volume and marathon injuries (under 30 km a week, about twice the risk; retrospective): <https://pmc.ncbi.nlm.nih.gov/articles/PMC3625790>
+44. Canadian Running, *The three stages of speed work* (strides first, 4 × 80–100 m): <https://runningmagazine.ca/?p=83805>
+45. Canadian Running, *When should beginners start speed work* (short hills; full interval workouts a bad idea at first): <https://runningmagazine.ca/?p=82759>
+46. G. McMillan, *The talk test*: <https://www.mcmillanrunning.com/the-talk-test-the-worlds-easiest-training-tool/>
+47. Nybo et al. (2010), *High-intensity training versus traditional exercise interventions for promoting health*, Med Sci Sports Exerc 42(10): in untrained men 5 × 2′ hard three times a week gave about twice the VO₂max gain of continuous running (+14 % vs +7 %), with 5 of 9 injured vs 2 of 9; summarised by A. Hutchinson: <https://runningmagazine.ca/?p=4372> (abstract not reached)
+48. *Run Clever* randomised trial (2018): progression of intensity or of volume, no difference in injuries (36 vs 44, confidence intervals crossing zero), recreational runners after 8 weeks of common base training: <https://bmjopensem.bmj.com/content/4/1/e000333.abstract>
+49. Muñoz et al. (2014), polarised training in recreational 10 km runners (about 77 % easy, 20 % hard): <https://abacus.universidadeuropea.com/entities/publication/e453045b-50fb-4586-89a8-a3d550db3ce1>
+
 Sources 1, 10, 11, 12, 16, 20 and 25 are secondary summaries of Daniels; prefer the book when implementing. Source 22 is a newspaper interview, weak; the +2 km step itself is from 2026.
+
+## 11. Beginner mode (D-054)
+
+For someone new to running or to the distance: `[load] beginner = true`. A first coach review (S11) proposed a cautious mode; the owner reviewed it (more intensity, a slower start, goals instead of races) and a second, independent coach review gave the rules below, agreed by the owner. Implemented in `ttg.beginner` and `ttg.expand` (`_BeginnerExpander`); everything not listed here (the phase layout §5, the 3:1 cycle, the long run's taper and restart §4) is the standard rule.
+
+**Evidence.** Studies give novices no progression numbers. A programme graded by the 10 % rule did not reduce injuries **[source 21]**; Nielsen's cohort only suggests that weekly km rising more than 30 % in two weeks may matter (not significant) **[source 41]**; a review calls the evidence on load changes very limited **[source 42]**. On intensity: in untrained men, short hard efforts three times a week roughly doubled the fitness gain of continuous running, but with more injuries in a tiny group **[source 47]**; progressing intensity was no riskier than progressing volume in recreational runners **[source 48]**; polarised training means mostly easy volume with about 20 % hard **[source 49]**. So: a little intensity early, by effort, inside a run, and the long run kept, because what stops a novice finishing 10 km is endurance, not top speed **[coach S11]**.
+
+**Inputs.** The race result is optional, and so is `[paces]`: without one the sheet prints the easy pace as *conversational*, the talk test **[source 46]**; estimates use about 8:00/km (a 5 km in 32:00) **[default]**. `easy_run_km` is optional: ¾ of the first long run **[default, fitted to source 35, 36]**. Inputs are taken as entered, even below 2 km (D-001).
+
+**Goals.** A race may be a goal of the runner's own (`goal = true`, *10 km by a date*): the same plan, printed `GOAL 10 km`. With no race at all the plan works towards 5 km in 9 weeks (or in `weeks`), the length and the end of Couch to 5K **[source 33]**, printed `GOAL 5 km` **[default, coach S11]**.
+
+**Runs a week.** 2–4, default 3: Couch to 5K and Higdon's novice plans run 3 days **[source 33, 35]**. The quality run is done *inside* a run, the shortest, and counts that run's km. With 2 runs: the short run with the week's intensity, and the long run (owner and coach, S11: the long run stays for a distance goal).
+
+**Growth** **[default, coach S11, fitted to source 33, 35]**. One step of 1 km a loading week, from week 2, to:
+1. the shortest easy run, while it is shorter than half the long run (a 1 km run is too short to be useful);
+2. else the long run, once it has held its distance for 2 loading weeks or is 5 km or more (a step of at most 20 %);
+3. else the shortest easy run; when nothing may grow, the week holds.
+
+The race-specific block gives every step to the long run. Easy runs stop at 5 km for races up to 10 km, 8 km for longer ones, and 1 km below the long run **[default; Higdon's weekday runs top out at 3 mi and 5 mi, source 35, 36]**. Owner's case (3 km long run, 1 km easy runs, 3 runs, 10 km in 15 weeks): long run 3, 3, 3, 3, 4, 4, 5, 5, 5, 6, 7, 7, 8, 9, then the goal.
+
+**Lighter weeks.** A beginner's deload holds: no step, strides instead of fartlek or hills **[default, coach S11]**; at these distances a 75 % long run would hardly differ. A taper, race or recovery week takes 1 km off each easy run, not below 2 km **[default; source 33]**.
+
+**Long-run caps**, reached in the race-specific block; build weeks stop at 75 % as for anyone (§6):
+
+| Race | Cap | Basis |
+|---|---|---|
+| ≤ 10 km | 90 % of the race distance (5 km → 5, 10 km → 9) | Higdon's novice peaks 4.8 km and 8.9 km **[source 34, 35]** |
+| half | 16 km | novice half peak 10 mi **[source 36]** |
+| marathon, ultra | 32 km or 3 h at easy pace, whichever is less | 20 mi **[source 37]**; the 3 h is our default, looser than Daniels' 150 min for trained runners **[source 25]** |
+
+**Quality runs**, by effort, never at a pace; full interval workouts are not for the start **[source 45]**. **[default, coach S11]**:
+- weeks 1–2: none (the run is an easy run);
+- from week 3: strides, *S*, 6 × 20″ in an easy run **[source 44]**;
+- from week 5, in the loading weeks: fartlek *F* and hills *H* in turn, fartlek first; each climbs its steps one at a time and stays at the last:
+  - F: 6 × 1′ → 8 × 1′ → 6 × 1′30″ → 5 × 2′, *comfortably hard*, then walk or jog as long;
+  - H: 6 × 30″ → 8 × 30″ → 6 × 45″ → 6 × 1′, strong uphill, walk or jog down;
+- hard time at most 10 % of the week's running time and at most 10′, about half the polarised hard share **[source 49]**: a step that would pass it waits, and a week too small for any step has strides;
+- deload, taper and bridge weeks: strides; race or goal week: none, one easy run fewer but always one run besides the race **[source 35, 36]**;
+- never I, T or MP. The footer says to start F and H once the run can be run without walking; until then the walk breaks are the intervals, as in Couch to 5K **[source 33, 40]**.
+
+**No warnings** (owner, S11: "the plan should be rather motivating"). The only one is C12 for a marathon on a small base, worded to encourage **[source 43]**. The sheet's default rules say what a warning would: run and walk, and cover the distance (run/walk, **[source 40]**); F and H once the run needs no walking; easy by the talk test **[source 46]**; keep the long run when short on time. Nothing points to another site (owner).
+
+**Choices left open:** no automatic move to the standard mode; Higdon's 3-week beginner marathon taper is not used (§5's 2 weeks).

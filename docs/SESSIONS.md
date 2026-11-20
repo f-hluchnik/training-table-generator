@@ -14,6 +14,8 @@ How the tickets are grouped into working sessions, with the prompt that starts e
 | S7 | T-14 review, T-15; T-12 evaluated | S6 |
 | S8 | T-15 brought to `main`, README, T-16 to T-21 | S7 |
 | S9 | 2027 coach review: T-22; landing page T-23 | S8 |
+| S10 | generator in the browser: T-24, T-25 | S9 |
+| S11 | beginners: T-26 time keyboard, T-27 beginner mode, T-28 short form | S10 |
 
 ## Prompts
 

@@ -55,7 +55,7 @@ Modules of the package `ttg`. Everything marked *pure* follows D-013.
 
 ### season.toml (input, D-011, D-025)
 
-Required: at least one race, a race result as the pace anchor, and the starting load. Everything else is optional. Unknown fields are errors.
+Required: at least one race, a race result as the pace anchor, and the starting load. A beginner needs only the starting load (D-054). Everything else is optional. Unknown fields are errors.
 
 Minimal example:
 
@@ -91,12 +91,14 @@ All fields:
 | `[[race]] taper_weeks` | integer ≥ 1 | by distance | Includes the race week (D-009). Not for C races. |
 | `[[race]] specific_weeks` | integer ≥ 0 | by distance | Race-specific block. Not for C races. |
 | `[[race]] recovery_weeks` | integer ≥ 0 | by distance | Recovery after the race. Not for C races. |
+| `[[race]] goal` | `true`, `false` | `false` | A distance by a date, not an event: printed `GOAL 10 km` (D-054). |
 | `[[race]] hilly` | `true`, `false` | `false` | Climbs, not a steady pace, decide the effort; the race-specific block leans into hill repeats (D-041). Not for C races. |
-| `[paces] race_result` | `{ distance_km, time }` | required | Anchor for the default paces (D-015); `time` is `"h:mm:ss"` or `"m:ss"`. |
+| `[paces] race_result` | `{ distance_km, time }` | required, except for a beginner | Anchor for the default paces (D-015); `time` is `"h:mm:ss"` or `"m:ss"`. A beginner may leave out `[paces]` altogether (D-054). |
 | `[paces] easy`, `mp`, `threshold`, `interval` | `"m:ss"` per km | derived | Overrides (D-005). |
-| `[load] easy_run_km` | integer ≥ 1 | required | Length of an easy run (D-022). |
+| `[load] beginner` | `true`, `false` | `false` | The beginner's rules, TRAINING_MODEL §11 (D-054). |
+| `[load] easy_run_km` | integer ≥ 1 | required; a beginner: ¾ of `long_run_km` | Length of an easy run (D-022). |
 | `[load] long_run_km` | integer ≥ 1 | required | Long run of the first week. |
-| `[load] runs_per_week` | integer 3–6 | 4 | D-016. |
+| `[load] runs_per_week` | integer 3–6; a beginner 2–4 | 4; a beginner 3 | D-016, D-054. |
 | `[overrides] N` | table | — | Changes to week N (D-012); fields below. |
 | `… easy` | `"regular"`, `"reduced"` | computed | Easy-run pattern (D-022). |
 | `… quality` | table, see below | computed | The quality session. |

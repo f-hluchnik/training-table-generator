@@ -1,4 +1,4 @@
-"""Warnings C3–C9 (T-07, D-043): each check fires and stays quiet; 2026 gives the expected warnings."""
+"""Warnings C3–C11 (T-07, D-043, D-054): each check fires and stays quiet; 2026 gives the expected warnings."""
 
 from dataclasses import replace
 from datetime import date
@@ -6,12 +6,14 @@ from datetime import date
 import pytest
 
 from ttg.checks import (
+    below_starting_level,
     check,
     hill_volume,
     interval_volume,
     long_run_above_cap,
     long_run_share,
     pace_consistency,
+    quality_longer_than_long_run,
     threshold_volume,
     weekly_ramp,
 )
@@ -207,3 +209,43 @@ def test_2026_gives_the_expected_warnings():
 def test_the_plan_carries_the_checks_warnings_too():
     plan = expand(load_season(SEASONS / "2026.toml"), TODAY)
     assert set(check(plan)) < set(plan.warnings)
+
+
+TEN_K = Race("10k", date(2027, 3, 7), 10.0)
+
+
+def plan(race: Race, load: Load = LOAD, **fields) -> Plan:
+    fields.setdefault("start", date(2026, 11, 23))
+    return expand(support_season(race, load=load, **fields), TODAY)
+
+
+def test_c10_fires_when_the_quality_run_is_longer_than_the_long_run():
+    small = plan(TEN_K, load=Load(easy_run_km=1, long_run_km=3))
+    warnings = list(quality_longer_than_long_run(small))
+    assert warnings and warnings[0].week == 1  # H 6×1′, about 4 km, beside a 3 km long run
+    assert "longer than the 3 km long run" in warnings[0].message
+
+
+def test_c10_quiet_for_the_default_plan_and_in_a_taper():
+    assert list(quality_longer_than_long_run(plan(MARATHON))) == []
+    # A half's taper: T 6 × 1 km (about 11 km) beside a 7 km long run.
+    tapered = plan(
+        Race("Half", date(2027, 3, 7), 21.1), load=Load(easy_run_km=6, long_run_km=8), start=date(2027, 2, 1)
+    )
+    taper_weeks = _taper_weeks(tapered)
+    assert any(week.quality_km > week.long_run_km for week in tapered.weeks if week.number in taper_weeks)
+    assert all(warning.week not in taper_weeks for warning in quality_longer_than_long_run(tapered))
+
+
+def _taper_weeks(the_plan: Plan) -> set[int]:
+    return {week.number for week in the_plan.weeks if week.kind in (WeekKind.TAPER, WeekKind.RACE)}
+
+
+@pytest.mark.parametrize(
+    ("race", "long_run_km", "fires"), [(TEN_K, 4, True), (TEN_K, 5, False), (MARATHON, 9, True), (MARATHON, 15, False)]
+)
+def test_c11_suggests_the_beginner_mode_below_the_usual_first_long_run(race, long_run_km, fires):
+    warnings = list(below_starting_level(plan(race, load=Load(easy_run_km=3, long_run_km=long_run_km))))
+    assert bool(warnings) is fires
+    if fires:
+        assert "beginner = true" in warnings[0].message

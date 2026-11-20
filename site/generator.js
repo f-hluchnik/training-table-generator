@@ -21,10 +21,13 @@ const FIELDS = [
   "paces.mp",
   "paces.threshold",
   "paces.interval",
+  "load.beginner",
   "load.easy_run_km",
   "load.long_run_km",
   "load.runs_per_week",
 ];
+// A beginner needs neither a race result nor an easy run's length (D-054).
+const OPTIONAL_FOR_BEGINNERS = ["paces.race_result.distance_km", "paces.race_result.time", "load.easy_run_km"];
 const ROW_FIELDS = {
   race: [
     "name",
@@ -36,6 +39,7 @@ const ROW_FIELDS = {
     "specific_weeks",
     "recovery_weeks",
     "hilly",
+    "goal",
   ],
   override: ["week", "easy", "quality.type", "quality.reps", "quality.minutes", "quality.km", "long_run_km", "note"],
 };
@@ -103,6 +107,7 @@ function restore(values) {
     }
   }
   if (!rows("race").length) addRow("race");
+  syncLevel();
   openFilledFolds();
 }
 
@@ -170,9 +175,15 @@ function syncRow(row) {
   }
 }
 
+function syncLevel() {
+  const beginner = control(form, "load.beginner").checked;
+  for (const name of OPTIONAL_FOR_BEGINNERS) control(form, name).required = !beginner;
+}
+
 form.addEventListener("change", (event) => {
   const row = event.target.closest(".row");
   if (row) syncRow(row);
+  syncLevel();
 });
 
 form.addEventListener("click", (event) => {

@@ -171,8 +171,14 @@ Checked: 424 tests (new: the limit and the cases it refuses in `tests/test_web.p
 
 Not verified: the live Pages site and jsDelivr (unreachable from the sandbox); Safari and Firefox. Open for the owner: serve Pyodide from the site instead of jsDelivr (D-053).
 
-### T-26 A keyboard with a colon for times — in review
+### T-26 A keyboard with a colon for times — done (merged in #33)
 *Owner, S11:* on an iPhone (Safari) the race time and the paces could not be typed: their fields asked for the numeric keypad, which has no colon. No phone keypad has one (`inputmode` numeric, decimal and tel alike), so the five fields that take `m:ss` or `h:mm:ss` now use the full keyboard, without autocorrect, capitals or spell-check. The distance and the whole-number fields keep their keypads. `tests/test_site.py` fails if a field whose placeholder has a colon asks for a keypad. Not verified on a real iPhone (no device in the sandbox).
+### T-27 Beginner mode — in review
+*Owner, S11:* small starting numbers gave hard sessions in week 1, a long run growing 3 → 5 → 7 km and a 16 km peak before a first 10 km; asked for a gentle mode with a coach's advice, a motivating plan without warnings. After the first version, the owner's review and a second coach review changed the rules: gentle intensity earlier and inside a run, the long run kept with 2 runs, a slower start, goals and no race (D-054).
+
+Built: `[load] beginner` and `[[race]] goal` (`ttg.spec`; `race_result`, `[paces]`, `easy_run_km` and the race optional for a beginner; 2–4 runs); `ttg.beginner` (the rules and their constants, TRAINING_MODEL §11); `_BeginnerExpander` in `ttg.expand` on small hooks of the standard expander (the long run before the easy runs within a week, the easy run's length for floors, the deload's long run, the quality km by week); the session type F (fartlek); the legend and the beginner's footer rules; reps under a minute in seconds (`6×30″`); `GOAL` on the sheet; checks C10 and C11 for the standard mode, C12 for a beginner; the web entry point; a beginner checkbox, a goal checkbox and F on the generator page (the form's redesign is T-28); both landing pages' reference.
+
+Checked: tests (`tests/test_beginner.py`; C10, C11 in `tests/test_checks.py`), ruff, mypy; both reference seasons build an identical `plan.json`; the owner's case follows the second coach review's table; a beginner's sheet rendered and inspected.
 
 ### Later (not scheduled)
 - **T-12** Elevation for mountain ultras (Q-5). *Evaluated in S7; parked by the owner (Q-7).* The race-type gap it found is covered by T-15 (`hilly`).

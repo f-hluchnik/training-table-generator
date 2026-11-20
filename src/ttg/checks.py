@@ -1,4 +1,4 @@
-"""Warnings C3–C9 (TRAINING_MODEL.md §7, D-031, D-043).
+"""Warnings C3–C12 (TRAINING_MODEL.md §7, D-031, D-043, D-054).
 
 Each check is a small function of the plan with a named threshold. C1 and C2
 come from the layout (D-029) and the expansion; `ttg.expand` merges them with these.
@@ -6,12 +6,13 @@ Warnings never stop the build (D-001) and are not printed on the sheet (D-027).
 Pure (D-013).
 """
 
-from collections.abc import Callable, Iterator
+from collections.abc import Callable, Iterator, Mapping
 from dataclasses import replace
 from itertools import pairwise
+from types import MappingProxyType
 
 from ttg import long_run
-from ttg.model import LongRun, Plan, PlanWarning, Session, SessionType, WarningCode, Week
+from ttg.model import LongRun, Plan, PlanWarning, RaceType, Session, SessionType, WarningCode, Week, WeekKind
 from ttg.paces import derive_paces
 from ttg.sessions import (
     MAX_HILL_MINUTES,
@@ -40,15 +41,33 @@ MAX_THRESHOLD_DEVIATION_SECONDS = 10
 # C9: the hill limits the H progression keeps (`ttg.sessions`, D-043): reps of at most 2′ [owner],
 # at most 20′ of effort [source 31, 32]. Only an override can pass them. Reps given in km are timed
 # at easy pace, as the km estimate counts hill efforts (TRAINING_MODEL.md §3).
+# C10 [default, coach S11]: in a loading or bridge week, a quality run longer than the long run means
+# the starting load is too small for the session; a taper's short threshold run may be longer.
+QUALITY_CHECKED_WEEKS = (WeekKind.BUILD, WeekKind.SPECIFIC, WeekKind.BRIDGE)
+# C11: the first long run that novice plans start from, below which the beginner mode fits better
+# (D-054): Higdon's novice 10K about 4.8 km [source 35], novice half 6.4 km [source 36], and a
+# comfortable 10 km before a marathon plan [source 39]; the ultra as the marathon [default].
+STARTING_LONG_RUN_KM: Mapping[RaceType, int] = MappingProxyType(
+    {RaceType.TEN_K: 5, RaceType.HALF: 6, RaceType.MARATHON: 10, RaceType.ULTRA: 10}
+)
+# C12: marathoners who ran under 30 km a week had about twice the injury risk, a retrospective
+# association [source 43]. The beginner's only warning, worded to encourage (owner, S11).
+MARATHON_BASE_WEEK_KM = 30
 
 
 def check(plan: Plan) -> tuple[PlanWarning, ...]:
-    """Warnings C3–C9 of the plan's weeks and paces (not C1 and C2, which come with the plan)."""
+    """Warnings C3–C11 of the plan's weeks and paces (not C1 and C2, which come with the plan)."""
     warnings: list[PlanWarning] = []
     for weekly_check in _WEEKLY_CHECKS:
         warnings += weekly_check(plan)
     warnings += pace_consistency(plan)
+    warnings += below_starting_level(plan)
     return tuple(warnings)
+
+
+def check_beginner(plan: Plan) -> tuple[PlanWarning, ...]:
+    """A beginner's plan gets only C12, an encouragement rather than a correction (owner, S11, D-054)."""
+    return tuple(marathon_base(plan))
 
 
 def weekly_ramp(plan: Plan) -> Iterator[PlanWarning]:
@@ -94,6 +113,47 @@ def long_run_above_cap(plan: Plan) -> Iterator[PlanWarning]:
             )
 
 
+def quality_longer_than_long_run(plan: Plan) -> Iterator[PlanWarning]:
+    """C10: the quality run's estimate includes its warm-up and cool-down (TRAINING_MODEL.md §3)."""
+    for week in _weeks_with_a_long_run(plan):
+        if week.kind in QUALITY_CHECKED_WEEKS and week.quality_km > week.long_run_km:
+            yield PlanWarning(
+                WarningCode.QUALITY_LONGER_THAN_LONG_RUN,
+                week.number,
+                f"the quality run, about {week.quality_km} km with warm-up and cool-down, is longer than "
+                f"the {week.long_run_km} km long run",
+            )
+
+
+def below_starting_level(plan: Plan) -> Iterator[PlanWarning]:
+    """C11: compared with the first week's target race; the beginner mode builds up more gently."""
+    first_long_run_km = plan.season.load.long_run_km
+    target = plan.weeks[0].target
+    starting_km = STARTING_LONG_RUN_KM[target.type]
+    if first_long_run_km < starting_km:
+        yield PlanWarning(
+            WarningCode.BELOW_STARTING_LEVEL,
+            None,
+            f'a first long run of {first_long_run_km} km is short for "{target.name}" ({target.type}): '
+            f"plans usually start from about {starting_km} km; the beginner mode (beginner = true in [load]) "
+            "builds up more gently",
+        )
+
+
+def marathon_base(plan: Plan) -> Iterator[PlanWarning]:
+    """C12: for a marathon or longer, the plan's biggest week."""
+    long_races = [race for race in plan.season.races if race.is_key and race.type in _LONG_RACES]
+    biggest_km = max(week.planned_km for week in plan.weeks)
+    if long_races and biggest_km < MARATHON_BASE_WEEK_KM:
+        yield PlanWarning(
+            WarningCode.MARATHON_BASE,
+            None,
+            f"your biggest week is {biggest_km} km. A first marathon goes best from about "
+            f"{MARATHON_BASE_WEEK_KM} km a week: a half marathon on the way, or a later date, gives your "
+            "legs time to get there. Walk breaks in the race are fine.",
+        )
+
+
 def threshold_volume(plan: Plan) -> Iterator[PlanWarning]:
     """C6."""
     for week, session in _sessions_of(plan, SessionType.THRESHOLD):
@@ -137,7 +197,7 @@ def hill_volume(plan: Plan) -> Iterator[PlanWarning]:
 def pace_consistency(plan: Plan) -> Iterator[PlanWarning]:
     """C8: compares an overridden threshold pace with the one derived from the race result."""
     paces = plan.season.paces
-    if paces.threshold is None:
+    if paces.threshold is None or paces.race_result is None:
         return
     derived = derive_paces(paces.race_result.distance_km, paces.race_result.time).threshold
     deviation = paces.threshold.seconds_per_km - derived.seconds_per_km
@@ -158,7 +218,9 @@ _WEEKLY_CHECKS: tuple[Callable[[Plan], Iterator[PlanWarning]], ...] = (
     threshold_volume,
     interval_volume,
     hill_volume,
+    quality_longer_than_long_run,
 )
+_LONG_RACES = (RaceType.MARATHON, RaceType.ULTRA)
 
 
 def _percent(share: float, sign: bool = False) -> str:

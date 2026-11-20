@@ -14,11 +14,16 @@ from enum import Enum, StrEnum, auto
 from pathlib import Path
 from typing import Any, NoReturn, TypeGuard, TypeVar, overload
 
+from ttg.beginner import default_easy_run_km
 from ttg.model import (
+    BEGINNER_RULES,
+    DEFAULT_BEGINNER_RUNS_PER_WEEK,
     DEFAULT_RULES,
     DEFAULT_RUNS_PER_WEEK,
     DEFAULT_TITLE,
+    MAX_BEGINNER_RUNS_PER_WEEK,
     MAX_RUNS_PER_WEEK,
+    MIN_BEGINNER_RUNS_PER_WEEK,
     MIN_RUNS_PER_WEEK,
     EasyRuns,
     Load,
@@ -45,6 +50,9 @@ _T = TypeVar("_T")
 # describe its repetitions.
 _PHASE_LENGTH_FIELDS = ("taper_weeks", "specific_weeks", "recovery_weeks")
 _REPETITION_FIELDS = ("reps", "minutes", "km")
+# `runs_per_week`: (default, minimum, maximum), for everyone (D-016) and for a beginner (D-054).
+_RUNS_PER_WEEK = (DEFAULT_RUNS_PER_WEEK, MIN_RUNS_PER_WEEK, MAX_RUNS_PER_WEEK)
+_BEGINNER_RUNS_PER_WEEK = (DEFAULT_BEGINNER_RUNS_PER_WEEK, MIN_BEGINNER_RUNS_PER_WEEK, MAX_BEGINNER_RUNS_PER_WEEK)
 
 
 def load_season(path: Path) -> Season:
@@ -70,14 +78,17 @@ def parse_season(data: dict[str, Any]) -> Season:
     weeks = root.integer("weeks", minimum=1)
     if start is not None and weeks is not None:
         _fail("weeks", "give either start or weeks, not both")
-    races = _parse_races(root.tables("race"))
+    # A beginner may give no race: "just start running" (D-054, `ttg.beginner.with_a_goal`). The flag
+    # is looked up first, so the races are still checked before the load.
+    races = _parse_races(root.tables("race") if root.has("race") else [], required=not _is_beginner(data))
+    load = _parse_load(root.table("load", REQUIRED))
     season = Season(
         races=races,
-        paces=_parse_paces(root.table("paces", REQUIRED)),
-        load=_parse_load(root.table("load", REQUIRED)),
+        paces=_parse_paces(root.table("paces", None if load.beginner else REQUIRED), load.beginner),
+        load=load,
         start=start,
         weeks=weeks,
-        sheet=_parse_sheet(root.table("sheet")),
+        sheet=_parse_sheet(root.table("sheet"), BEGINNER_RULES if load.beginner else DEFAULT_RULES),
         overrides=_parse_overrides(root.table("overrides")),
     )
     root.close()
@@ -88,8 +99,13 @@ def parse_season(data: dict[str, Any]) -> Season:
 # --- sections ----------------------------------------------------------------
 
 
-def _parse_races(tables: list["_Table"]) -> tuple[Race, ...]:
-    if not tables:
+def _is_beginner(data: dict[str, Any]) -> bool:
+    load = data.get("load")
+    return isinstance(load, dict) and load.get("beginner") is True
+
+
+def _parse_races(tables: list["_Table"], required: bool) -> tuple[Race, ...]:
+    if not tables and required:
         _fail("race", "at least one [[race]] is required")
     races = [_parse_race(table) for table in tables]
     _check_unique_names(races, tables)
@@ -111,6 +127,7 @@ def _parse_race(table: "_Table") -> Race:
         specific_weeks=table.integer("specific_weeks", minimum=0),
         recovery_weeks=table.integer("recovery_weeks", minimum=0),
         hilly=table.boolean("hilly", False),
+        goal=table.boolean("goal", False),
     )
     table.close()
     _check_c_race_fields(race, table)
@@ -144,9 +161,13 @@ def _check_races_not_before_start(races: Iterable[Race], start: dt.date | None) 
             _fail("start", f'{start} is after the race "{race.name}" on {race.last_day}')
 
 
-def _parse_paces(table: "_Table") -> Paces:
+def _parse_paces(table: "_Table | None", beginner: bool) -> Paces:
+    """A beginner needs no race result, so no `[paces]` at all (D-054)."""
+    if table is None:
+        return Paces(race_result=None)
+    result_table = table.table("race_result", None if beginner else REQUIRED)
     paces = Paces(
-        race_result=_parse_race_result(table.table("race_result", REQUIRED)),
+        race_result=None if result_table is None else _parse_race_result(result_table),
         easy=table.pace("easy"),
         mp=table.pace("mp"),
         threshold=table.pace("threshold"),
@@ -166,23 +187,29 @@ def _parse_race_result(table: "_Table") -> RaceResult:
 
 
 def _parse_load(table: "_Table") -> Load:
+    """A beginner runs 2–4 times a week, and the easy run follows from the long run (D-054)."""
+    beginner = table.boolean("beginner", False)
+    easy_run_km = table.integer("easy_run_km", minimum=1)
+    if easy_run_km is None and not beginner:
+        _fail(table.path_of("easy_run_km"), "missing (required)")
+    long_run_km = table.integer("long_run_km", REQUIRED, minimum=1)
+    default_runs, min_runs, max_runs = _BEGINNER_RUNS_PER_WEEK if beginner else _RUNS_PER_WEEK
     load = Load(
-        easy_run_km=table.integer("easy_run_km", REQUIRED, minimum=1),
-        long_run_km=table.integer("long_run_km", REQUIRED, minimum=1),
-        runs_per_week=table.integer(
-            "runs_per_week", DEFAULT_RUNS_PER_WEEK, minimum=MIN_RUNS_PER_WEEK, maximum=MAX_RUNS_PER_WEEK
-        ),
+        easy_run_km=default_easy_run_km(long_run_km) if easy_run_km is None else easy_run_km,
+        long_run_km=long_run_km,
+        runs_per_week=table.integer("runs_per_week", default_runs, minimum=min_runs, maximum=max_runs),
+        beginner=beginner,
     )
     table.close()
     return load
 
 
-def _parse_sheet(table: "_Table | None") -> Sheet:
+def _parse_sheet(table: "_Table | None", default_rules: tuple[str, ...]) -> Sheet:
     if table is None:
-        return Sheet()
+        return Sheet(rules=default_rules)
     sheet = Sheet(
         title=table.text("title", DEFAULT_TITLE),
-        rules=table.texts("rules", DEFAULT_RULES),
+        rules=table.texts("rules", default_rules),
     )
     table.close()
     return sheet
@@ -399,6 +426,9 @@ class _Table:
         if not isinstance(value, dict):
             self._wrong_type(key, "a table", value)
         return _Table(value, self.path_of(key))
+
+    def has(self, key: str) -> bool:
+        return self._value(key) is not None
 
     def tables(self, key: str) -> list["_Table"]:
         """A required array of tables, e.g. [[race]]; paths are numbered from 1."""

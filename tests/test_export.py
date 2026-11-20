@@ -45,7 +45,8 @@ def week(document, number):
     ("quality", "text"),
     [
         (Session(SessionType.HILLS, reps=6, minutes=1), "H: 6×1′"),
-        (Session(SessionType.HILLS, reps=5, minutes=1.5), "H: 5×1.5′"),
+        (Session(SessionType.HILLS, reps=5, minutes=1.5), "H: 5×1′30″"),
+        (Session(SessionType.FARTLEK, reps=6, minutes=0.75), "F: 6×45″"),
         (Session(SessionType.THRESHOLD, reps=6, km=1), "T: 6×1 km"),
         (Session(SessionType.MARATHON_PACE, reps=3, km=3), "MP: 3×3 km"),
         (Session(SessionType.STRIDES), "S"),

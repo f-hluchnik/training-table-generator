@@ -47,12 +47,25 @@ MONTHS = ("jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", 
 EASY_LABEL, INTERVAL_LABEL, THRESHOLD_LABEL = "easy", "hard", "comfortably hard"
 STRIDES_LABEL = "fast, relaxed strides"
 HILLS_LABEL = "hard uphill effort, jog down"
+# A beginner's legend (D-054): without a race result no pace, the talk test [source 46]; strides
+# in a full easy run; hills strong, not hard, walking down allowed [source 40]. I, T and MP only
+# when an override puts them on the sheet.
+CONVERSATIONAL_TEXT = "conversational"
+BEGINNER_STRIDES_TEXT = "easy run"
+BEGINNER_HILLS_LABEL = "strong uphill effort, walk or jog down"
+FARTLEK_LABEL = "comfortably hard, then walk or jog as long"
+BEGINNER_LONG_RUN_LABEL = "easy, walk breaks fine"
+BEGINNER_LEGEND_CODES = frozenset({"ER", "S", "F", "H", "LR"})
+# Codes printed only when the plan uses them: fartlek, in a regular plan only by an override.
+ONLY_WHEN_USED_CODES = frozenset({"F"})
 
 # D-018 notation.
 NO_SESSION = "–"
 # Typographic signs, in the table and the legend alike: `H: 6×1′`, `6×20″` (D-048).
 TIMES, MINUTES, SECONDS = "×", "′", "″"
+SECONDS_PER_MINUTE = 60
 RACE_TEXT = "RACE"
+GOAL_TEXT = "GOAL"  # a distance by a date, not an event (D-054)
 STRIDES_TEXT = "S"
 HILLY_TEXT = "hilly"  # in the footer's race list, so the hill repeats of its block make sense (D-041)
 
@@ -96,17 +109,17 @@ def phase_label(phase: Phase) -> str:
 
 
 def race_cell_text(race: Race) -> str:
-    """`RACE 21 km`: which race it is, the footer's race list says (owner, S5)."""
-    return f"{RACE_TEXT} {round_km(race.distance_km)} km"
+    """`RACE 21 km`, or `GOAL 10 km`: which race it is, the footer's race list says (owner, S5)."""
+    return f"{GOAL_TEXT if race.goal else RACE_TEXT} {round_km(race.distance_km)} km"
 
 
 def race_entry(race: Race) -> dict[str, str]:
-    """The footer's entry, printed `28–29 aug: Beskydská sedmička (B, hilly)` (D-047)."""
+    """The footer's entry, printed `28–29 aug: Beskydská sedmička (B, hilly)` (D-047), or `(goal)`."""
     hilly = f", {HILLY_TEXT}" if race.hilly else ""
     return {
         "dates": _date_range(race.date, race.last_day),
         "name": race.name,
-        "details": f"{race.priority}{hilly}",
+        "details": f"{GOAL_TEXT.lower() if race.goal else race.priority}{hilly}",
     }
 
 
@@ -121,8 +134,16 @@ def quality_text(quality: Session | Race) -> str:
     if quality.km is not None:
         return f"{quality.type}: {quality.reps}{TIMES}{_number(quality.km)} km"
     if quality.minutes is not None:
-        return f"{quality.type}: {quality.reps}{TIMES}{_number(quality.minutes)}{MINUTES}"
+        return f"{quality.type}: {quality.reps}{TIMES}{duration_text(quality.minutes)}"
     raise ValueError(f"a {quality.type} session needs minutes or km")
+
+
+def duration_text(minutes: float) -> str:
+    """1 → `1′`, 0.5 → `30″`, 1.5 → `1′30″`: a rep's duration in the sheet's signs (D-048)."""
+    whole, seconds = divmod(round(minutes * SECONDS_PER_MINUTE), SECONDS_PER_MINUTE)
+    if not seconds:
+        return f"{whole}{MINUTES}"
+    return f"{whole}{MINUTES}{seconds:02d}{SECONDS}" if whole else f"{seconds}{SECONDS}"
 
 
 def long_run_text(long_run: LongRun | Race | None) -> str:
@@ -151,7 +172,7 @@ def _week(week: Week, phase_number: int, races: Sequence[Race]) -> dict[str, Any
         "phase": phase_number,
         "phase_label": label,
         "phase_short": PHASE_SHORT_LABELS[label],
-        "easy": {"km": list(week.easy), "text": "+".join(str(km) for km in week.easy)},
+        "easy": {"km": list(week.easy), "text": "+".join(str(km) for km in week.easy) or NO_SESSION},
         "quality": {
             "type": "race" if isinstance(week.quality, Race) else str(week.quality.type),
             "km": week.quality_km,
@@ -181,18 +202,38 @@ def _note(week: Week) -> str:
 
 
 def _pace_legend(plan: Plan) -> list[dict[str, str]]:
-    paces = plan.paces
+    used = {str(week.quality.type) for week in plan.weeks if isinstance(week.quality, Session)}
+    if plan.season.load.beginner:
+        shown = BEGINNER_LEGEND_CODES | used
+        return [entry for entry in _legend(plan) if entry["code"] in shown]
+    return [entry for entry in _legend(plan) if entry["code"] not in ONLY_WHEN_USED_CODES - used]
+
+
+def _legend(plan: Plan) -> list[dict[str, str]]:
+    paces, load = plan.paces, plan.season.load
     recovery = f" + {RECOVERY_JOG_MINUTES}{MINUTES} jog"
-    strides = f"{half_easy_run_km(plan.season.load.easy_run_km)} km + {STRIDES_COUNT}{TIMES}{STRIDES_SECONDS}{SECONDS}"
+    strides_run = BEGINNER_STRIDES_TEXT if load.beginner else f"{half_easy_run_km(load.easy_run_km)} km"
+    strides = f"{strides_run} + {STRIDES_COUNT}{TIMES}{STRIDES_SECONDS}{SECONDS}"
+    easy = _easy_pace_text(plan)
     return [
-        {"code": "ER", "pace": paces.easy.format(), "label": EASY_LABEL},
+        {"code": "ER", "pace": easy, "label": EASY_LABEL},
         {"code": "S", "pace": strides, "label": STRIDES_LABEL},
-        {"code": "H", "pace": "", "label": HILLS_LABEL},  # effort-based, no pace (D-015)
+        # Effort-based, no pace (D-015, D-054).
+        {"code": "F", "pace": "", "label": FARTLEK_LABEL},
+        {"code": "H", "pace": "", "label": BEGINNER_HILLS_LABEL if load.beginner else HILLS_LABEL},
         {"code": "I", "pace": paces.interval.format() + recovery, "label": INTERVAL_LABEL},
         {"code": "T", "pace": paces.threshold.format() + recovery, "label": THRESHOLD_LABEL},
         {"code": "MP", "pace": paces.mp.format(), "label": ""},
-        {"code": "LR", "pace": paces.easy.format(), "label": EASY_LABEL},
+        {"code": "LR", "pace": easy, "label": BEGINNER_LONG_RUN_LABEL if load.beginner else EASY_LABEL},
     ]
+
+
+def _easy_pace_text(plan: Plan) -> str:
+    """The easy pace; without a race result or an easy pace given, none: the talk test (D-054)."""
+    season_paces = plan.season.paces
+    if season_paces.race_result is None and season_paces.easy is None:
+        return CONVERSATIONAL_TEXT
+    return plan.paces.easy.format()
 
 
 def _gauge_boxes(planned_kms: Iterable[int]) -> int:
