@@ -69,7 +69,8 @@
           </fieldset>
 
           <fieldset>
-            <legend>Váš závod</legend>
+            <legend>Váš závod nebo cíl</legend>
+            <p class="hint">Závod, nebo vlastní cíl, třeba 10&nbsp;km do určitého data. Začínáte a cíl zatím nemáte? Odeberte ho: plán vás pak za 9 týdnů dovede k&nbsp;5&nbsp;km.</p>
             <div class="rows" id="races"></div>
             <button class="add" type="button" data-add="race">Přidat další závod</button>
           </fieldset>
@@ -202,6 +203,10 @@
                 <input name="distance_km" type="text" inputmode="decimal" placeholder="10" required />
                 <small>Půlmaraton je 21,1, maraton 42,2.</small>
               </label>
+              <label class="field wide check">
+                <input name="goal" type="checkbox" />
+                <span>Vlastní cíl (třeba 10&nbsp;km do tohoto dne), ne závod</span>
+              </label>
             </div>
             <details class="fold">
               <summary>Víc o tomto závodu</summary>
@@ -243,10 +248,6 @@
                 <label class="field wide check">
                   <input name="hilly" type="checkbox" />
                   <span>Kopcovitá trať: o&nbsp;úsilí rozhodují stoupání, ne stálé tempo (trail, hory)</span>
-                </label>
-                <label class="field wide check">
-                  <input name="goal" type="checkbox" />
-                  <span>Vlastní cíl (třeba 10&nbsp;km do tohoto dne), ne závod</span>
                 </label>
               </div>
               <p class="hint">

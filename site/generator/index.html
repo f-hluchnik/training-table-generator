@@ -66,7 +66,8 @@
           </fieldset>
 
           <fieldset>
-            <legend>Your race</legend>
+            <legend>Your race or goal</legend>
+            <p class="hint">A race, or a goal of your own, such as 10&nbsp;km by a date. New to running and no goal yet? Remove it: the plan then builds you up to 5&nbsp;km in 9 weeks.</p>
             <div class="rows" id="races"></div>
             <button class="add" type="button" data-add="race">Add another race</button>
           </fieldset>
@@ -199,6 +200,10 @@
                 <input name="distance_km" type="text" inputmode="decimal" placeholder="10" required />
                 <small>A half marathon is 21.1, a marathon 42.2.</small>
               </label>
+              <label class="field wide check">
+                <input name="goal" type="checkbox" />
+                <span>A goal of my own (such as 10&nbsp;km by this date), not a race event</span>
+              </label>
             </div>
             <details class="fold">
               <summary>More about this race</summary>
@@ -240,10 +245,6 @@
                 <label class="field wide check">
                   <input name="hilly" type="checkbox" />
                   <span>A hilly course: climbs, not a steady pace, decide the effort (trail, mountain)</span>
-                </label>
-                <label class="field wide check">
-                  <input name="goal" type="checkbox" />
-                  <span>A goal of my own (such as 10&nbsp;km by this date), not a race event</span>
                 </label>
               </div>
               <p class="hint">The weeks and the hilly mark are not for a C race, which has no phases of its own.</p>

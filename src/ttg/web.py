@@ -52,7 +52,7 @@ def generate(form: Mapping[str, Any], today: dt.date) -> Generated:
 
 def _with_level(form: Mapping[str, Any], today: dt.date) -> Mapping[str, Any]:
     """The form with its level: the visitor's choice, or the beginner's when the visitor left it open
-    and gave no race time or a first long run below where plans for the race start (C11, D-054)."""
+    and gave no race, no race time, or a first long run below where plans for the race start (C11, D-054)."""
     load = form.get("load", {})
     if load.get("beginner") in (True, False):
         return form
@@ -61,7 +61,7 @@ def _with_level(form: Mapping[str, Any], today: dt.date) -> Mapping[str, Any]:
 
 def _suggests_beginner(form: Mapping[str, Any], today: dt.date) -> bool:
     result = form.get("paces", {}).get("race_result", {})
-    if not any(_field(result, key) for key in ("distance_km", "time")):
+    if not form.get("race") or not any(_field(result, key) for key in ("distance_km", "time")):
         return True
     standard = {**form, "load": {**form.get("load", {}), "beginner": False}}
     try:

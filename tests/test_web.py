@@ -111,7 +111,7 @@ def test_a_whole_number_of_km_stays_an_integer():
 @pytest.mark.parametrize(
     ("form", "message"),
     [
-        ({}, "race: at least one [[race]] is required"),
+        ({"load": {"beginner": False}}, "race: at least one [[race]] is required"),
         (a_form(race=[{}]), "race[1].date: missing (required)"),
         (
             a_form(race=[MARATHON | {"date": "10.10.2027"}]),
@@ -260,6 +260,7 @@ def test_a_chosen_level_is_kept():
     [
         ({}, False),
         ({"paces": {"race_result": {"distance_km": "", "time": ""}}}, True),  # no race time
+        ({"race": []}, True),  # just start running
         ({"load": {"easy_run_km": "3", "long_run_km": "8"}}, True),  # below a marathon's 10 km (C11)
         ({"load": {"easy_run_km": "3", "long_run_km": "10"}}, False),
     ],

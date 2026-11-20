@@ -118,7 +118,8 @@ function restore(values) {
       syncRow(row);
     }
   }
-  if (!rows("race").length) addRow("race");
+  // A new form starts with one race; a form saved without any stays so ("just start running").
+  if (!values.race) addRow("race");
   syncLevel();
   openFilledFolds();
 }
@@ -160,8 +161,8 @@ function addRow(kind) {
 function numberRows(kind) {
   rows(kind).forEach((row, index) => {
     row.querySelector(".row-title").textContent = text[kind].replace("{n}", index + 1);
-    // A season needs a race: the only one cannot be removed.
-    row.querySelector(".remove-row").hidden = kind === "race" && rows(kind).length === 1;
+    // Every race can be removed: a beginner needs none (D-054).
+    row.querySelector(".remove-row").hidden = false;
   });
 }
 
@@ -192,9 +193,14 @@ function syncLevel() {
   for (const name of REQUIRED_WHEN_REGULAR) control(form, name).required = regular;
 }
 
-// A race needs a name for the list under the table; an unnamed one is called as its row is.
+// A race needs a name for the list under the table: an unnamed goal is called by its distance, an
+// unnamed race as its row is.
+function defaultName(entry, index) {
+  return entry.goal && entry.distance_km.trim() ? `${entry.distance_km.trim()} km` : text.race.replace("{n}", index + 1);
+}
+
 function withRaceNames(values) {
-  const race = values.race.map((entry, index) => ({ ...entry, name: entry.name.trim() || text.race.replace("{n}", index + 1) }));
+  const race = values.race.map((entry, index) => ({ ...entry, name: entry.name.trim() || defaultName(entry, index) }));
   return { ...values, race };
 }
 
