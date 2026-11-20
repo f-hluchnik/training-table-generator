@@ -79,11 +79,13 @@ def season_data(form: Mapping[str, Any]) -> dict[str, Any]:
     if sheet:
         data["sheet"] = sheet
     data["race"] = [_race(race, number) for number, race in enumerate(form.get("race", []), start=1)]
-    # `paces` and `load` are always present, so a missing field is reported by name, e.g. `load.easy_run_km`.
-    data["paces"] = _paces(form.get("paces", {}))
-    data["load"] = _convert(
-        form.get("load", {}), "load", {"easy_run_km": _integer, "long_run_km": _integer, "runs_per_week": _integer}
-    )
+    load = _load(form.get("load", {}))
+    # `paces` and `load` are present, so a missing field is reported by name, e.g. `load.easy_run_km`.
+    # A beginner needs no race result, and then has no `[paces]` (D-054).
+    paces = _paces(form.get("paces", {}), beginner=load.get("beginner", False))
+    if paces:
+        data["paces"] = paces
+    data["load"] = load
     overrides = _overrides(form.get("overrides", []))
     if overrides:
         data["overrides"] = overrides
@@ -118,9 +120,18 @@ def _race(form: Mapping[str, Any], number: int) -> dict[str, Any]:
     return race
 
 
-def _paces(form: Mapping[str, Any]) -> dict[str, Any]:
+def _load(form: Mapping[str, Any]) -> dict[str, Any]:
+    load = _convert(form, "load", {"easy_run_km": _integer, "long_run_km": _integer, "runs_per_week": _integer})
+    if form.get("beginner") is True:
+        load = {"beginner": True, **load}
+    return load
+
+
+def _paces(form: Mapping[str, Any], beginner: bool) -> dict[str, Any]:
     paces = _convert(form, "paces", {"easy": _text, "mp": _text, "threshold": _text, "interval": _text})
     result = _convert(form.get("race_result", {}), "paces.race_result", {"distance_km": _number, "time": _text})
+    if beginner and not result:
+        return paces
     return {"race_result": result, **paces}
 
 

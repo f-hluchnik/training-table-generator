@@ -142,11 +142,12 @@ The season file is a [TOML](https://toml.io) file. Required: at least one race, 
 | `specific_weeks` | whole number ≥ 0 | by race type | The race-specific block. |
 | `recovery_weeks` | whole number ≥ 0 | by race type | Recovery after the race. |
 | `hilly` | `true`, `false` | `false` | A course where climbs, not a steady pace, decide the effort (trail, mountain): its race-specific block leans into hill repeats. |
-| `[paces] race_result` | `{ distance_km, time }` | required | A recent race; `time` is `"h:mm:ss"` or `"m:ss"`. All paces derive from it. |
+| `[paces] race_result` | `{ distance_km, time }` | required, except for a beginner | A recent race; `time` is `"h:mm:ss"` or `"m:ss"`. All paces derive from it. No race yet? Run 5 km as fast as you comfortably can and use that. |
 | `[paces] easy`, `mp`, `threshold`, `interval` | `"m:ss"` per km | derived | Override a derived pace; `mp` is the place for a goal pace. |
-| `[load] easy_run_km` | whole number ≥ 1 | required | The length of an easy run. |
+| `[load] beginner` | `true`, `false` | `false` | Build up gently: about 1 km more a week, strides and short hills only, no warnings (`docs/TRAINING_MODEL.md` §11). Makes `race_result` and `easy_run_km` optional. |
+| `[load] easy_run_km` | whole number ≥ 1 | required, except for a beginner | The length of an easy run. A beginner's easy runs grow, from ¾ of the long run if not given. |
 | `[load] long_run_km` | whole number ≥ 1 | required | The long run of the first week. |
-| `[load] runs_per_week` | 3–6 | 4 | Always one quality run and one long run; the rest are easy runs. |
+| `[load] runs_per_week` | 3–6; a beginner 2–4 | 4; a beginner 3 | Always one quality run and one long run; the rest are easy runs. A beginner with 2 runs has no quality run. |
 
 The phase lengths and `hilly = true` are not allowed on a C race, because a C race has no phases of its own.
 
@@ -225,6 +226,9 @@ Warnings never stop the build; they go to the terminal, not on the sheet.
 | C7 | More than 10 km, or 8 % of the week, at interval pace in one session. |
 | C8 | An overridden threshold pace is more than 10 s/km off the one derived from the race result. |
 | C9 | Hill reps longer than 2′, or more than 20′ of hill effort in one session. |
+| C10 | A quality run (with warm-up and cool-down) longer than the long run in a building week. |
+| C11 | A first long run shorter than plans for the race usually start from: try `beginner = true`. |
+| C12 | A beginner's marathon plan whose biggest week stays under 30 km (the only warning a beginner gets). |
 
 ## How it works inside
 
@@ -244,7 +248,8 @@ All logic is in Python. The Typst template only lays out `plan.json`, which alre
 | `sessions` | Session catalogue, progressions and km estimates. |
 | `long_run` | Long-run growth, caps, deload, taper and restart. |
 | `expand` | Phases → weeks, then the overrides; collects all warnings. |
-| `checks` | Warnings C3–C9. |
+| `checks` | Warnings C3–C12. |
+| `beginner` | The beginner's rules (`docs/TRAINING_MODEL.md` §11). |
 | `export` | Plan → `plan.json`, including the display strings. |
 | `render`, `plan.typ` | Write `plan.json`, compile the template to `plan.pdf`. |
 | `cli` | `ttg build`. |

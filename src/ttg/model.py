@@ -18,6 +18,11 @@ from ttg.paces import MARATHON_KM, Pace, TrainingPaces, derive_paces
 MIN_RUNS_PER_WEEK = 3
 MAX_RUNS_PER_WEEK = 6
 DEFAULT_RUNS_PER_WEEK = 4
+# D-054: a beginner runs 2–4 times a week, default 3, as in the NHS Couch to 5K and Higdon's novice
+# plans [source 33, 35]; with 2 runs there is no quality run (owner, S11).
+MIN_BEGINNER_RUNS_PER_WEEK = 2
+MAX_BEGINNER_RUNS_PER_WEEK = 4
+DEFAULT_BEGINNER_RUNS_PER_WEEK = 3
 
 DEFAULT_TITLE = "training plan"
 
@@ -28,6 +33,13 @@ DEFAULT_RULES = (
     # [coach, owner S9] Notes, not numbers on the sheet (D-050).
     "Vary the easy runs' length, same total.",
     "Re-check paces after A races and every 2–3 months: easy by heart rate, T and MP by a race or test.",
+)
+# D-054: a beginner's sheet encourages; it gives no warnings (owner, S11). Run/walk: Galloway
+# [source 40]; easy by the talk test [source 46]; the long run is kept first [default, coach S11].
+BEGINNER_RULES = (
+    "Can't run the whole way yet? Run and walk, and cover the distance: walk breaks are part of the plan.",
+    "Easy means you can talk in full sentences. Slower is always fine.",
+    "Short on time: skip an easy run and keep the long run. Tired or sore: rest, it is part of training.",
 )
 
 
@@ -145,11 +157,17 @@ class RaceResult:
     time: dt.timedelta
 
 
+# [default, coach S11] Without a race result (a beginner, D-054), the km of hill sessions and the
+# time cap of a beginner's long run are estimated from an easy pace of about 8:00/km: a 5 km in
+# 32:00 gives 7:57. The sheet prints no pace then, only "conversational".
+BEGINNER_REFERENCE_RESULT = RaceResult(distance_km=5.0, time=dt.timedelta(minutes=32))
+
+
 @dataclass(frozen=True)
 class Paces:
     """The pace anchor and the optional overrides (D-005)."""
 
-    race_result: RaceResult
+    race_result: RaceResult | None  # optional for a beginner (D-054)
     easy: Pace | None = None
     mp: Pace | None = None
     threshold: Pace | None = None
@@ -157,7 +175,8 @@ class Paces:
 
     def resolve(self) -> TrainingPaces:
         """The paces to use: each override where given, otherwise the derived default (D-005, D-015)."""
-        derived = derive_paces(self.race_result.distance_km, self.race_result.time)
+        result = self.race_result or BEGINNER_REFERENCE_RESULT
+        derived = derive_paces(result.distance_km, result.time)
         return TrainingPaces(
             easy=derived.easy if self.easy is None else self.easy,
             mp=derived.mp if self.mp is None else self.mp,
@@ -173,6 +192,7 @@ class Load:
     easy_run_km: int
     long_run_km: int  # the long run of the first week
     runs_per_week: int = DEFAULT_RUNS_PER_WEEK
+    beginner: bool = False  # the gentle rules of TRAINING_MODEL.md §11 (D-054)
 
 
 @dataclass(frozen=True)
@@ -309,6 +329,9 @@ class WarningCode(StrEnum):
     INTERVAL_VOLUME = "C7"
     PACE_CONSISTENCY = "C8"
     HILL_VOLUME = "C9"
+    QUALITY_LONGER_THAN_LONG_RUN = "C10"
+    BELOW_STARTING_LEVEL = "C11"
+    MARATHON_BASE = "C12"
 
 
 @dataclass(frozen=True)

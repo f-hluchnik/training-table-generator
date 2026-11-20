@@ -294,10 +294,12 @@ long_run_km = 15                <span class="comment"># your long run now</span>
 
             <h4>Paces: <code>[paces]</code></h4>
             <dl class="fields">
-              <dt><code>race_result</code> <span>required</span></dt>
+              <dt><code>race_result</code> <span>required, except for a beginner</span></dt>
               <dd>
                 A race you ran recently, as <code>{ distance_km = 21.1, time = "1:39:30" }</code>. The time is
-                <code>"h:mm:ss"</code> or <code>"m:ss"</code>. Every pace is worked out from it.
+                <code>"h:mm:ss"</code> or <code>"m:ss"</code>. Every pace is worked out from it. No race yet? Run
+                5&nbsp;km as fast as you comfortably can on your own and enter that time. A beginner can leave it
+                out: the sheet then says to run at a pace where you can still talk.
               </dd>
               <dt><code>easy</code>, <code>mp</code>, <code>threshold</code>, <code>interval</code> <span>"m:ss" per km</span></dt>
               <dd>
@@ -309,12 +311,26 @@ long_run_km = 15                <span class="comment"># your long run now</span>
 
             <h4>Your running now: <code>[load]</code></h4>
             <dl class="fields">
-              <dt><code>easy_run_km</code> <span>number, required</span></dt>
-              <dd>The length of one easy run. It stays the same all season; in lighter weeks the last one is halved.</dd>
+              <dt><code>beginner</code> <span>true or false, default false</span></dt>
+              <dd>
+                <code>beginner = true</code> builds up gently for someone new to running or to the race's
+                distance: about 1&nbsp;km more a week, no hard sessions in the first month, then strides and
+                short hills only, a long run that peaks near the race distance (10&nbsp;km and shorter), and
+                no warnings. The race result and the easy run become optional, and 2 to 4 runs a week are
+                allowed.
+              </dd>
+              <dt><code>easy_run_km</code> <span>number, required, except for a beginner</span></dt>
+              <dd>
+                The length of one easy run. It stays the same all season; in lighter weeks the last one is halved.
+                A beginner's easy runs grow; without a length they start at three quarters of the long run.
+              </dd>
               <dt><code>long_run_km</code> <span>number, required</span></dt>
               <dd>The long run of the first week. It grows by 2&nbsp;km in each building week, up to a limit set by the race.</dd>
-              <dt><code>runs_per_week</code> <span>3 to 6, default 4</span></dt>
-              <dd>Always one quality run and one long run; the others are easy runs.</dd>
+              <dt><code>runs_per_week</code> <span>3 to 6, default 4; a beginner 2 to 4, default 3</span></dt>
+              <dd>
+                Always one quality run and one long run; the others are easy runs. A beginner with 2 runs a week
+                has an easy run and the long run.
+              </dd>
             </dl>
 
             <h4>The sheet: <code>[sheet]</code></h4>
@@ -399,6 +415,12 @@ long_run_km = 15                <span class="comment"># your long run now</span>
               <dd>A threshold pace you set is more than 10 seconds per km away from the worked-out one.</dd>
               <dt id="c9"><code>C9</code></dt>
               <dd>Hill repeats longer than 2 minutes, or more than 20 minutes of hill effort in one session.</dd>
+              <dt id="c10"><code>C10</code></dt>
+              <dd>A quality run, with its warm-up and cool-down, is longer than the week's long run.</dd>
+              <dt id="c11"><code>C11</code></dt>
+              <dd>The first long run is shorter than training plans for the race usually start from. Try the beginner mode.</dd>
+              <dt id="c12"><code>C12</code></dt>
+              <dd>A beginner's marathon plan whose biggest week stays under 30&nbsp;km.</dd>
             </dl>
           </details>
         </section>

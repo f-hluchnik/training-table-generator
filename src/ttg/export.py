@@ -47,6 +47,13 @@ MONTHS = ("jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", 
 EASY_LABEL, INTERVAL_LABEL, THRESHOLD_LABEL = "easy", "hard", "comfortably hard"
 STRIDES_LABEL = "fast, relaxed strides"
 HILLS_LABEL = "hard uphill effort, jog down"
+# A beginner's legend (D-054): without a race result no pace, the talk test [source 46]; strides
+# in a full easy run; hills strong, not hard, walking down allowed [source 40]. I, T and MP only
+# when an override puts them on the sheet.
+CONVERSATIONAL_TEXT = "conversational"
+BEGINNER_STRIDES_TEXT = "easy run"
+BEGINNER_HILLS_LABEL = "strong uphill effort, walk or jog down"
+BEGINNER_LEGEND_CODES = frozenset({"ER", "S", "H", "LR"})
 
 # D-018 notation.
 NO_SESSION = "–"
@@ -181,18 +188,37 @@ def _note(week: Week) -> str:
 
 
 def _pace_legend(plan: Plan) -> list[dict[str, str]]:
-    paces = plan.paces
+    legend = _legend(plan)
+    if not plan.season.load.beginner:
+        return legend
+    used = {str(week.quality.type) for week in plan.weeks if isinstance(week.quality, Session)}
+    return [entry for entry in legend if entry["code"] in BEGINNER_LEGEND_CODES | used]
+
+
+def _legend(plan: Plan) -> list[dict[str, str]]:
+    paces, load = plan.paces, plan.season.load
     recovery = f" + {RECOVERY_JOG_MINUTES}{MINUTES} jog"
-    strides = f"{half_easy_run_km(plan.season.load.easy_run_km)} km + {STRIDES_COUNT}{TIMES}{STRIDES_SECONDS}{SECONDS}"
+    strides_run = BEGINNER_STRIDES_TEXT if load.beginner else f"{half_easy_run_km(load.easy_run_km)} km"
+    strides = f"{strides_run} + {STRIDES_COUNT}{TIMES}{STRIDES_SECONDS}{SECONDS}"
+    easy = _easy_pace_text(plan)
     return [
-        {"code": "ER", "pace": paces.easy.format(), "label": EASY_LABEL},
+        {"code": "ER", "pace": easy, "label": EASY_LABEL},
         {"code": "S", "pace": strides, "label": STRIDES_LABEL},
-        {"code": "H", "pace": "", "label": HILLS_LABEL},  # effort-based, no pace (D-015)
+        # Effort-based, no pace (D-015).
+        {"code": "H", "pace": "", "label": BEGINNER_HILLS_LABEL if load.beginner else HILLS_LABEL},
         {"code": "I", "pace": paces.interval.format() + recovery, "label": INTERVAL_LABEL},
         {"code": "T", "pace": paces.threshold.format() + recovery, "label": THRESHOLD_LABEL},
         {"code": "MP", "pace": paces.mp.format(), "label": ""},
-        {"code": "LR", "pace": paces.easy.format(), "label": EASY_LABEL},
+        {"code": "LR", "pace": easy, "label": EASY_LABEL},
     ]
+
+
+def _easy_pace_text(plan: Plan) -> str:
+    """The easy pace; without a race result or an easy pace given, none: the talk test (D-054)."""
+    season_paces = plan.season.paces
+    if season_paces.race_result is None and season_paces.easy is None:
+        return CONVERSATIONAL_TEXT
+    return plan.paces.easy.format()
 
 
 def _gauge_boxes(planned_kms: Iterable[int]) -> int:

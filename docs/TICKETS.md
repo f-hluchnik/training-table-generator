@@ -171,6 +171,13 @@ Checked: 424 tests (new: the limit and the cases it refuses in `tests/test_web.p
 
 Not verified: the live Pages site and jsDelivr (unreachable from the sandbox); Safari and Firefox. Open for the owner: serve Pyodide from the site instead of jsDelivr (D-053).
 
+### T-27 Beginner mode — in review
+*Owner, S11:* small starting numbers gave hard sessions in week 1, a long run growing 3 → 5 → 7 km and a 16 km peak before a first 10 km; asked for a gentle mode with a coach's advice, 2 runs a week allowed, a motivating plan without warnings (D-054).
+
+Built: `[load] beginner` (`ttg.spec`; `race_result`, `[paces]` and `easy_run_km` optional; 2–4 runs); `ttg.beginner` (the rules and their constants, TRAINING_MODEL §11); `_BeginnerExpander` in `ttg.expand` on three small hooks of the standard expander (the order of the long run and the easy runs within a week, the easy run's length for floors, the quality km by week); the legend (*conversational*, only the sessions used) and the beginner's footer rules; checks C10 and C11 for the standard mode, C12 for a beginner; the web entry point and a checkbox on the generator page (the form's redesign is T-28); both landing pages' reference.
+
+Checked: tests (new `tests/test_beginner.py`; C10, C11 in `tests/test_checks.py`), ruff, mypy; both reference seasons build an identical `plan.json`; a beginner's 10 km sheet rendered and inspected.
+
 ### Later (not scheduled)
 - **T-12** Elevation for mountain ultras (Q-5). *Evaluated in S7; parked by the owner (Q-7).* The race-type gap it found is covered by T-15 (`hilly`).
 
