@@ -376,6 +376,11 @@ h1 {
 .sheet-paper {
   display: inline-block;
 }
+/* The first weeks, as wide as the text: the calendar and the sessions; the kilometre gauge comes
+   with the whole season (T-30). */
+.sheet-scroll.collapsed .gauge {
+  display: none;
+}
 .sheet-scroll.collapsed {
   max-height: var(--collapsed-height);
   overflow-y: hidden;
