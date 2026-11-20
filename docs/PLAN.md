@@ -23,7 +23,7 @@ seasons/2026.toml ──spec──▶ Season ──layout──▶ phases ──
                                                                        plan.json ◀┘──render (Typst)──▶ plan.pdf
 ```
 
-The generator page (D-052) runs the same pipeline in the browser under Pyodide, from a form instead of a file, and draws `plan.json` itself:
+The generator page (D-052) runs the same pipeline in the browser under Pyodide, from a form instead of a file, and draws `plan.json` itself. The build runs in a Web Worker with a timeout, the page limits a plan to 104 weeks (`web.MAX_WEEKS`; the core has no limit) and a Content-Security-Policy applies (D-053):
 
 ```
 form ──web (types the texts, then spec ──▶ expand ──▶ export)──▶ plan.json ──site/sheet-render.js──▶ the sheet on the page, printed by the browser

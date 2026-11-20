@@ -191,25 +191,65 @@ form.addEventListener("click", (event) => {
   }
 });
 
-// --- Python in the browser ----------------------------------------------------
+// --- Python in the browser, in a worker ----------------------------------------
 
-let generator;
+// A plan of the longest length builds in well under a second (D-053); a build that is still going
+// after this is stopped, so a page can never hang on one.
+const GENERATE_TIMEOUT_MS = 10_000;
 
-// Loaded once, on first need; the page asks for it at once, since it is what the page is for.
+class TimedOut extends Error {}
+
+let worker;
+let ready;
+let nextId = 0;
+const pending = new Map();
+
+function settle(id, outcome, value) {
+  const request = pending.get(id);
+  if (!request) return;
+  clearTimeout(request.timer);
+  pending.delete(id);
+  request[outcome](value);
+}
+
+// Ends the worker, and every request waiting for it; the next one starts a new worker.
+function stopWorker(reason) {
+  worker?.terminate();
+  worker = undefined;
+  ready = undefined;
+  for (const id of [...pending.keys()]) settle(id, "reject", reason);
+}
+
+function send(message, timeoutMs) {
+  return new Promise((resolve, reject) => {
+    const id = nextId++;
+    const timer = timeoutMs && setTimeout(() => stopWorker(new TimedOut()), timeoutMs);
+    pending.set(id, { resolve, reject, timer });
+    worker.postMessage({ id, ...message });
+  });
+}
+
+// Started once, on first need; the page asks at once, since the generator is what the page is for.
 function loadGenerator() {
-  generator ??= (async () => {
-    const wheel = fetch(form.dataset.wheel).then((response) => {
-      if (!response.ok) throw new Error(`${form.dataset.wheel}: ${response.status}`);
-      return response.arrayBuffer();
+  if (!worker) {
+    worker = new Worker(new URL("./generator-worker.js", import.meta.url), { type: "module" });
+    worker.onmessage = ({ data }) =>
+      data.error === undefined ? settle(data.id, "resolve", data.result) : settle(data.id, "reject", new Error(data.error));
+    worker.onerror = (event) => stopWorker(new Error(event.message || "the generator's worker failed"));
+    const load = { kind: "load", pyodideUrl: PYODIDE_URL, wheelUrl: new URL(form.dataset.wheel, location.href).href };
+    // A failed load is not kept: the next submit starts a new worker and tries again.
+    ready = send(load).catch((error) => {
+      stopWorker(error);
+      throw error;
     });
-    const { loadPyodide } = await import(`${PYODIDE_URL}pyodide.mjs`);
-    const pyodide = await loadPyodide({ indexURL: PYODIDE_URL });
-    // The package is a plain wheel with the core and `ttg.web`; no dependency is needed (the Typst
-    // compiler only draws the PDF).
-    pyodide.unpackArchive(await wheel, "wheel");
-    return pyodide.pyimport("ttg.web").generate_json;
-  })();
-  return generator;
+  }
+  return ready;
+}
+
+async function generate(values) {
+  await loadGenerator();
+  const reply = await send({ kind: "generate", form: JSON.stringify(values), today: today() }, GENERATE_TIMEOUT_MS);
+  return JSON.parse(reply);
 }
 
 function today() {
@@ -228,6 +268,7 @@ function clearOutcome() {
   for (const input of form.querySelectorAll("[aria-invalid]")) input.removeAttribute("aria-invalid");
   for (const input of form.elements) input.setCustomValidity("");
   result.querySelector(".problem").hidden = true;
+  result.querySelector(".slow").hidden = true;
 }
 
 // A message is about what was typed when it came; a changed form is a new question.
@@ -319,10 +360,11 @@ form.addEventListener("submit", async (event) => {
   event.preventDefault();
   clearOutcome();
   setStatus(text.building);
+  const submit = form.querySelector('button[type="submit"]');
+  submit.disabled = true;
   try {
-    const generate = await loadGenerator();
     const values = collect();
-    const reply = JSON.parse(generate(JSON.stringify(values), today()));
+    const reply = await generate(values);
     if (reply.error) showProblem(reply.error);
     else {
       save(values);
@@ -330,8 +372,9 @@ form.addEventListener("submit", async (event) => {
     }
   } catch (error) {
     console.error(error);
-    result.querySelector(".failure").hidden = false;
+    result.querySelector(error instanceof TimedOut ? ".slow" : ".failure").hidden = false;
   } finally {
+    submit.disabled = false;
     setStatus("");
   }
 });

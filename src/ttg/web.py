@@ -14,13 +14,19 @@ from collections.abc import Callable, Mapping
 from dataclasses import dataclass
 from typing import Any
 
+from ttg.calendar import plan_calendar
 from ttg.expand import expand
 from ttg.export import export
-from ttg.model import SeasonError
+from ttg.model import Season, SeasonError
 from ttg.spec import parse_season
 
 # Reads one typed value from the text of a form field; the second argument is the field's path, for errors.
 Converter = Callable[[str, str], Any]
+
+# The longest plan the page makes, two years (D-053). Our own default, not a training rule. The command
+# line has no limit (D-001), but the work grows faster than the plan: a plan of 6,700 weeks took half
+# a minute, and a mistyped year would freeze the visitor's browser.
+MAX_WEEKS = 104
 
 _TOML_DEL = "\x7f"  # a control character that TOML requires escaped and `json.dumps` leaves as it is
 
@@ -34,8 +40,20 @@ class Generated:
 def generate(form: Mapping[str, Any], today: dt.date) -> Generated:
     """Build the plan for a filled-in form. Raises `SeasonError` for an invalid form."""
     data = season_data(form)
-    plan = export(expand(parse_season(data), today))
-    return Generated(plan=plan, season_toml=season_toml(data))
+    season = parse_season(data)
+    _check_length(season, today)
+    return Generated(plan=export(expand(season, today)), season_toml=season_toml(data))
+
+
+def _check_length(season: Season, today: dt.date) -> None:
+    """Refuse a plan longer than the page makes; the calendar is cheap, the plan is not."""
+    weeks = plan_calendar(season, today).weeks
+    if weeks > MAX_WEEKS:
+        field = "weeks" if season.weeks is not None else "start"
+        raise SeasonError(
+            f"{field}: the plan would be {weeks} weeks long; this page makes plans of up to {MAX_WEEKS} weeks"
+            " (the command-line tool has no limit)"
+        )
 
 
 def generate_json(form_json: str, today: str) -> str:

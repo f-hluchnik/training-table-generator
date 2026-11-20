@@ -184,6 +184,7 @@
 }
 .problem,
 .failure,
+.slow,
 .warnings {
   max-width: var(--measure);
   margin: 0 0 1.5rem;
@@ -191,11 +192,13 @@
   border-left: 3px solid var(--ink);
 }
 .problem,
-.failure {
+.failure,
+.slow {
   border-left-color: var(--event);
 }
 .problem p,
 .failure p,
+.slow p,
 .warnings p {
   margin: 0.5rem 0;
 }

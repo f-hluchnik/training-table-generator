@@ -276,7 +276,7 @@ pip wheel . --no-deps -w wheel && cp wheel/ttg-*.whl site/ttg.whl   # git-ignore
 python3 -m http.server --directory site                              # then open http://localhost:8000/generator/
 ```
 
-It is printed by the browser (A4 landscape, 100 %), so it differs slightly from the PDF; see D-052 for how.
+It is printed by the browser (A4 landscape, 100 %), so it differs slightly from the PDF; see D-052 for how. Unlike the command-line tool, the page makes plans of up to 104 weeks only, builds in a Web Worker that is stopped after 10 s, and sets a Content-Security-Policy (D-053).
 
 **Ways of working.** Work is organised in tickets, one branch per ticket (`t-NN-short-name`) and one pull request each. Every training-rule number is a named constant citing its source. A new season-file field needs a recorded decision. The documents in `docs/` are updated in the same change as the code:
 
