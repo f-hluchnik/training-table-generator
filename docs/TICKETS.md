@@ -171,6 +171,13 @@ Checked: 424 tests (new: the limit and the cases it refuses in `tests/test_web.p
 
 Not verified: the live Pages site and jsDelivr (unreachable from the sandbox); Safari and Firefox. Open for the owner: serve Pyodide from the site instead of jsDelivr (D-053).
 
+### T-26 A centred landing page on wide screens — in review
+*Owner, S10:* "the table is wider than the text. I think we should either put the text boxes to center or spread it." Clarified: the landing page, not the generator (D-054). Stacked on T-25 (#31): both add to the same places in the docs.
+
+Built: the three-track grid under `.landing` in `site/style.css`, the class on both landing pages, the sheet footer as wide as the table, the colophon centred. Generator pages untouched.
+
+Checked: both landing pages at 390, 768, 1024, 1440 and 1920 px (the page never scrolls sideways; the sheet is centred where it fits and scrolls from its left edge where it does not); the generator page looks as before; tests, ruff, mypy. Not verified: Safari, Firefox.
+
 ### Later (not scheduled)
 - **T-12** Elevation for mountain ultras (Q-5). *Evaluated in S7; parked by the owner (Q-7).* The race-type gap it found is covered by T-15 (`hilly`).
 

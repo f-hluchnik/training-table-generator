@@ -165,6 +165,46 @@ a:hover {
   text-decoration: none;
 }
 
+/* ---------------------------------------------------------------- the column (landing page) */
+
+/* The text is a centred column; the example sheet is wider than it and takes all three tracks, so
+   it overhangs the text evenly on both sides (D-054). */
+.landing {
+  --tracks: minmax(0, 1fr) min(100%, var(--measure)) minmax(0, 1fr);
+}
+.landing main,
+.landing .sheet-figure {
+  display: grid;
+  grid-template-columns: var(--tracks);
+}
+.landing main > *,
+.landing .sheet-figure > * {
+  grid-column: 2;
+  min-width: 0;
+}
+.landing main > .sheet-figure,
+.landing .sheet-figure > .sheet-scroll {
+  grid-column: 1 / -1;
+}
+.landing .sheet-toggle {
+  justify-self: start;
+}
+.landing .sheet-scroll {
+  text-align: center; /* a sheet wider than the box still starts at its left edge and scrolls */
+}
+.landing .sheet-paper {
+  text-align: left;
+}
+/* The footer's text must not stretch the sheet: as wide as the table, no wider, as in the PDF. */
+.landing .sheet-footer {
+  width: 0;
+  min-width: 100%;
+}
+.landing .colophon {
+  margin-left: auto;
+  margin-right: auto;
+}
+
 /* ---------------------------------------------------------------- hero */
 
 .hero {
@@ -715,6 +755,9 @@ li code {
 }
 
 @media print {
+  .landing main {
+    display: block;
+  }
   .sheet-figure,
   .masthead a[hreflang] {
     display: none;
