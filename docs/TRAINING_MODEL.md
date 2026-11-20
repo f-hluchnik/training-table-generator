@@ -324,14 +324,14 @@ For someone new to running or to the distance: `[load] beginner = true`. A first
 
 **Goals.** A race may be a goal of the runner's own (`goal = true`, *10 km by a date*): the same plan, printed `GOAL 10 km`. With no race at all the plan works towards 5 km in 9 weeks (or in `weeks`), the length and the end of Couch to 5K **[source 33]**, printed `GOAL 5 km` **[default, coach S11]**.
 
-**Runs a week.** 2–4, default 3: Couch to 5K and Higdon's novice plans run 3 days **[source 33, 35]**. The quality run is done *inside* a run, the shortest, and counts that run's km. With 2 runs: the short run with the week's intensity, and the long run (owner and coach, S11: the long run stays for a distance goal).
+**Runs a week.** 2–4, default 3: Couch to 5K and Higdon's novice plans run 3 days **[source 33, 35]**. The quality run is done *inside* a run, the longest of the short ones, where its efforts and walk breaks fit (T-29), and counts that run's km. With 2 runs: the short run with the week's intensity, and the long run (owner and coach, S11: the long run stays for a distance goal).
 
 **Growth** **[default, coach S11, fitted to source 33, 35]**. One step of 1 km a loading week, from week 2, to:
-1. the shortest easy run, while it is shorter than half the long run (a 1 km run is too short to be useful);
+1. the shortest easy run, while even the longest easy run is shorter than half the long run (a 1 km run is too short to be useful). Only one easy run has to catch up, so that more runs a week do not hold the long run back (owner, T-29: before, 4 runs from 1 km easy runs peaked at a 7 km long run instead of 9);
 2. else the long run, once it has held its distance for 2 loading weeks or is 5 km or more (a step of at most 20 %);
 3. else the shortest easy run; when nothing may grow, the week holds.
 
-The race-specific block gives every step to the long run. Easy runs stop at 5 km for races up to 10 km, 8 km for longer ones, and 1 km below the long run **[default; Higdon's weekday runs top out at 3 mi and 5 mi, source 35, 36]**. Owner's case (3 km long run, 1 km easy runs, 3 runs, 10 km in 15 weeks): long run 3, 3, 3, 3, 4, 4, 5, 5, 5, 6, 7, 7, 8, 9, then the goal.
+The race-specific block gives every step to the long run. Easy runs stop at 5 km for races up to 10 km, 8 km for longer ones, and 1 km below the long run **[default; Higdon's weekday runs top out at 3 mi and 5 mi, source 35, 36]**. Owner's case (3 km long run, 1 km easy runs, 10 km in 15 weeks): long run 3, 3, 4, 4, 4, 5, 5, 5, 6, 7, 7, 7, 8, 9, then the goal, with 2, 3 or 4 runs a week alike; the weekly total grows the same.
 
 **Lighter weeks.** A beginner's deload holds: no step, strides instead of fartlek or hills **[default, coach S11]**; at these distances a 75 % long run would hardly differ. A taper, race or recovery week takes 1 km off each easy run, not below 2 km **[default; source 33]**.
 

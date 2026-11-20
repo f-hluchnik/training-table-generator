@@ -139,19 +139,25 @@ def test_a_week_too_small_for_the_first_step_has_strides():
     assert tiny.weeks[4].quality == Session(SessionType.STRIDES)
 
 
-def test_the_quality_run_is_done_inside_the_shortest_run():
-    week_5 = beginner_plan().weeks[4]
+def test_the_quality_run_is_done_inside_the_longest_short_run():
+    week_5 = beginner_plan(runs_per_week=4).weeks[4]  # short runs of 2, 2 and 1 km (T-29)
     assert week_5.quality == Session(SessionType.FARTLEK, reps=6, minutes=1)
-    assert week_5.easy == (2,) and week_5.quality_km == 2
+    assert week_5.easy == (2, 1) and week_5.quality_km == 2
 
 
 # --- growth -------------------------------------------------------------------------
 
 
-def test_the_owners_case_with_three_runs_follows_the_coachs_table():
+def test_the_owners_case_with_three_runs():
     plan = beginner_plan()
-    assert [week.long_run_km for week in plan.weeks[:14]] == [3, 3, 3, 3, 4, 4, 5, 5, 5, 6, 7, 7, 8, 9]
-    assert plan.weeks[1].easy == (2, 1)  # the 1 km easy runs catch up first
+    assert [week.long_run_km for week in plan.weeks[:14]] == [3, 3, 4, 4, 4, 5, 5, 5, 6, 7, 7, 7, 8, 9]
+    assert plan.weeks[1].easy == (2, 1)  # an easy run catches up first
+
+
+@pytest.mark.parametrize("runs", [2, 3, 4])
+def test_more_runs_do_not_hold_the_long_run_back(runs):
+    """Only one easy run catches up, so 4 runs reach the same long run as 2 or 3 (owner, T-29)."""
+    assert max(loading_long_runs(beginner_plan(runs_per_week=runs))) == 9
 
 
 @pytest.mark.parametrize("runs", [2, 3, 4])

@@ -25,9 +25,11 @@ from ttg.sessions import round_km
 # [default, coach S11] One step of 1 km a loading week, from week 2. Higdon's novice 10K adds about
 # 0.8 km a week to the long run [source 35]. Whole km, as the sheet prints them.
 STEP_KM = 1
-# [default, coach S11] Which run takes the step: first an easy run shorter than half the long run (a
-# 1 km run is too short to be useful); then the long run, once it has held its distance for 2 loading
-# weeks or is 5 km or more, so that a step is at most 20 %; otherwise the shortest easy run. The
+# [default, coach S11] Which run takes the step: first the easy runs, while even the longest of them is
+# shorter than half the long run (a 1 km run is too short to be useful); then the long run, once it has
+# held its distance for 2 loading weeks or is 5 km or more, so that a step is at most 20 %; otherwise
+# the shortest easy run. Only one easy run has to catch up, so that with 4 runs a week the long run is
+# not held back by three short ones (owner, T-29). The
 # race-specific block gives every step to the long run. Couch to 5K also holds a stage before the next
 # jump [source 33]; a percentage rule has no evidence for novices [source 21, 41, 42].
 EASY_CATCH_UP_SHARE = 0.5
@@ -136,8 +138,8 @@ def easy_run_cap(race: Race, long_run_km: int) -> int:
     return min(EASY_RUN_CAP_KM[race.type], long_run_km - EASY_RUN_BELOW_LONG_RUN_KM)
 
 
-def easy_runs_catch_up(long_run_km: int, shortest_easy_km: int) -> bool:
-    return shortest_easy_km < EASY_CATCH_UP_SHARE * long_run_km
+def easy_runs_catch_up(long_run_km: int, longest_easy_km: int) -> bool:
+    return longest_easy_km < EASY_CATCH_UP_SHARE * long_run_km
 
 
 def long_run_may_grow(long_run_km: int, weeks_held: int) -> bool:
