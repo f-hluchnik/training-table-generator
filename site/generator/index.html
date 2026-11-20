@@ -2,6 +2,11 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
+    <!-- What this page may load (D-053). GitHub Pages cannot send headers, so the policy is a tag. -->
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'none'; script-src 'self' https://cdn.jsdelivr.net 'wasm-unsafe-eval'; worker-src 'self'; connect-src 'self' https://cdn.jsdelivr.net; style-src 'self'; font-src 'self'; img-src 'self'; base-uri 'none'; form-action 'none'"
+    />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Make your training table in the browser</title>
     <meta
@@ -292,6 +297,12 @@
             <p>
               The generator could not be started in this browser. It needs a recent one, and a connection for the
               first load. The <a href="../#make">command-line tool</a> makes the same sheet.
+            </p>
+          </div>
+          <div class="slow no-print" role="alert" hidden>
+            <p>
+              Making the sheet took too long, so it was stopped. Check your dates and try again. If it keeps
+              happening, the <a href="../#make">command-line tool</a> can make this sheet.
             </p>
           </div>
           <div class="warnings no-print" hidden>

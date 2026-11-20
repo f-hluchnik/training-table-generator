@@ -119,3 +119,31 @@ def test_both_languages_word_the_same_labels():
 def test_each_landing_page_links_to_its_generator():
     assert 'href="generator/"' in page_text(PAGES[0])
     assert 'href="generator/"' in page_text(PAGES[1])
+
+
+def content_security_policy(page: Path) -> dict[str, list[str]]:
+    policy = re.search(r'http-equiv="Content-Security-Policy"\s+content="([^"]+)"', page_text(page)).group(1)
+    directives = (part.split() for part in policy.split(";"))
+    return {name: sources for name, *sources in directives}
+
+
+@pytest.mark.parametrize("page", GENERATOR_PAGES, ids=lambda page: page.parent.name)
+def test_the_page_allows_only_its_own_files_and_the_pyodide_cdn(page):
+    policy = content_security_policy(page)
+    assert policy["default-src"] == ["'none'"]
+    cdn = re.search(r'PYODIDE_URL = "(https://[^/]+)/', GENERATOR_SCRIPT).group(1)
+    assert policy["script-src"] == ["'self'", cdn, "'wasm-unsafe-eval'"]
+    assert policy["connect-src"] == ["'self'", cdn]
+    assert policy["worker-src"] == ["'self'"]
+    assert "'unsafe-inline'" not in str(policy) and "'unsafe-eval'" not in str(policy)
+
+
+def test_both_languages_have_the_same_policy():
+    english, czech = (content_security_policy(page) for page in GENERATOR_PAGES)
+    assert english == czech
+
+
+def test_the_page_builds_in_a_worker_so_a_runaway_build_can_be_stopped():
+    assert "generator-worker.js" in GENERATOR_SCRIPT
+    assert "worker?.terminate()" in GENERATOR_SCRIPT
+    assert (SITE / "generator-worker.js").is_file()

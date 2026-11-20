@@ -162,6 +162,15 @@ Checked: 415 tests (new: `tests/test_web.py`, the generator page's guards in `te
 
 Not verified: the jsDelivr path of this Pyodide version (the sandbox cannot reach it); the Pages workflow; a real printer; Safari and Firefox. Known gaps: errors, warnings and the sheet's labels are English on the Czech page too; a plan above 40 weeks prints a second page without the header; the Czech text wants a native proofread (as T-23).
 
+### T-25 A safe web generator — in review
+*Owner, S10:* "the tool should not refuse a plan, but the website could [...] If not, then we should use the Web Worker. But I want the app to be safe since it's online." (D-053)
+
+Built: the 104-week limit in `ttg.web` (`MAX_WEEKS`, `_check_length`); `site/generator-worker.js` and a worker client in `generator.js` with a 10 s timeout, a restart, and a message of its own; a Content-Security-Policy on both generator pages; the generator pages' `.slow` alert.
+
+Checked: 424 tests (new: the limit and the cases it refuses in `tests/test_web.py`, the policy and the worker in `tests/test_site.py`, mutation-checked), ruff, mypy. In headless Chrome: the 1900 start refused in 0.09 s; a forced runaway build terminated at about 10.5 s and the next build succeeded; both pages under the policy, with no console violations.
+
+Not verified: the live Pages site and jsDelivr (unreachable from the sandbox); Safari and Firefox. Open for the owner: serve Pyodide from the site instead of jsDelivr (D-053).
+
 ### Later (not scheduled)
 - **T-12** Elevation for mountain ultras (Q-5). *Evaluated in S7; parked by the owner (Q-7).* The race-type gap it found is covered by T-15 (`hilly`).
 
