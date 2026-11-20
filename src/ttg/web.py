@@ -14,6 +14,7 @@ from collections.abc import Callable, Mapping
 from dataclasses import dataclass
 from typing import Any
 
+from ttg.beginner import with_a_goal
 from ttg.calendar import plan_calendar
 from ttg.expand import expand
 from ttg.export import export
@@ -43,6 +44,8 @@ def generate(form: Mapping[str, Any], today: dt.date) -> Generated:
     form = _with_level(form, today)
     data = season_data(form)
     season = parse_season(data)
+    if season.load.beginner:
+        season = with_a_goal(season, today)
     _check_length(season, today)
     return Generated(plan=export(expand(season, today)), season_toml=season_toml(data), beginner=season.load.beginner)
 
@@ -141,8 +144,9 @@ def _race(form: Mapping[str, Any], number: int) -> dict[str, Any]:
             "recovery_weeks": _integer,
         },
     )
-    if form.get("hilly") is True:
-        race["hilly"] = True
+    for flag in ("hilly", "goal"):
+        if form.get(flag) is True:
+            race[flag] = True
     return race
 
 

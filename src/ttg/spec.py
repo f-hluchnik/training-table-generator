@@ -78,7 +78,9 @@ def parse_season(data: dict[str, Any]) -> Season:
     weeks = root.integer("weeks", minimum=1)
     if start is not None and weeks is not None:
         _fail("weeks", "give either start or weeks, not both")
-    races = _parse_races(root.tables("race"))
+    # A beginner may give no race: "just start running" (D-054, `ttg.beginner.with_a_goal`). The flag
+    # is looked up first, so the races are still checked before the load.
+    races = _parse_races(root.tables("race") if root.has("race") else [], required=not _is_beginner(data))
     load = _parse_load(root.table("load", REQUIRED))
     season = Season(
         races=races,
@@ -97,8 +99,13 @@ def parse_season(data: dict[str, Any]) -> Season:
 # --- sections ----------------------------------------------------------------
 
 
-def _parse_races(tables: list["_Table"]) -> tuple[Race, ...]:
-    if not tables:
+def _is_beginner(data: dict[str, Any]) -> bool:
+    load = data.get("load")
+    return isinstance(load, dict) and load.get("beginner") is True
+
+
+def _parse_races(tables: list["_Table"], required: bool) -> tuple[Race, ...]:
+    if not tables and required:
         _fail("race", "at least one [[race]] is required")
     races = [_parse_race(table) for table in tables]
     _check_unique_names(races, tables)
@@ -120,6 +127,7 @@ def _parse_race(table: "_Table") -> Race:
         specific_weeks=table.integer("specific_weeks", minimum=0),
         recovery_weeks=table.integer("recovery_weeks", minimum=0),
         hilly=table.boolean("hilly", False),
+        goal=table.boolean("goal", False),
     )
     table.close()
     _check_c_race_fields(race, table)
@@ -418,6 +426,9 @@ class _Table:
         if not isinstance(value, dict):
             self._wrong_type(key, "a table", value)
         return _Table(value, self.path_of(key))
+
+    def has(self, key: str) -> bool:
+        return self._value(key) is not None
 
     def tables(self, key: str) -> list["_Table"]:
         """A required array of tables, e.g. [[race]]; paths are numbered from 1."""

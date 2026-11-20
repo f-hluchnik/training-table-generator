@@ -55,7 +55,7 @@ Modules of the package `ttg`. Everything marked *pure* follows D-013.
 
 ### season.toml (input, D-011, D-025)
 
-Required: at least one race, a race result as the pace anchor, and the starting load. Everything else is optional. Unknown fields are errors.
+Required: at least one race, a race result as the pace anchor, and the starting load. A beginner needs only the starting load (D-054). Everything else is optional. Unknown fields are errors.
 
 Minimal example:
 
@@ -91,6 +91,7 @@ All fields:
 | `[[race]] taper_weeks` | integer ≥ 1 | by distance | Includes the race week (D-009). Not for C races. |
 | `[[race]] specific_weeks` | integer ≥ 0 | by distance | Race-specific block. Not for C races. |
 | `[[race]] recovery_weeks` | integer ≥ 0 | by distance | Recovery after the race. Not for C races. |
+| `[[race]] goal` | `true`, `false` | `false` | A distance by a date, not an event: printed `GOAL 10 km` (D-054). |
 | `[[race]] hilly` | `true`, `false` | `false` | Climbs, not a steady pace, decide the effort; the race-specific block leans into hill repeats (D-041). Not for C races. |
 | `[paces] race_result` | `{ distance_km, time }` | required, except for a beginner | Anchor for the default paces (D-015); `time` is `"h:mm:ss"` or `"m:ss"`. A beginner may leave out `[paces]` altogether (D-054). |
 | `[paces] easy`, `mp`, `threshold`, `interval` | `"m:ss"` per km | derived | Overrides (D-005). |

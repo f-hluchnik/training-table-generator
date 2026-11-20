@@ -221,7 +221,7 @@ def session_km(session: Session, paces: TrainingPaces, easy_run_km: int) -> floa
     if session.type is SessionType.STRIDES:
         return float(half_easy_run_km(easy_run_km))
     easy_km_per_minute = _km_per_minute(paces.easy)
-    # Hill efforts count at easy pace.
+    # Hill and fartlek efforts count at easy pace.
     work = work_km(session, _effort_pace(session.type, paces))
     recoveries = (_reps(session) - 1) * _recovery_minutes(session)
     easy_minutes = WARMUP_MINUTES + COOLDOWN_MINUTES + recoveries
@@ -258,15 +258,20 @@ def _rep_minutes(session: Session) -> float:
 def _effort_pace(session_type: SessionType, paces: TrainingPaces) -> Pace:
     return {
         SessionType.HILLS: paces.easy,
+        SessionType.FARTLEK: paces.easy,  # effort-based, counted like hill efforts
         SessionType.INTERVALS: paces.interval,
         SessionType.THRESHOLD: paces.threshold,
         SessionType.MARATHON_PACE: paces.mp,
     }[session_type]
 
 
+# Sessions whose recovery lasts as long as the effort: the jog down a hill, a fartlek's walk or jog.
+EQUAL_RECOVERY_TYPES = (SessionType.HILLS, SessionType.FARTLEK)
+
+
 def _recovery_minutes(session: Session) -> float:
-    if session.type is SessionType.HILLS and session.minutes:
-        return session.minutes  # the jog down takes as long as the effort up
+    if session.type in EQUAL_RECOVERY_TYPES and session.minutes:
+        return session.minutes
     return RECOVERY_JOG_MINUTES
 
 
