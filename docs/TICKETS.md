@@ -2,7 +2,7 @@
 
 Status: **todo**, **in progress**, **done**, **blocked (reason)**. One branch per ticket, named `t-NN-short-name`.
 
-All decisions needed for T-01–T-10 are made (D-001–D-029). Q-5 is for the later ticket (T-12). The website (T-11) and coloured print (T-13) were dropped in S6 (D-036).
+All decisions needed for T-01–T-10 are made (D-001–D-029). Q-5 is for the later ticket (T-12). The website (T-11) and coloured print (T-13) were dropped in S6 (D-036); the generator in the browser came back as T-24 (D-052).
 
 ```
 T-01 ─▶ T-02 ─┬─▶ T-03 ─┐
@@ -152,6 +152,15 @@ Q-8 (b), owner S7: a `hilly` marker on a race leans its race-specific block into
 
 ### T-23 Landing page — in review (#29)
 *Owner, S9:* a small bilingual (Czech, English) GitHub Pages page for people who want to use the generator: purpose, philosophy, usage; less technical than the README. Design iterated with the owner before the PR (D-051). Draft 1: `site/` with both languages, the example sheet drawn from the built `plan.json`, the Pages workflow. Checked: both pages at 1440 and 390 px; colouring a day and the km gauge by mouse and keyboard; no console errors. Not verifiable here: the workflow itself (needs Pages enabled). *Draft 2 (owner's review):* km coloured green/yellow/red by share of plan; T and MP list their 2′ jog; strides explained; paces: derived from a race result or set in the file; sources described honestly with examples; every option in a folded reference, guarded by `tests/test_site.py`; the whole season and the sheet's footer on the page instead of a PDF download; the owner's Czech terms. Czech reviewed by two independent AI reviewers (linguist, writer); a native human proofread is still advised. *Draft 3 (owner's review):* install code keeps its lines (an inline-code rule had collapsed them); no warm-up sentence (every km of a quality run already counts: `sessions.session_km`); restructured after an AI web-designer review: what-you-need line in the hero, minimal file, common changes, *Keep your paces current*, a reference in three folds. New Czech passages reviewed again by the two AI reviewers. Then: the red corner is the fifth mark in a day's click cycle; the example race is Běhej lesy Lednice (the page's TOML example builds without warnings).
+
+### T-24 The generator in the browser — in review
+*Owner, S10:* "what would it take to make it possible to generate the table on the website?" Then: Pyodide, a form in Czech and English with all the fields, and a printout that may differ from the PDF if that simplifies it (D-052).
+
+Built: `ttg.web` (the form's texts → `parse_season` → `expand` → `export`, plus the season file written back); `site/generator/` and `site/cs/generator/` (the form, the sheet, print, download of the season file, the last form kept in the browser); `site/sheet-render.js` (the sheet's drawing, taken out of `sheet.js` and shared with the landing page's example); `site/generator.js`, `site/generator.css`; the Pages workflow builds the package as `site/ttg.whl`; both landing pages link to the generator.
+
+Checked: 415 tests (new: `tests/test_web.py`, the generator page's guards in `tests/test_site.py`), ruff, mypy. In headless Chrome with the Pyodide 314.0.8 files from npm, both pages: a 2027 marathon builds 32 weeks; the 2026 season entered by hand gives the 23 weeks and the five warnings of the golden test; an invalid entry marks its field; the Czech decimal comma; rows and changes added and removed; the form restored after a reload; the season file downloaded. Printed to PDF: 23, 32 and 40 weeks on one A4 landscape page, 60 weeks on two, blank. The sheet inspected.
+
+Not verified: the jsDelivr path of this Pyodide version (the sandbox cannot reach it); the Pages workflow; a real printer; Safari and Firefox. Known gaps: errors, warnings and the sheet's labels are English on the Czech page too; a plan above 40 weeks prints a second page without the header; the Czech text wants a native proofread (as T-23).
 
 ### Later (not scheduled)
 - **T-12** Elevation for mountain ultras (Q-5). *Evaluated in S7; parked by the owner (Q-7).* The race-type gap it found is covered by T-15 (`hilly`).

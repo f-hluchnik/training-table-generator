@@ -11,7 +11,7 @@ Automate building a printable training-table outline like `docs/reference/2026-m
 - **R-3** The plan is an outline: weekly planned km is an approximation; a week is a success at ≥ 80 % (D-006).
 - **R-4** Unrealistic or risky input gives warnings, never a refusal (D-001).
 - **R-5** "Just the right amount of simple": few required inputs, everything else defaulted and overridable.
-- **R-6** A personal command-line tool; no website (D-002, D-036).
+- **R-6** A command-line tool, with a landing page (D-051) and a page that runs the same generator in the browser (D-052; D-002 and D-036 had ruled a website out).
 
 **Non-goals:** recording or analysing actual runs, adapting the plan to past performance, assigning sessions to days, multi-sport training.
 
@@ -21,6 +21,12 @@ Automate building a printable training-table outline like `docs/reference/2026-m
 seasons/2026.toml ──spec──▶ Season ──layout──▶ phases ──expand (+ checks)──▶ Plan with warnings
                                                                                   │
                                                                        plan.json ◀┘──render (Typst)──▶ plan.pdf
+```
+
+The generator page (D-052) runs the same pipeline in the browser under Pyodide, from a form instead of a file, and draws `plan.json` itself:
+
+```
+form ──web (types the texts, then spec ──▶ expand ──▶ export)──▶ plan.json ──site/sheet-render.js──▶ the sheet on the page, printed by the browser
 ```
 
 Modules of the package `ttg`. Everything marked *pure* follows D-013.
@@ -39,6 +45,7 @@ Modules of the package `ttg`. Everything marked *pure* follows D-013.
 | `spec` | read and validate `season.toml` → `Season` (errors for invalid input) | no |
 | `render` | write `plan.json`, call Typst with the template `src/ttg/plan.typ` (D-035) | no |
 | `cli` | `ttg build SEASON.toml [-o DIR]` → `plan.json`, `plan.pdf`; warnings on stderr | no |
+| `web` | the generator page's entry point (D-052): the form's texts → season tree → `plan.json` and the season file text; imports no Typst | yes |
 
 **Errors vs warnings:** invalid input (unparsable date, start after the last race, negative km) is an error and nothing is built. Questionable input is a warning, and the plan is still built.
 

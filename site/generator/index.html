@@ -1,0 +1,342 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Make your training table in the browser</title>
+    <meta
+      name="description"
+      content="Fill in your races and how much you run now, and get a printable training table: one row per week, a cell for every day. Built in your browser; nothing is sent anywhere."
+    />
+    <link rel="alternate" hreflang="cs" href="../cs/generator/" />
+    <link rel="alternate" hreflang="en" href="./" />
+    <link rel="preload" href="../fonts/libertinus-serif-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="icon" href="../favicon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="../style.css" />
+    <link rel="stylesheet" href="../generator.css" />
+    <script type="module" src="../generator.js"></script>
+  </head>
+  <body>
+    <div class="page">
+      <header class="masthead no-print">
+        <a class="name" href="../">Training table generator</a>
+        <a href="../cs/generator/" hreflang="cs" lang="cs">Česky</a>
+      </header>
+
+      <main>
+        <div class="hero no-print">
+          <h1>Make your sheet right here.</h1>
+          <p class="lede">
+            Fill in your races and how much you run now. The table is built in your browser, and you can print it
+            or take the season file home to the <a href="../#make">command-line tool</a>. Nothing you type is sent
+            anywhere.
+          </p>
+          <p class="needs">You need your race dates, one recent race time and the length of your usual runs.</p>
+        </div>
+
+        <form
+          class="generator no-print"
+          id="generator"
+          data-wheel="../ttg.whl"
+          data-reference="../"
+        >
+          <fieldset>
+            <legend>Your races</legend>
+            <p class="hint">
+              Every race you want the plan to build towards. One main race is enough; add the others as tune-ups.
+            </p>
+            <div class="rows" id="races"></div>
+            <button class="add" type="button" data-add="race">Add a race</button>
+          </fieldset>
+
+          <fieldset>
+            <legend>A recent race</legend>
+            <p class="hint">All your paces are worked out from it. Use a race you ran lately, of any distance.</p>
+            <div class="grid">
+              <label class="field">
+                <span>Distance, km</span>
+                <input name="paces.race_result.distance_km" type="text" inputmode="decimal" placeholder="42.195" required />
+              </label>
+              <label class="field">
+                <span>Time</span>
+                <input name="paces.race_result.time" type="text" inputmode="numeric" placeholder="3:30:02" required />
+                <small>Hours, minutes, seconds; or minutes and seconds.</small>
+              </label>
+            </div>
+            <details class="fold" data-fold>
+              <summary>Set the paces yourself (optional)</summary>
+              <p class="hint">
+                Any pace you give replaces the one worked out from the race, in minutes and seconds per km. Marathon
+                pace is the place for a goal pace.
+              </p>
+              <div class="grid">
+                <label class="field">
+                  <span>Easy</span>
+                  <input name="paces.easy" type="text" inputmode="numeric" placeholder="5:37" />
+                </label>
+                <label class="field">
+                  <span>Marathon pace</span>
+                  <input name="paces.mp" type="text" inputmode="numeric" placeholder="4:59" />
+                </label>
+                <label class="field">
+                  <span>Threshold</span>
+                  <input name="paces.threshold" type="text" inputmode="numeric" placeholder="4:40" />
+                </label>
+                <label class="field">
+                  <span>Interval</span>
+                  <input name="paces.interval" type="text" inputmode="numeric" placeholder="4:18" />
+                </label>
+              </div>
+            </details>
+          </fieldset>
+
+          <fieldset>
+            <legend>What you run now</legend>
+            <div class="grid">
+              <label class="field">
+                <span>Easy run, km</span>
+                <input name="load.easy_run_km" type="text" inputmode="numeric" placeholder="12" required />
+                <small>The length of one easy run. It stays the same all season.</small>
+              </label>
+              <label class="field">
+                <span>Long run, km</span>
+                <input name="load.long_run_km" type="text" inputmode="numeric" placeholder="15" required />
+                <small>The long run of the first week.</small>
+              </label>
+              <label class="field">
+                <span>Runs a week</span>
+                <input name="load.runs_per_week" type="text" inputmode="numeric" placeholder="4" />
+                <small>From 3 to 6. One is a quality run, one a long run, the rest easy runs. Empty means 4.</small>
+              </label>
+            </div>
+          </fieldset>
+
+          <fieldset>
+            <legend>When it starts</legend>
+            <p class="hint">Give a start date or a length, or neither: then the plan starts next Monday.</p>
+            <div class="grid">
+              <label class="field">
+                <span>Start date</span>
+                <input name="start" type="date" />
+                <small>Week 1 is the Monday-to-Sunday week that contains it.</small>
+              </label>
+              <label class="field">
+                <span>Or: number of weeks</span>
+                <input name="weeks" type="text" inputmode="numeric" placeholder="20" />
+                <small>The plan ends with the week of your last race.</small>
+              </label>
+            </div>
+          </fieldset>
+
+          <fieldset>
+            <legend>Changes and extras</legend>
+            <details class="fold" data-fold>
+              <summary>Change single weeks (optional)</summary>
+              <p class="hint">
+                A change affects only its own week; the weeks after it are still worked out from the rules. A week
+                that holds a race keeps its race.
+              </p>
+              <div class="rows" id="overrides"></div>
+              <button class="add" type="button" data-add="override">Add a change</button>
+            </details>
+            <details class="fold" data-fold>
+              <summary>The sheet’s title and rules (optional)</summary>
+              <div class="grid">
+                <label class="field wide">
+                  <span>Title</span>
+                  <input name="sheet.title" type="text" placeholder="training plan" />
+                </label>
+                <label class="field wide">
+                  <span>Rules under the table</span>
+                  <textarea name="sheet.rules" rows="3"></textarea>
+                  <small>One rule per line. Empty means the usual two, on what to give up first.</small>
+                </label>
+              </div>
+            </details>
+          </fieldset>
+
+          <div class="submit">
+            <button type="submit">Make the sheet</button>
+            <span id="status" role="status"></span>
+          </div>
+        </form>
+
+        <template id="race-template">
+          <div class="row" data-kind="race">
+            <div class="row-head">
+              <h3 class="row-title"></h3>
+              <button class="remove-row" type="button">Remove</button>
+            </div>
+            <div class="grid">
+              <label class="field wide">
+                <span>Name</span>
+                <input name="name" type="text" placeholder="Prague Marathon" required />
+              </label>
+              <label class="field">
+                <span>Date</span>
+                <input name="date" type="date" required />
+                <small>Race day, or the first day of a race over several days.</small>
+              </label>
+              <label class="field">
+                <span>Distance, km</span>
+                <input name="distance_km" type="text" inputmode="decimal" placeholder="42.195" required />
+                <small>Up to 10 km, a half marathon, a marathon, or longer, which counts as an ultra.</small>
+              </label>
+              <label class="field">
+                <span>Priority</span>
+                <select name="priority">
+                  <option value="A">A: the main race</option>
+                  <option value="B">B: an important race, a shorter taper</option>
+                  <option value="C">C: a tune-up inside the training</option>
+                </select>
+                <small>A and B get a taper and recovery of their own.</small>
+              </label>
+            </div>
+            <details class="fold">
+              <summary>More about this race</summary>
+              <div class="grid">
+                <label class="field">
+                  <span>Last day</span>
+                  <input name="end" type="date" />
+                  <small>For a race over several days.</small>
+                </label>
+                <label class="field">
+                  <span>Taper, weeks</span>
+                  <input name="taper_weeks" type="text" inputmode="numeric" />
+                  <small>Includes the race week. Empty means by distance.</small>
+                </label>
+                <label class="field">
+                  <span>Race-specific block, weeks</span>
+                  <input name="specific_weeks" type="text" inputmode="numeric" />
+                  <small>Empty means by distance.</small>
+                </label>
+                <label class="field">
+                  <span>Recovery, weeks</span>
+                  <input name="recovery_weeks" type="text" inputmode="numeric" />
+                  <small>Empty means by distance.</small>
+                </label>
+                <label class="field wide check">
+                  <input name="hilly" type="checkbox" />
+                  <span>A hilly course: climbs, not a steady pace, decide the effort (trail, mountain)</span>
+                </label>
+              </div>
+              <p class="hint">The weeks and the hilly mark are not for a C race, which has no phases of its own.</p>
+            </details>
+          </div>
+        </template>
+
+        <template id="override-template">
+          <div class="row" data-kind="override">
+            <div class="row-head">
+              <h3 class="row-title"></h3>
+              <button class="remove-row" type="button">Remove</button>
+            </div>
+            <div class="grid">
+              <label class="field">
+                <span>Week</span>
+                <input name="week" type="text" inputmode="numeric" placeholder="13" />
+                <small>Its number on the sheet.</small>
+              </label>
+              <label class="field">
+                <span>Easy runs</span>
+                <select name="easy">
+                  <option value="">As planned</option>
+                  <option value="regular">Regular: all the same length</option>
+                  <option value="reduced">Reduced: the last one halved</option>
+                </select>
+              </label>
+              <label class="field">
+                <span>Quality run</span>
+                <select name="quality.type">
+                  <option value="">As planned</option>
+                  <option value="none">No session</option>
+                  <option value="S">Strides</option>
+                  <option value="H" data-repeated>Hill repeats</option>
+                  <option value="I" data-repeated>Intervals</option>
+                  <option value="T" data-repeated>Threshold</option>
+                  <option value="MP" data-repeated>Marathon pace</option>
+                </select>
+              </label>
+              <label class="field">
+                <span>Repetitions</span>
+                <input name="quality.reps" type="text" inputmode="numeric" placeholder="10" />
+              </label>
+              <label class="field">
+                <span>Minutes each</span>
+                <input name="quality.minutes" type="text" inputmode="decimal" placeholder="1" />
+                <small>Give minutes or km, not both.</small>
+              </label>
+              <label class="field">
+                <span>Or km each</span>
+                <input name="quality.km" type="text" inputmode="decimal" />
+              </label>
+              <label class="field">
+                <span>Long run, km</span>
+                <input name="long_run_km" type="text" inputmode="numeric" placeholder="40" />
+                <small>0 means no long run.</small>
+              </label>
+              <label class="field">
+                <span>Note</span>
+                <input name="note" type="text" placeholder="holiday" />
+                <small>Replaces the last column.</small>
+              </label>
+            </div>
+          </div>
+        </template>
+
+        <div class="result" id="result" tabindex="-1">
+          <div class="problem no-print" role="alert" hidden>
+            <p><strong>Please check this:</strong> <span class="message" lang="en"></span></p>
+          </div>
+          <div class="failure no-print" role="alert" hidden>
+            <p>
+              The generator could not be started in this browser. It needs a recent one, and a connection for the
+              first load. The <a href="../#make">command-line tool</a> makes the same sheet.
+            </p>
+          </div>
+          <div class="warnings no-print" hidden>
+            <p>
+              The sheet is made, but these are worth a look. Each code is explained in
+              <a href="../#warnings">what the warnings mean</a>.
+            </p>
+            <ul></ul>
+          </div>
+          <div class="actions no-print" data-after-build hidden>
+            <button class="print" type="button">Print</button>
+            <button class="download" type="button">Download the season file</button>
+          </div>
+          <div class="sheet-scroll"></div>
+          <p class="sheet-caption no-print" data-after-build hidden>
+            Print it on A4, landscape, at 100&nbsp;%, then colour it in by hand. You can also press a day or the
+            boxes here to try the colours; they are not saved.
+          </p>
+          <details class="season-file no-print" data-after-build hidden>
+            <summary>The season file behind this sheet</summary>
+            <p class="hint">
+              Save it as a <code>.toml</code> file to change the plan later, or build the same sheet as a PDF with
+              <code>ttg build</code>.
+            </p>
+            <pre></pre>
+          </details>
+        </div>
+
+        <script type="application/json" id="generator-text">
+          {
+            "race": "Race {n}",
+            "override": "Change {n}",
+            "loading": "Loading the generator, about 10 MB, once…",
+            "building": "Making the sheet…",
+            "week": "week {week}",
+            "caption": "Your training table",
+            "weekdays": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
+            "runs": { "easy": "easy run", "quality": "quality run", "long": "long run" },
+            "blank": "no run coloured",
+            "event": "marked as unexpected",
+            "kmText": "{km} of {planned} km",
+            "gaugeText": "Kilometres run in week {week}"
+          }
+        </script>
+      </main>
+    </div>
+  </body>
+</html>

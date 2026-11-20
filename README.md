@@ -2,6 +2,8 @@
 
 `ttg` is a command-line plan compiler for runners. You describe a season in a short text file: your races, when the plan starts, a recent race result and what you run now. From that it builds a printable A4 landscape training table (PDF), one row per week, in the style of [`docs/reference/2026-marathon-training.pdf`](docs/reference/2026-marathon-training.pdf).
 
+There is also a page that makes the same sheet in the browser, from a form, with no install ([`site/generator/`](site/generator/), on the project's GitHub Pages; see [Development](#development)). The rest of this README is about the command-line tool, which makes the PDF.
+
 The table is an **outline, not a prescription**. You print it, put it on the wall, colour a cell after each run and adapt the plan to life as you go. The tool automates the tedious, error-prone parts: dates, phases, session progressions, km arithmetic and layout. It never refuses a plan. If something looks risky (races too close together, a plan too short, a long run too big), it still builds the plan and prints a warning.
 
 ## Contents
@@ -246,6 +248,7 @@ All logic is in Python. The Typst template only lays out `plan.json`, which alre
 | `export` | Plan → `plan.json`, including the display strings. |
 | `render`, `plan.typ` | Write `plan.json`, compile the template to `plan.pdf`. |
 | `cli` | `ttg build`. |
+| `web` | The generator page's entry point: the form's texts → plan, in the browser (Pyodide). |
 
 `plan.json` (`schema_version` 6) is the contract between the Python side and the template. Its fields are documented in [`docs/PLAN.md`](docs/PLAN.md) §4.
 
@@ -265,6 +268,15 @@ The tests include two acceptance tests on the reference seasons:
 - **Snapshots** (`tests/fixtures/plan-*.json`): the complete `plan.json` of both seasons. After an intended rule change, regenerate them with `TTG_UPDATE_SNAPSHOTS=1 pytest tests/test_snapshots.py` and review the diff.
 
 After a change to the template or to the plan's content, look at a rendered page, not only at the tests.
+
+**The generator page** (`site/generator/`, Czech in `site/cs/generator/`) runs `ttg.web` in the browser under [Pyodide](https://pyodide.org), loaded from a CDN (the first load is about 10 MB, so it needs a connection), and draws the sheet with `site/sheet-render.js`. The Pages workflow builds the package as `site/ttg.whl`; to try the page on your machine:
+
+```sh
+pip wheel . --no-deps -w wheel && cp wheel/ttg-*.whl site/ttg.whl   # git-ignored
+python3 -m http.server --directory site                              # then open http://localhost:8000/generator/
+```
+
+It is printed by the browser (A4 landscape, 100 %), so it differs slightly from the PDF; see D-052 for how.
 
 **Ways of working.** Work is organised in tickets, one branch per ticket (`t-NN-short-name`) and one pull request each. Every training-rule number is a named constant citing its source. A new season-file field needs a recorded decision. The documents in `docs/` are updated in the same change as the code:
 
