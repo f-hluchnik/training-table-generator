@@ -183,6 +183,13 @@ Default: A.
 - **Architect's choices, for the owner's review in the PR:** the 3:1 cycle is kept for beginners; no automatic graduation to the standard mode; the race-specific block, taper and recovery keep their standard lengths.
 - *Not taken:* a time-based run/walk block at the start of the plan (a new session type on the sheet); a time trial in week 1.
 
+### D-055 A short form, the level first — Agreed (owner, S11)
+*Owner, S11:* the form is overwhelming at first sight; paginate it or hide what is not required. The owner chose the short form with one fold over pages (pages would add steps to every edit for the runners who customise most).
+- **First sight:** the level ("new to running" / "I train regularly", D-054), the race's date and distance, the long run, the easy run and the runs a week, the recent race. The hints say what a beginner may leave empty, and what to do without a race (run 5 km alone and enter the time).
+- **One fold, *More options*:** start date or length, single-week changes, the sheet's title and rules. A race's name, priority and the rest are in the race's own fold. A race without a name is named as its row ("Race 1", "Závod 1"); the parser still requires a name, the page fills it.
+- **A level left open is decided by the generator** (`ttg.web`), so the rule stays in Python: the beginner's when there is no race time, or when the regular plan would give C11; otherwise the regular one. The page then shows the level chosen. *Owner, S11:* the choice on the form, pre-selected by the inputs; it is set when the sheet is made, not while typing, so the radio buttons never change under the visitor's hand. The race result and the easy run are required in the browser only when "I train regularly" is chosen.
+- `generate_json` returns `beginner` beside the plan and the season file.
+
 ## Open questions (need the owner)
 
 - **Q-1** *Answered:* Python 3.11 and 3.12 available; work in a virtual environment → D-011.

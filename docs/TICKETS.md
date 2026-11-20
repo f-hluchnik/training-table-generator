@@ -178,6 +178,11 @@ Built: `[load] beginner` (`ttg.spec`; `race_result`, `[paces]` and `easy_run_km`
 
 Checked: tests (new `tests/test_beginner.py`; C10, C11 in `tests/test_checks.py`), ruff, mypy; both reference seasons build an identical `plan.json`; a beginner's 10 km sheet rendered and inspected.
 
+### T-28 A short form — in review
+*Owner, S11:* the form is overwhelming at first sight (D-055). Built on T-27: the level choice first; the race's date and distance, the runs and the recent race visible; everything optional in one *More options* fold; race name and priority in the race's fold, an unnamed race named as its row; the level, when left open, decided by `ttg.web` (no race time, or C11) and shown afterwards. Both languages.
+
+Checked: tests (the level in `tests/test_web.py`), ruff, mypy. In headless Chrome with the Pyodide 314.0.8 files from npm, both languages: an open level with a 3 km long run and no race time builds a beginner's sheet with no warnings and sets the level; "I train regularly" requires the race time; with 1 km / 3 km it shows C10 and C11; a reload keeps the level; no console errors under the policy. The phone view is shorter (2,521 → 2,087 px at 390 px). Not verified: Safari, Firefox, a real iPhone.
+
 ### Later (not scheduled)
 - **T-12** Elevation for mountain ultras (Q-5). *Evaluated in S7; parked by the owner (Q-7).* The race-type gap it found is covered by T-15 (`hilly`).
 

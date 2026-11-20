@@ -36,7 +36,7 @@
             or take the season file home to the <a href="../#make">command-line tool</a>. Nothing you type is sent
             anywhere.
           </p>
-          <p class="needs">You need your race dates, one recent race time and the length of your usual runs.</p>
+          <p class="needs">You need your race date and how far you run now.</p>
         </div>
 
         <form
@@ -46,30 +46,72 @@
           data-reference="../"
         >
           <fieldset>
-            <legend>Your races</legend>
-            <p class="hint">
-              Every race you want the plan to build towards. One main race is enough; add the others as tune-ups.
-            </p>
+            <legend>How do you run now?</legend>
+            <div class="choices">
+              <label class="choice">
+                <input name="load.beginner" type="radio" value="true" />
+                <span>
+                  <strong>New to running</strong>, or to this distance. A gentle plan: about a kilometre more each
+                  week, strides and short hills only, walk breaks welcome.
+                </span>
+              </label>
+              <label class="choice">
+                <input name="load.beginner" type="radio" value="false" />
+                <span>
+                  <strong>I train regularly.</strong> Intervals, threshold and race-pace work, as the race needs.
+                </span>
+              </label>
+            </div>
+            <p class="hint">Not sure? Leave it: the plan is gentle when your long run is short or there is no race time.</p>
+          </fieldset>
+
+          <fieldset>
+            <legend>Your race</legend>
             <div class="rows" id="races"></div>
-            <button class="add" type="button" data-add="race">Add a race</button>
+            <button class="add" type="button" data-add="race">Add another race</button>
+          </fieldset>
+
+          <fieldset>
+            <legend>What you run now</legend>
+            <div class="grid">
+              <label class="field">
+                <span>Long run, km</span>
+                <input name="load.long_run_km" type="text" inputmode="numeric" placeholder="15" required />
+                <small>Your longest run lately; walk breaks count.</small>
+              </label>
+              <label class="field">
+                <span>Easy run, km</span>
+                <input name="load.easy_run_km" type="text" inputmode="numeric" placeholder="12" required />
+                <small>One of your usual shorter runs. New to running? You can leave it empty.</small>
+              </label>
+              <label class="field">
+                <span>Runs a week</span>
+                <input name="load.runs_per_week" type="text" inputmode="numeric" placeholder="4" />
+                <small>Empty means 4, or 3 when new to running (2 to 4).</small>
+              </label>
+            </div>
           </fieldset>
 
           <fieldset>
             <legend>A recent race</legend>
-            <p class="hint">All your paces are worked out from it. Use a race you ran lately, of any distance.</p>
+            <p class="hint">
+              Your paces are worked out from it. No race yet? Run 5&nbsp;km on your own, as fast as you
+              comfortably can, and enter that. New to running? Leave it empty and run at a pace where you can
+              still talk.
+            </p>
             <div class="grid">
               <label class="field">
                 <span>Distance, km</span>
-                <input name="paces.race_result.distance_km" type="text" inputmode="decimal" placeholder="42.195" required />
+                <input name="paces.race_result.distance_km" type="text" inputmode="decimal" placeholder="5" required />
               </label>
               <label class="field">
                 <span>Time</span>
-                <input name="paces.race_result.time" type="text" inputmode="numeric" placeholder="3:30:02" required />
-                <small>Hours, minutes, seconds; or minutes and seconds.</small>
+                <input name="paces.race_result.time" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="27:30" required />
+                <small>Minutes and seconds, or hours, minutes, seconds.</small>
               </label>
             </div>
             <details class="fold" data-fold>
-              <summary>Set the paces yourself (optional)</summary>
+              <summary>Set the paces yourself</summary>
               <p class="hint">
                 Any pace you give replaces the one worked out from the race, in minutes and seconds per km. Marathon
                 pace is the place for a goal pace.
@@ -77,52 +119,29 @@
               <div class="grid">
                 <label class="field">
                   <span>Easy</span>
-                  <input name="paces.easy" type="text" inputmode="numeric" placeholder="5:37" />
+                  <input name="paces.easy" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="5:37" />
                 </label>
                 <label class="field">
                   <span>Marathon pace</span>
-                  <input name="paces.mp" type="text" inputmode="numeric" placeholder="4:59" />
+                  <input name="paces.mp" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="4:59" />
                 </label>
                 <label class="field">
                   <span>Threshold</span>
-                  <input name="paces.threshold" type="text" inputmode="numeric" placeholder="4:40" />
+                  <input name="paces.threshold" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="4:40" />
                 </label>
                 <label class="field">
                   <span>Interval</span>
-                  <input name="paces.interval" type="text" inputmode="numeric" placeholder="4:18" />
+                  <input name="paces.interval" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="4:18" />
                 </label>
               </div>
             </details>
           </fieldset>
 
-          <fieldset>
-            <legend>What you run now</legend>
-            <div class="grid">
-              <label class="field wide check">
-                <input name="load.beginner" type="checkbox" />
-                <span>I’m new to running, or to this distance: build up gently</span>
-              </label>
-              <label class="field">
-                <span>Easy run, km</span>
-                <input name="load.easy_run_km" type="text" inputmode="numeric" placeholder="12" required />
-                <small>The length of one easy run. It stays the same all season.</small>
-              </label>
-              <label class="field">
-                <span>Long run, km</span>
-                <input name="load.long_run_km" type="text" inputmode="numeric" placeholder="15" required />
-                <small>The long run of the first week.</small>
-              </label>
-              <label class="field">
-                <span>Runs a week</span>
-                <input name="load.runs_per_week" type="text" inputmode="numeric" placeholder="4" />
-                <small>From 3 to 6. One is a quality run, one a long run, the rest easy runs. Empty means 4.</small>
-              </label>
-            </div>
-          </fieldset>
+          <details class="fold more" data-fold>
+            <summary>More options: start date, single weeks, the sheet’s text</summary>
 
-          <fieldset>
-            <legend>When it starts</legend>
-            <p class="hint">Give a start date or a length, or neither: then the plan starts next Monday.</p>
+            <h3>When it starts</h3>
+            <p class="hint">Empty: the plan starts next Monday.</p>
             <div class="grid">
               <label class="field">
                 <span>Start date</span>
@@ -135,34 +154,28 @@
                 <small>The plan ends with the week of your last race.</small>
               </label>
             </div>
-          </fieldset>
 
-          <fieldset>
-            <legend>Changes and extras</legend>
-            <details class="fold" data-fold>
-              <summary>Change single weeks (optional)</summary>
-              <p class="hint">
-                A change affects only its own week; the weeks after it are still worked out from the rules. A week
-                that holds a race keeps its race.
-              </p>
-              <div class="rows" id="overrides"></div>
-              <button class="add" type="button" data-add="override">Add a change</button>
-            </details>
-            <details class="fold" data-fold>
-              <summary>The sheet’s title and rules (optional)</summary>
-              <div class="grid">
-                <label class="field wide">
-                  <span>Title</span>
-                  <input name="sheet.title" type="text" placeholder="training plan" />
-                </label>
-                <label class="field wide">
-                  <span>Rules under the table</span>
-                  <textarea name="sheet.rules" rows="3"></textarea>
-                  <small>One rule per line. Empty means the usual two, on what to give up first.</small>
-                </label>
-              </div>
-            </details>
-          </fieldset>
+            <h3>Change single weeks</h3>
+            <p class="hint">
+              A change affects only its own week; the weeks after it are still worked out from the rules. A week
+              that holds a race keeps its race.
+            </p>
+            <div class="rows" id="overrides"></div>
+            <button class="add" type="button" data-add="override">Add a change</button>
+
+            <h3>The sheet’s title and rules</h3>
+            <div class="grid">
+              <label class="field wide">
+                <span>Title</span>
+                <input name="sheet.title" type="text" placeholder="training plan" />
+              </label>
+              <label class="field wide">
+                <span>Rules under the table</span>
+                <textarea name="sheet.rules" rows="3"></textarea>
+                <small>One rule per line. Empty means the usual ones.</small>
+              </label>
+            </div>
+          </details>
 
           <div class="submit">
             <button type="submit">Make the sheet</button>
@@ -177,33 +190,33 @@
               <button class="remove-row" type="button">Remove</button>
             </div>
             <div class="grid">
-              <label class="field wide">
-                <span>Name</span>
-                <input name="name" type="text" placeholder="Prague Marathon" required />
-              </label>
               <label class="field">
                 <span>Date</span>
                 <input name="date" type="date" required />
-                <small>Race day, or the first day of a race over several days.</small>
               </label>
               <label class="field">
                 <span>Distance, km</span>
-                <input name="distance_km" type="text" inputmode="decimal" placeholder="42.195" required />
-                <small>Up to 10 km, a half marathon, a marathon, or longer, which counts as an ultra.</small>
-              </label>
-              <label class="field">
-                <span>Priority</span>
-                <select name="priority">
-                  <option value="A">A: the main race</option>
-                  <option value="B">B: an important race, a shorter taper</option>
-                  <option value="C">C: a tune-up inside the training</option>
-                </select>
-                <small>A and B get a taper and recovery of their own.</small>
+                <input name="distance_km" type="text" inputmode="decimal" placeholder="10" required />
+                <small>A half marathon is 21.1, a marathon 42.2.</small>
               </label>
             </div>
             <details class="fold">
               <summary>More about this race</summary>
               <div class="grid">
+                <label class="field wide">
+                  <span>Name</span>
+                  <input name="name" type="text" placeholder="Prague Marathon" />
+                  <small>For the list under the table. Empty: its number, as above.</small>
+                </label>
+                <label class="field">
+                  <span>Priority</span>
+                  <select name="priority">
+                    <option value="A">A: the main race</option>
+                    <option value="B">B: an important race, a shorter taper</option>
+                    <option value="C">C: a tune-up inside the training</option>
+                  </select>
+                  <small>A and B get a taper and recovery of their own.</small>
+                </label>
                 <label class="field">
                   <span>Last day</span>
                   <input name="end" type="date" />

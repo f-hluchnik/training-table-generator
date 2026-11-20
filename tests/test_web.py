@@ -121,7 +121,10 @@ def test_a_whole_number_of_km_stays_an_integer():
         (a_form(race=[MARATHON | {"distance_km": "far"}]), 'race[1].distance_km: expected a number, got "far"'),
         (a_form(race=[MARATHON | {"distance_km": "nan"}]), 'race[1].distance_km: expected a number, got "nan"'),
         (a_form(race=[MARATHON, MARATHON | {"date": "xx"}]), "race[2].date: expected a date"),
-        (a_form(paces={}), "paces.race_result.distance_km: missing (required)"),
+        (
+            a_form(paces={}, load={"beginner": False, "easy_run_km": "12", "long_run_km": "15"}),
+            "paces.race_result.distance_km: missing (required)",
+        ),
         (
             a_form(paces={"race_result": {"distance_km": "42,195", "time": "fast"}}),
             "paces.race_result.time: expected a time",
@@ -240,3 +243,33 @@ def test_the_limit_is_the_pages_and_not_the_cores():
     """The command line never refuses a plan (D-001)."""
     long_plan = parse_season(season_data(a_form(start="", weeks=str(MAX_WEEKS + 20))))
     assert len(expand(long_plan, TODAY).weeks) == MAX_WEEKS + 20
+
+
+# --- the level: chosen, or suggested when left open (D-054) -------------------------------
+
+
+def test_a_chosen_level_is_kept():
+    regular = a_form(load={"beginner": False, "easy_run_km": "3", "long_run_km": "3"})
+    assert generate(regular, TODAY).beginner is False
+    beginner = a_form(load={"beginner": True, "easy_run_km": "12", "long_run_km": "15"})
+    assert generate(beginner, TODAY).beginner is True
+
+
+@pytest.mark.parametrize(
+    ("changes", "is_beginner"),
+    [
+        ({}, False),
+        ({"paces": {"race_result": {"distance_km": "", "time": ""}}}, True),  # no race time
+        ({"load": {"easy_run_km": "3", "long_run_km": "8"}}, True),  # below a marathon's 10 km (C11)
+        ({"load": {"easy_run_km": "3", "long_run_km": "10"}}, False),
+    ],
+)
+def test_a_level_left_open_is_suggested_by_the_race_time_and_the_long_run(changes, is_beginner):
+    generated = generate(a_form(**changes), TODAY)
+    assert generated.beginner is is_beginner
+    assert ("beginner = true" in generated.season_toml) is is_beginner
+
+
+def test_a_level_left_open_still_reports_the_regular_forms_error():
+    with pytest.raises(SeasonError, match=r"^load.easy_run_km: missing"):
+        generate(a_form(load={"long_run_km": "15"}), TODAY)
