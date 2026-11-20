@@ -171,6 +171,9 @@ Checked: 424 tests (new: the limit and the cases it refuses in `tests/test_web.p
 
 Not verified: the live Pages site and jsDelivr (unreachable from the sandbox); Safari and Firefox. Open for the owner: serve Pyodide from the site instead of jsDelivr (D-053).
 
+### T-26 A keyboard with a colon for times — in review
+*Owner, S11:* on an iPhone (Safari) the race time and the paces could not be typed: their fields asked for the numeric keypad, which has no colon. No phone keypad has one (`inputmode` numeric, decimal and tel alike), so the five fields that take `m:ss` or `h:mm:ss` now use the full keyboard, without autocorrect, capitals or spell-check. The distance and the whole-number fields keep their keypads. `tests/test_site.py` fails if a field whose placeholder has a colon asks for a keypad. Not verified on a real iPhone (no device in the sandbox).
+
 ### Later (not scheduled)
 - **T-12** Elevation for mountain ultras (Q-5). *Evaluated in S7; parked by the owner (Q-7).* The race-type gap it found is covered by T-15 (`hilly`).
 

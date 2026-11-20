@@ -147,3 +147,14 @@ def test_the_page_builds_in_a_worker_so_a_runaway_build_can_be_stopped():
     assert "generator-worker.js" in GENERATOR_SCRIPT
     assert "worker?.terminate()" in GENERATOR_SCRIPT
     assert (SITE / "generator-worker.js").is_file()
+
+
+INPUT_TAG = re.compile(r"<input\b[^>]*>")
+
+
+@pytest.mark.parametrize("page", GENERATOR_PAGES, ids=lambda page: page.parent.name)
+def test_a_field_for_a_time_or_pace_keeps_the_full_keyboard(page):
+    """Phone keypads for `inputmode` numeric, decimal or tel have no colon, so `3:30` can't be typed (T-26)."""
+    timed = [tag for tag in INPUT_TAG.findall(page_text(page)) if re.search(r'placeholder="[^"]*:', tag)]
+    assert len(timed) == 5  # the race time and the four paces
+    assert [tag for tag in timed if "inputmode=" in tag] == []
