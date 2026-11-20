@@ -173,17 +173,22 @@ Not verified: the live Pages site and jsDelivr (unreachable from the sandbox); S
 
 ### T-26 A keyboard with a colon for times — done (merged in #33)
 *Owner, S11:* on an iPhone (Safari) the race time and the paces could not be typed: their fields asked for the numeric keypad, which has no colon. No phone keypad has one (`inputmode` numeric, decimal and tel alike), so the five fields that take `m:ss` or `h:mm:ss` now use the full keyboard, without autocorrect, capitals or spell-check. The distance and the whole-number fields keep their keypads. `tests/test_site.py` fails if a field whose placeholder has a colon asks for a keypad. Not verified on a real iPhone (no device in the sandbox).
-### T-27 Beginner mode — in review
+### T-27 Beginner mode — done (merged in #34)
 *Owner, S11:* small starting numbers gave hard sessions in week 1, a long run growing 3 → 5 → 7 km and a 16 km peak before a first 10 km; asked for a gentle mode with a coach's advice, a motivating plan without warnings. After the first version, the owner's review and a second coach review changed the rules: gentle intensity earlier and inside a run, the long run kept with 2 runs, a slower start, goals and no race (D-054).
 
 Built: `[load] beginner` and `[[race]] goal` (`ttg.spec`; `race_result`, `[paces]`, `easy_run_km` and the race optional for a beginner; 2–4 runs); `ttg.beginner` (the rules and their constants, TRAINING_MODEL §11); `_BeginnerExpander` in `ttg.expand` on small hooks of the standard expander (the long run before the easy runs within a week, the easy run's length for floors, the deload's long run, the quality km by week); the session type F (fartlek); the legend and the beginner's footer rules; reps under a minute in seconds (`6×30″`); `GOAL` on the sheet; checks C10 and C11 for the standard mode, C12 for a beginner; the web entry point; a beginner checkbox, a goal checkbox and F on the generator page (the form's redesign is T-28); both landing pages' reference.
 
 Checked: tests (`tests/test_beginner.py`; C10, C11 in `tests/test_checks.py`), ruff, mypy; both reference seasons build an identical `plan.json`; the owner's case follows the second coach review's table; a beginner's sheet rendered and inspected.
 
-### T-28 A short form — in review
+### T-28 A short form — done (merged in #35)
 *Owner, S11:* the form is overwhelming at first sight (D-055). Built on T-27: the level choice first; *Your race or goal* with the goal checkbox, every race removable ("just start running"); the race's date and distance, the runs and the recent race visible; everything optional in one *More options* fold; race name and priority in the race's fold, an unnamed race named as its row; the level, when left open, decided by `ttg.web` (no race time, or C11) and shown afterwards. Both languages.
 
 Checked: tests (the level in `tests/test_web.py`), ruff, mypy. In headless Chrome with the Pyodide 314.0.8 files from npm, both languages: no race and an open level builds 9 weeks to `GOAL 5 km` as a beginner, and a reload keeps it without a race; a goal prints `GOAL 10 km` and "10 km (goal)"; an open level with a 3 km long run and no race time builds a beginner's sheet with no warnings and sets the level; "I train regularly" requires the race time; with 1 km / 3 km it shows C10 and C11; a reload keeps the level; no console errors under the policy. The phone view is shorter (2,521 → 2,087 px at 390 px). Not verified: Safari, Firefox, a real iPhone.
+
+### T-29 More runs don't hold the long run back — in review
+*Owner, S11:* with 4 runs a week from 1 km easy runs, a beginner's long run peaked at 7 km before a 10 km goal, against 9 km with 2 or 3 runs: every easy run had to catch up to half the long run before the long run's turn. Now only one has to (the step goes to the easy runs while even the longest is under half the long run). And the quality run moves from the shortest to the longest of the short runs: with the new rule a 1 km run would otherwise have carried F 6 × 1′, about 12 minutes with its walk breaks.
+
+Checked: the owner's case peaks at 9 km with 2, 3 and 4 runs, with the same weekly totals as before (4 runs: 6 → 16 km); every F or H sits in a run of at least 2 km; tests (`test_more_runs_do_not_hold_the_long_run_back`), ruff, mypy; both reference seasons build an identical `plan.json`.
 
 ### Later (not scheduled)
 - **T-12** Elevation for mountain ultras (Q-5). *Evaluated in S7; parked by the owner (Q-7).* The race-type gap it found is covered by T-15 (`hilly`).

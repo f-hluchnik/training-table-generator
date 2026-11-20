@@ -381,7 +381,7 @@ class _BeginnerExpander(_Expander):
 
     Every run but the long run has a slot of its own length (`_slots`, longest first). A loading week
     grows by one step, to the long run or the shortest slot, or holds (`beginner`'s growth rule). The
-    quality run is done inside the shortest slot's run, so it counts that run's km.
+    quality run is done inside the longest slot's run, so it counts that run's km.
     """
 
     def __init__(self, season: Season, layout: Layout, paces: TrainingPaces) -> None:
@@ -413,7 +413,8 @@ class _BeginnerExpander(_Expander):
         longer_km = last_km + beginner.STEP_KM if last_km + beginner.STEP_KM <= cap else None
         longer_slots = beginner.grown(self._slots, beginner.easy_run_cap(target, last_km))
         long_run_may_grow = specific or beginner.long_run_may_grow(last_km, self._long_run_weeks_held)
-        easy_runs_first = not specific and beginner.easy_runs_catch_up(last_km, min(self._slots))
+        # Only one easy run has to catch up, so with more runs the long run is not held back (T-29).
+        easy_runs_first = not specific and beginner.easy_runs_catch_up(last_km, max(self._slots))
         if longer_slots is not None and (easy_runs_first or not long_run_may_grow or longer_km is None):
             self._slots = longer_slots
             return last_km
@@ -434,8 +435,9 @@ class _BeginnerExpander(_Expander):
         if kind is WeekKind.RACE:
             kept = max(beginner.MIN_RACE_WEEK_EASY_RUNS, len(slots) - beginner.RACE_WEEK_RUNS_LEFT_OUT)
             return slots[:kept], quality
-        # The quality run is done in the shortest slot's run; without one, that run is easy.
-        return (slots[:-1] if _takes_a_slot(quality) else slots), quality
+        # The quality run is done in the longest slot's run, where its efforts and walk breaks fit
+        # best (T-29); without one, that run is easy.
+        return (slots[1:] if _takes_a_slot(quality) else slots), quality
 
     def _beginner_quality(self, kind: WeekKind, number: int, week_km: int) -> Session:
         match beginner.quality_of(kind, number):
@@ -469,9 +471,9 @@ class _BeginnerExpander(_Expander):
         return self._slots[0]
 
     def _quality_km(self, quality: Session | Race, week_number: int) -> int:
-        """A beginner's quality run is done inside a run: the shortest slot's (§11)."""
+        """A beginner's quality run is done inside a run: the longest slot's (§11, T-29)."""
         if isinstance(quality, Session) and quality.type is not SessionType.NONE:
-            return min(self._run_slots[week_number])
+            return max(self._run_slots[week_number])
         return super()._quality_km(quality, week_number)
 
 
