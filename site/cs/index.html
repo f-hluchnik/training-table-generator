@@ -262,7 +262,11 @@ long_run_km = 15                <span class="comment"># váš současný dlouhý
             </dl>
 
             <h4>Závody: <code>[[race]]</code></h4>
-            <p>Každý závod má vlastní sekci; závodů může být libovolně mnoho, v&nbsp;libovolných termínech.</p>
+            <p>
+              Každý závod má vlastní sekci; závodů může být libovolně mnoho, v&nbsp;libovolných termínech. Závodem
+              může být i&nbsp;vlastní cíl, třeba 10&nbsp;km do určitého data. Začátečník nemusí zadat žádný: plán ho
+              pak za 9 týdnů (nebo za <code>weeks</code>) dovede k&nbsp;5&nbsp;km.
+            </p>
             <dl class="fields">
               <dt><code>name</code> <span>text, povinné</span></dt>
               <dd>Tiskne se pod tabulkou. Každý závod potřebuje vlastní název.</dd>
@@ -291,6 +295,11 @@ long_run_km = 15                <span class="comment"># váš současný dlouhý
                 V&nbsp;týdnech zaměřených na něj je každý druhý trénink intenzity kopcový, místo maratonského tempa
                 přichází trénink prahové hodnoty a dlouhé běhy jsou bez úseků v&nbsp;maratonském tempu. Neplatí pro závody C.
               </dd>
+              <dt><code>goal</code> <span>true nebo false, výchozí false</span></dt>
+              <dd>
+                Vzdálenost, kterou chcete do daného dne zvládnout, ne závod: v&nbsp;tabulce stojí
+                <code>GOAL 10 km</code> místo <code>RACE 10 km</code>. Plán je stejný.
+              </dd>
             </dl>
 
             <h4>Tempa: <code>[paces]</code></h4>
@@ -315,9 +324,10 @@ long_run_km = 15                <span class="comment"># váš současný dlouhý
               <dt><code>beginner</code> <span>true nebo false, výchozí false</span></dt>
               <dd>
                 <code>beginner = true</code> zvyšuje zátěž pozvolna, pro ty, kdo s&nbsp;běháním nebo s&nbsp;danou
-                tratí začínají: zhruba o&nbsp;1&nbsp;km týdně, první měsíc bez náročných tréninků, pak jen rovinky
-                a krátké kopce, dlouhý běh vrcholí blízko délky závodu (u&nbsp;10&nbsp;km a kratších) a žádná
-                upozornění. Výsledek závodu a délka lehkého běhu jsou pak nepovinné a stačí 2 až 4 běhy týdně.
+                tratí začínají: zhruba o&nbsp;1&nbsp;km týdně, dlouhý běh pod 5&nbsp;km drží každou délku dva týdny,
+                mírná intenzita podle pocitu (od 3. týdne rovinky, od 5. týdne fartlek a krátké kopce, vždy
+                uvnitř běhu) a žádná upozornění. Výsledek závodu, délka lehkého běhu i&nbsp;závod jsou pak
+                nepovinné a stačí 2 až 4 běhy týdně.
               </dd>
               <dt><code>easy_run_km</code> <span>číslo, povinné, kromě začátečníka</span></dt>
               <dd>
@@ -333,7 +343,7 @@ long_run_km = 15                <span class="comment"># váš současný dlouhý
               <dt><code>runs_per_week</code> <span>3 až 6, výchozí 4; začátečník 2 až 4, výchozí 3</span></dt>
               <dd>
                 Vždy jeden trénink intenzity a jeden dlouhý běh; ostatní jsou lehké běhy. Začátečník se dvěma
-                běhy týdně má jeden lehký běh a dlouhý běh.
+                běhy týdně má kratší běh s&nbsp;mírnou intenzitou a dlouhý běh.
               </dd>
             </dl>
 
@@ -361,7 +371,8 @@ long_run_km = 15                <span class="comment"># váš současný dlouhý
 20 = { note = "dovolená" }                                 <span class="comment"># nahradí šedé číslo na konci řádku</span></code></pre>
             <p>
               Trénink intenzity se zapisuje jako <code>{ type, reps, minutes }</code> nebo
-              <code>{ type, reps, km }</code>, kde <code>type</code> je <code>"H"</code>, <code>"I"</code>,
+              <code>{ type, reps, km }</code>, kde <code>type</code> je <code>"H"</code>, <code>"F"</code>
+              (fartlek: středně těžký úsek, pak stejně dlouho chůze nebo klus), <code>"I"</code>,
               <code>"T"</code> nebo <code>"MP"</code>. Rovinky jsou <code>{ type = "S" }</code>, týden bez tréninku
               intenzity <code>{ type = "none" }</code>. Závod nahradit nelze.
             </p>

@@ -19,7 +19,7 @@ MIN_RUNS_PER_WEEK = 3
 MAX_RUNS_PER_WEEK = 6
 DEFAULT_RUNS_PER_WEEK = 4
 # D-054: a beginner runs 2–4 times a week, default 3, as in the NHS Couch to 5K and Higdon's novice
-# plans [source 33, 35]; with 2 runs there is no quality run (owner, S11).
+# plans [source 33, 35]; with 2 runs, the short run carries the week's gentle intensity (owner, S11).
 MIN_BEGINNER_RUNS_PER_WEEK = 2
 MAX_BEGINNER_RUNS_PER_WEEK = 4
 DEFAULT_BEGINNER_RUNS_PER_WEEK = 3
@@ -35,9 +35,12 @@ DEFAULT_RULES = (
     "Re-check paces after A races and every 2–3 months: easy by heart rate, T and MP by a race or test.",
 )
 # D-054: a beginner's sheet encourages; it gives no warnings (owner, S11). Run/walk: Galloway
-# [source 40]; easy by the talk test [source 46]; the long run is kept first [default, coach S11].
+# [source 40]; until a run needs no walking, the walk breaks are the interval work, as in Couch to 5K
+# [source 33]; easy by the talk test [source 46]; the long run is kept first [default, coach S11].
 BEGINNER_RULES = (
     "Can't run the whole way yet? Run and walk, and cover the distance: walk breaks are part of the plan.",
+    "F and H go inside a run. Start them once you can run it without walking; until then, your walk "
+    "breaks are the intervals.",
     "Easy means you can talk in full sentences. Slower is always fine.",
     "Short on time: skip an easy run and keep the long run. Tired or sore: rest, it is part of training.",
 )
@@ -96,6 +99,7 @@ class SessionType(StrEnum):
     """Quality-run types (TRAINING_MODEL.md §1)."""
 
     HILLS = "H"
+    FARTLEK = "F"  # effort-based, "comfortably hard", walk or jog between: a beginner's intervals (D-054)
     INTERVALS = "I"
     THRESHOLD = "T"
     MARATHON_PACE = "MP"
@@ -128,6 +132,8 @@ class Race:
     # A course where climbs, not a steady pace, decide the effort: its race-specific block
     # leans into hill repeats and has no marathon-pace work (D-041).
     hilly: bool = False
+    # A distance the runner aims to cover by the date, not an event: the sheet says GOAL (D-054).
+    goal: bool = False
 
     @property
     def last_day(self) -> dt.date:

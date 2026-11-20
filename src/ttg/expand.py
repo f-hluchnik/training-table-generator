@@ -84,6 +84,8 @@ def expand(season: Season, today: date) -> Plan:
 
     A beginner's plan has only the encouraging C12; its sheet is meant to motivate (owner, S11, D-054).
     """
+    if season.load.beginner:
+        season = beginner.with_a_goal(season, today)  # "just start running": 5 km in 9 weeks
     layout = lay_out(season, today)
     expander_class = _BeginnerExpander if season.load.beginner else _Expander
     expander = expander_class(season, layout, season.paces.resolve())
@@ -198,7 +200,7 @@ class _Expander:
             case WeekKind.DELOAD:
                 # Long C races can have taken the place of every loading long run since the last race.
                 last_km = self._progress.long_run_km or self._first_long_run_km(target)
-                return LongRun(long_run.deload(last_km, easy_run_km))
+                return LongRun(self._deload_long_run(last_km))
             case WeekKind.TAPER:
                 weeks_to_race_week = phase.last_week - number
                 return LongRun(long_run.taper(self._taper_peak(), weeks_to_race_week, easy_run_km))
@@ -307,6 +309,9 @@ class _Expander:
         """An easy run's length now: the floor of a reduced long run, and the recovery's long run."""
         return self.season.load.easy_run_km
 
+    def _deload_long_run(self, last_loading_km: int) -> int:
+        return long_run.deload(last_loading_km, self._easy_run_km())
+
     def _quality_km(self, quality: Session | Race, week_number: int) -> int:
         if isinstance(quality, Race):
             return round_km(quality.distance_km)  # a C race counts (owner, S5)
@@ -374,69 +379,85 @@ class _Expander:
 class _BeginnerExpander(_Expander):
     """The beginner's weeks (TRAINING_MODEL.md §11, D-054); the phases and their kinds are the standard ones.
 
-    Every run but the long run has a slot of its own length (`_slots`, longest first). The week grows
-    by one step, in turn the long run's and the shortest slot's. A quality run takes the shortest
-    slot's place; without one, the slot is an easy run.
+    Every run but the long run has a slot of its own length (`_slots`, longest first). A loading week
+    grows by one step, to the long run or the shortest slot, or holds (`beginner`'s growth rule). The
+    quality run is done inside the shortest slot's run, so it counts that run's km.
     """
 
     def __init__(self, season: Season, layout: Layout, paces: TrainingPaces) -> None:
         super().__init__(season, layout, paces)
         load = season.load
         self._slots = (load.easy_run_km,) * (load.runs_per_week - 1)
-        self._long_run_steps_next = True  # the build's steps alternate, the long run's first
-        self._hills_next = True  # hills and strides alternate in the loading weeks
-        self._hill_sessions = 0
+        self._long_run_weeks_held = 0  # loading weeks at the current long run's distance
+        self._efforts = 0  # fartlek and hill sessions so far, for their rotation
+        self._effort_steps: dict[SessionType, int] = {}  # each type's last step given
         # Each week's slots: as built (for overrides) and as run (regular or reduced).
         self._built_slots: dict[int, tuple[int, ...]] = {}
         self._run_slots: dict[int, tuple[int, ...]] = {}
 
     def _loading_long_run(self, kind: WeekKind, target: Race, tune_up_week: bool) -> LongRun:
         progress = self._progress
-        km = self._first_long_run_km(target) if progress.long_run_km is None else self._step(kind, target)
+        last_km = progress.long_run_km
+        km = self._first_long_run_km(target) if last_km is None else self._step(kind, target, last_km)
+        self._long_run_weeks_held = self._long_run_weeks_held + 1 if km == last_km else 1
         progress.long_run_km = km
         progress.peak_km = max(km, progress.peak_km or 0)
         return LongRun(km)  # no marathon-pace km: a beginner has no MP work
 
-    def _step(self, kind: WeekKind, target: Race) -> int:
-        """One step of growth; returns the long run. The specific block gives every step to the long run."""
-        last_km = self._progress.long_run_km
-        assert last_km is not None  # the first loading week takes no step
+    def _step(self, kind: WeekKind, target: Race, last_km: int) -> int:
+        """One step of growth; returns the long run, which may stay as it was."""
         cap = beginner.long_run_cap(target, self.paces.easy)
-        long_run_first = True
-        if kind is not WeekKind.SPECIFIC:
+        specific = kind is WeekKind.SPECIFIC
+        if not specific:
             cap = round_km(long_run.BUILD_CAP_SHARE * cap)
-            long_run_first = self._long_run_steps_next
-            self._long_run_steps_next = not long_run_first
         longer_km = last_km + beginner.STEP_KM if last_km + beginner.STEP_KM <= cap else None
         longer_slots = beginner.grown(self._slots, beginner.easy_run_cap(target, last_km))
-        if longer_km is not None and (long_run_first or longer_slots is None):
-            return longer_km
-        if longer_slots is not None:
+        long_run_may_grow = specific or beginner.long_run_may_grow(last_km, self._long_run_weeks_held)
+        easy_runs_first = not specific and beginner.easy_runs_catch_up(last_km, min(self._slots))
+        if longer_slots is not None and (easy_runs_first or not long_run_may_grow or longer_km is None):
             self._slots = longer_slots
-        return last_km
+            return last_km
+        return longer_km if longer_km is not None and long_run_may_grow else last_km
+
+    def _deload_long_run(self, last_loading_km: int) -> int:
+        return last_loading_km  # a beginner's deload holds: no step, strides only (§11)
 
     def _easy_and_quality(
         self, kind: WeekKind, number: int, phase: Phase, target: Race, c_race: Race | None, long_km: int
     ) -> tuple[tuple[int, ...], Session | Race]:
-        quality = _quality_beside(c_race, kind) if c_race is not None else self._beginner_quality(kind, number)
-        slots = self._slots if kind.has_regular_easy_runs else beginner.reduced(self._slots)
+        slots = beginner.reduced(self._slots) if kind in beginner.REDUCED_KINDS else self._slots
         self._built_slots[number], self._run_slots[number] = self._slots, slots
-        taken = beginner.RACE_WEEK_RUNS_LEFT_OUT if kind is WeekKind.RACE else int(_takes_a_slot(quality))
-        return slots[: max(1, len(slots) - taken)], quality
+        if c_race is not None:
+            quality: Session | Race = _quality_beside(c_race, kind)
+        else:
+            quality = self._beginner_quality(kind, number, week_km=sum(slots) + long_km)
+        if kind is WeekKind.RACE:
+            kept = max(beginner.MIN_RACE_WEEK_EASY_RUNS, len(slots) - beginner.RACE_WEEK_RUNS_LEFT_OUT)
+            return slots[:kept], quality
+        # The quality run is done in the shortest slot's run; without one, that run is easy.
+        return (slots[:-1] if _takes_a_slot(quality) else slots), quality
 
-    def _beginner_quality(self, kind: WeekKind, number: int) -> Session:
-        if not beginner.has_quality_run(self.season.load.runs_per_week):
-            return no_session()
-        session_type = beginner.quality_type(kind, number, self._hills_next)
-        if kind.is_loading and number >= beginner.HILLS_FROM_WEEK:
-            self._hills_next = not self._hills_next
-        match session_type:
-            case SessionType.HILLS:
-                self._hill_sessions += 1
-                return beginner.hill_session(self._hill_sessions - 1)
-            case SessionType.STRIDES:
-                return strides_session()
-        return no_session()
+    def _beginner_quality(self, kind: WeekKind, number: int, week_km: int) -> Session:
+        match beginner.quality_of(kind, number):
+            case beginner.Quality.NONE:
+                return no_session()
+            case beginner.Quality.EFFORT:
+                session = self._next_effort(beginner.hard_minutes_limit(week_km, self.paces.easy))
+                if session is not None:
+                    return session
+        return strides_session()
+
+    def _next_effort(self, limit_minutes: float) -> Session | None:
+        """Fartlek and hills in turn; None (strides instead) when even the first step is too much."""
+        rotation = beginner.EFFORT_ROTATION
+        session_type = rotation[self._efforts % len(rotation)]
+        self._efforts += 1
+        # One step further than last time, unless the week's limit holds it (it never skips a step).
+        step = beginner.effort_step(session_type, self._effort_steps.get(session_type, -1) + 1, limit_minutes)
+        if step is None:
+            return None
+        self._effort_steps[session_type] = step
+        return beginner.effort_session(session_type, step)
 
     def _overridden_easy_runs(self, week: Week, pattern: EasyRuns) -> tuple[int, ...]:
         """As many easy runs as the week has, from the week's slots as built; reduced as in a reduced week."""
@@ -448,8 +469,8 @@ class _BeginnerExpander(_Expander):
         return self._slots[0]
 
     def _quality_km(self, quality: Session | Race, week_number: int) -> int:
-        """A beginner's strides run is a full easy run: the slot it takes, the week's shortest (§11)."""
-        if isinstance(quality, Session) and quality.type is SessionType.STRIDES:
+        """A beginner's quality run is done inside a run: the shortest slot's (§11)."""
+        if isinstance(quality, Session) and quality.type is not SessionType.NONE:
             return min(self._run_slots[week_number])
         return super()._quality_km(quality, week_number)
 

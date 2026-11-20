@@ -1,28 +1,38 @@
-"""The beginner's rules (TRAINING_MODEL.md §11, D-054): gentle growth, little intensity, no warnings.
+"""The beginner's rules (TRAINING_MODEL.md §11, D-054): gentle growth, gentle intensity, no warnings.
 
-The phase layout, the 3:1 cycle and the long-run reductions (deload, taper, restart) are the
-standard ones; what differs is here: how a week's runs grow, the long-run caps, the easy runs, and
-which quality run a week gets. `ttg.expand` applies them. Pure (D-013).
+The phase layout and the long run's taper and restart are the standard ones; what differs is here: how
+a week's runs grow, the long-run caps, the easy runs, which quality run a week gets, and a plan without
+a race. `ttg.expand` applies them. Pure (D-013).
 
 Studies give novices no progression numbers: a 10 % rule did not prevent injuries [source 21], and
 the evidence on load changes is very limited [source 42]. The numbers follow established beginner
-plans (NHS Couch to 5K, Higdon's novice plans) or are our own defaults, as tagged.
+plans (NHS Couch to 5K, Higdon's novice plans), or are our own defaults fitted to them, as tagged.
 """
 
+import datetime as dt
 from collections.abc import Mapping
+from dataclasses import replace
+from enum import Enum, auto
 from types import MappingProxyType
 
-from ttg.model import Race, RaceType, Session, SessionType, WeekKind
+from ttg.calendar import ONE_WEEK, monday_of, monday_on_or_after
+from ttg.model import Race, RaceType, Season, Session, SessionType, WeekKind
 from ttg.paces import Pace
 from ttg.sessions import round_km
 
 # --- the runs of a week -----------------------------------------------------
 
-# [default, fitted to Higdon] A week grows by 1 km a loading week, in turn the long run's and the
-# shortest easy run's. Higdon's novice 10K adds about 0.8 km a week to the long run [source 35];
-# his novice half adds 1.6 km every other week [source 36]. An absolute step: at 3–10 km a share
-# of the run is not a step in whole km.
+# [default, coach S11] One step of 1 km a loading week, from week 2. Higdon's novice 10K adds about
+# 0.8 km a week to the long run [source 35]. Whole km, as the sheet prints them.
 STEP_KM = 1
+# [default, coach S11] Which run takes the step: first an easy run shorter than half the long run (a
+# 1 km run is too short to be useful); then the long run, once it has held its distance for 2 loading
+# weeks or is 5 km or more, so that a step is at most 20 %; otherwise the shortest easy run. The
+# race-specific block gives every step to the long run. Couch to 5K also holds a stage before the next
+# jump [source 33]; a percentage rule has no evidence for novices [source 21, 41, 42].
+EASY_CATCH_UP_SHARE = 0.5
+LONG_RUN_HOLD_WEEKS = 2
+LONG_RUN_HOLD_BELOW_KM = 5
 
 # [default, fitted to Higdon] Without `easy_run_km`, an easy run is ¾ of the first long run:
 # Higdon's novice plans start with weekday runs of 2.5 mi to a 3 mi long run (10K) and 3 mi to
@@ -37,10 +47,13 @@ EASY_RUN_CAP_KM: Mapping[RaceType, int] = MappingProxyType(
 )
 EASY_RUN_BELOW_LONG_RUN_KM = 1
 
-# [default] A reduced week (deload, taper, race, recovery) takes 1 km off each easy run, but does not
-# shorten a run below 2 km, about a Couch to 5K week-1 session [source 33].
+# [default] A taper, race or recovery week takes 1 km off each easy run, but does not shorten a run
+# below 2 km, about a Couch to 5K week-1 session [source 33]. A beginner's deload only holds: no step,
+# strides instead of fartlek or hills [default, coach S11]; at these distances a 75 % long run would
+# hardly differ from the week before.
 REDUCTION_KM = 1
 MIN_REDUCED_EASY_RUN_KM = 2
+REDUCED_KINDS = (WeekKind.TAPER, WeekKind.RACE, WeekKind.RECOVERY)
 
 # --- the long run -----------------------------------------------------------
 
@@ -56,27 +69,56 @@ LONG_RACE_CAP_MINUTES = 180
 
 # --- the quality run ----------------------------------------------------------
 
-# Higdon's novice plans have no speed work [source 34–37]. Strides come first, then short hills
-# [source 44, 45]; intervals and threshold runs are for later [source 45].
-# [default] No quality run in weeks 1–4; strides from week 5; from week 9 (after a month of
-# strides, source 44 says 2–3 weeks) hill repeats every other loading week, strides in between.
-STRIDES_FROM_WEEK = 5
-HILLS_FROM_WEEK = 9
-# [default] Hill repeats 4 × 1′, one more each time, held at 6 × 1′; walk or jog down.
-HILL_START_REPS = 4
-HILL_MAX_REPS = 6
-HILL_REP_MINUTES = 1
+# Gentle intensity, by effort and never at a pace: strides first, then short hills and fartlek; full
+# interval workouts are not for the start [source 45]. Untrained runners gain from short hard
+# efforts [source 47], and progressing intensity was no riskier than progressing volume in
+# recreational runners [source 48]; the injury signal of hard intervals in novices [source 47] is why
+# they stay short. [default, coach S11] Weeks 1–2: none; from week 3 strides; from week 5 fartlek and
+# hills in turn in the loading weeks (fartlek first), strides in deload, taper and bridge weeks.
+STRIDES_FROM_WEEK = 3
+EFFORTS_FROM_WEEK = 5
+# [default, coach S11] Each type's steps as (reps, minutes each); the recovery lasts as long as the
+# effort (`sessions.EQUAL_RECOVERY_TYPES`). A type stays at its last step.
+EFFORT_STEPS: Mapping[SessionType, tuple[tuple[int, float], ...]] = MappingProxyType(
+    {
+        SessionType.FARTLEK: ((6, 1), (8, 1), (6, 1.5), (5, 2)),
+        SessionType.HILLS: ((6, 0.5), (8, 0.5), (6, 0.75), (6, 1)),
+    }
+)
+EFFORT_ROTATION = (SessionType.FARTLEK, SessionType.HILLS)
+# [default, coach S11] Hard time at most 10 % of the week's running time and at most 10′: about half
+# the hard share of polarised training in trained runners [source 49]. A step that would pass it is
+# not taken; when even the first is too much, the week has strides.
+MAX_HARD_SHARE_OF_WEEK = 0.10
+MAX_HARD_MINUTES = 10
 
-# With fewer runs a week there is no quality run: a beginner keeps the long run first (owner, S11).
-MIN_RUNS_FOR_A_QUALITY_RUN = 3
-
-# [default, coach S11] Rest before the race: the race week has no quality run and one easy run fewer,
-# as in Higdon's novice race weeks [source 35, 36].
+# [default, coach S11] Rest before the race or goal: the race week has no quality run and one easy
+# run fewer, as in Higdon's novice race weeks [source 35, 36], but always one run besides the race.
 RACE_WEEK_RUNS_LEFT_OUT = 1
+MIN_RACE_WEEK_EASY_RUNS = 1
+
+# --- a plan without a race ----------------------------------------------------
+
+# [default, coach S11] "Just start running": 9 weeks towards 5 km, the length and the end of Couch to 5K
+# [source 33], printed as a goal.
+NO_GOAL_WEEKS = 9
+NO_GOAL_KM = 5.0
+NO_GOAL_NAME = "5 km"
 
 
 def default_easy_run_km(long_run_km: int) -> int:
     return max(MIN_DEFAULT_EASY_RUN_KM, round_km(DEFAULT_EASY_SHARE_OF_LONG_RUN * long_run_km))
+
+
+def with_a_goal(season: Season, today: dt.date) -> Season:
+    """The season, with a goal of 5 km at the end of 9 weeks (or of `weeks`) when it has no race."""
+    if season.races:
+        return season
+    first_monday = monday_of(season.start) if season.start is not None else monday_on_or_after(today)
+    weeks = season.weeks or NO_GOAL_WEEKS
+    goal_day = first_monday + weeks * ONE_WEEK - dt.timedelta(days=1)
+    goal = Race(NO_GOAL_NAME, goal_day, NO_GOAL_KM, goal=True)
+    return replace(season, races=(goal,), start=first_monday, weeks=None)
 
 
 def long_run_cap(race: Race, easy: Pace) -> int:
@@ -94,6 +136,15 @@ def easy_run_cap(race: Race, long_run_km: int) -> int:
     return min(EASY_RUN_CAP_KM[race.type], long_run_km - EASY_RUN_BELOW_LONG_RUN_KM)
 
 
+def easy_runs_catch_up(long_run_km: int, shortest_easy_km: int) -> bool:
+    return shortest_easy_km < EASY_CATCH_UP_SHARE * long_run_km
+
+
+def long_run_may_grow(long_run_km: int, weeks_held: int) -> bool:
+    """Below 5 km the long run holds each distance for 2 loading weeks (rule above)."""
+    return weeks_held >= LONG_RUN_HOLD_WEEKS or long_run_km >= LONG_RUN_HOLD_BELOW_KM
+
+
 def reduced(easy_kms: tuple[int, ...]) -> tuple[int, ...]:
     """A reduced week's easy runs: each 1 km shorter, but not below 2 km by the cut."""
     return tuple(max(km - REDUCTION_KM, min(km, MIN_REDUCED_EASY_RUN_KM)) for km in easy_kms)
@@ -109,20 +160,34 @@ def grown(easy_kms: tuple[int, ...], cap_km: int) -> tuple[int, ...] | None:
     return tuple(sorted(runs, reverse=True))
 
 
-def has_quality_run(runs_per_week: int) -> bool:
-    return runs_per_week >= MIN_RUNS_FOR_A_QUALITY_RUN
+class Quality(Enum):
+    """What kind of quality run a beginner's week has."""
+
+    NONE = auto()
+    STRIDES = auto()
+    EFFORT = auto()  # fartlek or hills, in turn (`EFFORT_ROTATION`)
 
 
-def quality_type(kind: WeekKind, number: int, hill_week: bool) -> SessionType:
-    """The kind of quality run a week gets; `hill_week` alternates in the loading weeks."""
+def quality_of(kind: WeekKind, number: int) -> Quality:
     if kind in (WeekKind.RACE, WeekKind.RECOVERY) or number < STRIDES_FROM_WEEK:
-        return SessionType.NONE
-    if kind.is_loading and number >= HILLS_FROM_WEEK and hill_week:
-        return SessionType.HILLS
-    return SessionType.STRIDES
+        return Quality.NONE
+    if kind.is_loading and number >= EFFORTS_FROM_WEEK:
+        return Quality.EFFORT
+    return Quality.STRIDES
 
 
-def hill_session(occurrence: int) -> Session:
-    """The `occurrence`-th (from 0) beginner hill session: 4 × 1′, 5 × 1′, then 6 × 1′."""
-    reps = min(HILL_START_REPS + occurrence, HILL_MAX_REPS)
-    return Session(SessionType.HILLS, reps=reps, minutes=HILL_REP_MINUTES)
+def hard_minutes_limit(week_km: int, easy: Pace) -> float:
+    week_minutes = week_km * easy.seconds_per_km / 60
+    return min(MAX_HARD_MINUTES, MAX_HARD_SHARE_OF_WEEK * week_minutes)
+
+
+def effort_step(session_type: SessionType, highest: int, limit_minutes: float) -> int | None:
+    """The highest step up to `highest` within the week's limit of hard minutes; None if none is."""
+    steps = EFFORT_STEPS[session_type][: highest + 1]
+    within = [index for index, (reps, minutes) in enumerate(steps) if reps * minutes <= limit_minutes]
+    return within[-1] if within else None
+
+
+def effort_session(session_type: SessionType, step: int) -> Session:
+    reps, minutes = EFFORT_STEPS[session_type][step]
+    return Session(session_type, reps=reps, minutes=minutes)

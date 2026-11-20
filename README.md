@@ -142,12 +142,13 @@ The season file is a [TOML](https://toml.io) file. Required: at least one race, 
 | `specific_weeks` | whole number ≥ 0 | by race type | The race-specific block. |
 | `recovery_weeks` | whole number ≥ 0 | by race type | Recovery after the race. |
 | `hilly` | `true`, `false` | `false` | A course where climbs, not a steady pace, decide the effort (trail, mountain): its race-specific block leans into hill repeats. |
+| `goal` | `true`, `false` | `false` | A distance you aim to cover by the date, not an event: printed `GOAL 10 km` instead of `RACE 10 km`. |
 | `[paces] race_result` | `{ distance_km, time }` | required, except for a beginner | A recent race; `time` is `"h:mm:ss"` or `"m:ss"`. All paces derive from it. No race yet? Run 5 km as fast as you comfortably can and use that. |
 | `[paces] easy`, `mp`, `threshold`, `interval` | `"m:ss"` per km | derived | Override a derived pace; `mp` is the place for a goal pace. |
-| `[load] beginner` | `true`, `false` | `false` | Build up gently: about 1 km more a week, strides and short hills only, no warnings (`docs/TRAINING_MODEL.md` §11). Makes `race_result` and `easy_run_km` optional. |
+| `[load] beginner` | `true`, `false` | `false` | Build up gently: about 1 km more a week, gentle intensity by effort (strides, fartlek, short hills, inside a run), no warnings (`docs/TRAINING_MODEL.md` §11). Makes `race_result`, `easy_run_km` and the race itself optional; without a race the plan works towards 5 km in 9 weeks. |
 | `[load] easy_run_km` | whole number ≥ 1 | required, except for a beginner | The length of an easy run. A beginner's easy runs grow, from ¾ of the long run if not given. |
 | `[load] long_run_km` | whole number ≥ 1 | required | The long run of the first week. |
-| `[load] runs_per_week` | 3–6; a beginner 2–4 | 4; a beginner 3 | Always one quality run and one long run; the rest are easy runs. A beginner with 2 runs has no quality run. |
+| `[load] runs_per_week` | 3–6; a beginner 2–4 | 4; a beginner 3 | Always one quality run and one long run; the rest are easy runs. A beginner with 2 runs does the quality run inside the short run. |
 
 The phase lengths and `hilly = true` are not allowed on a C race, because a C race has no phases of its own.
 

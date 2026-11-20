@@ -39,6 +39,7 @@ const ROW_FIELDS = {
     "specific_weeks",
     "recovery_weeks",
     "hilly",
+    "goal",
   ],
   override: ["week", "easy", "quality.type", "quality.reps", "quality.minutes", "quality.km", "long_run_km", "note"],
 };
