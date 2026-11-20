@@ -186,6 +186,14 @@ Default: A.
 - **The sheet:** a beginner's legend lists ER, S, F, H and LR (and I, T or MP only where an override puts one on the sheet); F appears in a regular legend only when an override uses it. Reps under a minute print in seconds, `H: 6×30″`, `F: 6×1′30″`. `plan.json` keeps its schema (6).
 - *Not taken:* minutes instead of km on a beginner's sheet (a new unit through the whole tool; the walk breaks are the safety valve instead); a time trial in week 1; dropping the long run for intensity when there is a distance goal; no automatic move to the standard mode.
 
+### D-055 A short form, the level first — Agreed (owner, S11)
+*Owner, S11:* the form is overwhelming at first sight; paginate it or hide what is not required. The owner chose the short form with one fold over pages (pages would add steps to every edit for the runners who customise most).
+- **First sight:** the level ("new to running" / "I train regularly", D-054), the race's date and distance and whether it is a goal of one's own, the long run, the easy run and the runs a week, the recent race.
+- **No race needed** (owner, S11): the section is *Your race or goal*; every race can be removed, and the hint says that a beginner without one gets 5 km in 9 weeks. A form saved without races is restored without them. The hints say what a beginner may leave empty, and what to do without a race (run 5 km alone and enter the time).
+- **One fold, *More options*:** start date or length, single-week changes, the sheet's title and rules. A race's name, priority and the rest are in the race's own fold. A race without a name is named as its row ("Race 1", "Závod 1"), a goal by its distance ("10 km"); the parser still requires a name, the page fills it.
+- **A level left open is decided by the generator** (`ttg.web`), so the rule stays in Python: the beginner's when there is no race, no race time, or when the regular plan would give C11; otherwise the regular one. The page then shows the level chosen. *Owner, S11:* the choice on the form, pre-selected by the inputs; it is set when the sheet is made, not while typing, so the radio buttons never change under the visitor's hand. The race result and the easy run are required in the browser only when "I train regularly" is chosen.
+- `generate_json` returns `beginner` beside the plan and the season file.
+
 ## Open questions (need the owner)
 
 - **Q-1** *Answered:* Python 3.11 and 3.12 available; work in a virtual environment → D-011.

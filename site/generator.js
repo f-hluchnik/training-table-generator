@@ -26,8 +26,10 @@ const FIELDS = [
   "load.long_run_km",
   "load.runs_per_week",
 ];
-// A beginner needs neither a race result nor an easy run's length (D-054).
-const OPTIONAL_FOR_BEGINNERS = ["paces.race_result.distance_km", "paces.race_result.time", "load.easy_run_km"];
+// What only a runner who trains regularly must give (D-054). With the level left open the generator
+// decides it (`ttg.web`), so these are required only when "I train regularly" is chosen.
+const REQUIRED_WHEN_REGULAR = ["paces.race_result.distance_km", "paces.race_result.time", "load.easy_run_km"];
+const LEVEL = "load.beginner";
 const ROW_FIELDS = {
   race: [
     "name",
@@ -82,9 +84,19 @@ function lookup(object, path) {
 }
 
 const control = (scope, name) => scope.querySelector(`[name="${name}"]`);
-const read = (input) => (input.type === "checkbox" ? input.checked : input.value);
+// A pair of radio buttons is a yes or no, or null while neither is chosen.
+const radios = (input) => input.form.querySelectorAll(`[name="${input.name}"]`);
+function read(input) {
+  if (input.type === "checkbox") return input.checked;
+  if (input.type === "radio") {
+    const chosen = [...radios(input)].find((radio) => radio.checked);
+    return chosen ? chosen.value === "true" : null;
+  }
+  return input.value;
+}
 function write(input, value) {
   if (input.type === "checkbox") input.checked = value === true;
+  else if (input.type === "radio") for (const radio of radios(input)) radio.checked = radio.value === String(value);
   else input.value = typeof value === "string" ? value : "";
 }
 
@@ -106,7 +118,8 @@ function restore(values) {
       syncRow(row);
     }
   }
-  if (!rows("race").length) addRow("race");
+  // A new form starts with one race; a form saved without any stays so ("just start running").
+  if (!values.race) addRow("race");
   syncLevel();
   openFilledFolds();
 }
@@ -148,8 +161,8 @@ function addRow(kind) {
 function numberRows(kind) {
   rows(kind).forEach((row, index) => {
     row.querySelector(".row-title").textContent = text[kind].replace("{n}", index + 1);
-    // A season needs a race: the only one cannot be removed.
-    row.querySelector(".remove-row").hidden = kind === "race" && rows(kind).length === 1;
+    // Every race can be removed: a beginner needs none (D-054).
+    row.querySelector(".remove-row").hidden = false;
   });
 }
 
@@ -176,8 +189,19 @@ function syncRow(row) {
 }
 
 function syncLevel() {
-  const beginner = control(form, "load.beginner").checked;
-  for (const name of OPTIONAL_FOR_BEGINNERS) control(form, name).required = !beginner;
+  const regular = read(control(form, LEVEL)) === false;
+  for (const name of REQUIRED_WHEN_REGULAR) control(form, name).required = regular;
+}
+
+// A race needs a name for the list under the table: an unnamed goal is called by its distance, an
+// unnamed race as its row is.
+function defaultName(entry, index) {
+  return entry.goal && entry.distance_km.trim() ? `${entry.distance_km.trim()} km` : text.race.replace("{n}", index + 1);
+}
+
+function withRaceNames(values) {
+  const race = values.race.map((entry, index) => ({ ...entry, name: entry.name.trim() || defaultName(entry, index) }));
+  return { ...values, race };
 }
 
 form.addEventListener("change", (event) => {
@@ -374,11 +398,13 @@ form.addEventListener("submit", async (event) => {
   const submit = form.querySelector('button[type="submit"]');
   submit.disabled = true;
   try {
-    const values = collect();
-    const reply = await generate(values);
+    const reply = await generate(withRaceNames(collect()));
     if (reply.error) showProblem(reply.error);
     else {
-      save(values);
+      // The level the plan was made for, also when the generator chose it.
+      write(control(form, LEVEL), reply.beginner);
+      syncLevel();
+      save(collect());
       showResult(reply);
     }
   } catch (error) {

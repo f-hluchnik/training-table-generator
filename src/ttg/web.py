@@ -18,7 +18,7 @@ from ttg.beginner import with_a_goal
 from ttg.calendar import plan_calendar
 from ttg.expand import expand
 from ttg.export import export
-from ttg.model import Season, SeasonError
+from ttg.model import Season, SeasonError, WarningCode
 from ttg.spec import parse_season
 
 # Reads one typed value from the text of a form field; the second argument is the field's path, for errors.
@@ -36,16 +36,41 @@ _TOML_DEL = "\x7f"  # a control character that TOML requires escaped and `json.d
 class Generated:
     plan: dict[str, Any]
     season_toml: str
+    beginner: bool  # the level the plan was built for, chosen or suggested (D-054)
 
 
 def generate(form: Mapping[str, Any], today: dt.date) -> Generated:
     """Build the plan for a filled-in form. Raises `SeasonError` for an invalid form."""
+    form = _with_level(form, today)
     data = season_data(form)
     season = parse_season(data)
     if season.load.beginner:
         season = with_a_goal(season, today)
     _check_length(season, today)
-    return Generated(plan=export(expand(season, today)), season_toml=season_toml(data))
+    return Generated(plan=export(expand(season, today)), season_toml=season_toml(data), beginner=season.load.beginner)
+
+
+def _with_level(form: Mapping[str, Any], today: dt.date) -> Mapping[str, Any]:
+    """The form with its level: the visitor's choice, or the beginner's when the visitor left it open
+    and gave no race, no race time, or a first long run below where plans for the race start (C11, D-054)."""
+    load = form.get("load", {})
+    if load.get("beginner") in (True, False):
+        return form
+    return {**form, "load": {**load, "beginner": _suggests_beginner(form, today)}}
+
+
+def _suggests_beginner(form: Mapping[str, Any], today: dt.date) -> bool:
+    result = form.get("paces", {}).get("race_result", {})
+    if not form.get("race") or not any(_field(result, key) for key in ("distance_km", "time")):
+        return True
+    standard = {**form, "load": {**form.get("load", {}), "beginner": False}}
+    try:
+        season = parse_season(season_data(standard))
+        _check_length(season, today)
+    except SeasonError:
+        return False  # the standard form's own error is the one to show
+    warnings = expand(season, today).warnings
+    return any(warning.code is WarningCode.BELOW_STARTING_LEVEL for warning in warnings)
 
 
 def _check_length(season: Season, today: dt.date) -> None:
@@ -60,12 +85,13 @@ def _check_length(season: Season, today: dt.date) -> None:
 
 
 def generate_json(form_json: str, today: str) -> str:
-    """`generate` for the page: a JSON form and an ISO date in, `{"plan", "season_toml"}` or `{"error"}` out."""
+    """`generate` for the page: a JSON form and an ISO date in, `{"plan", "season_toml", "beginner"}` or
+    `{"error"}` out."""
     try:
         generated = generate(json.loads(form_json), dt.date.fromisoformat(today))
     except SeasonError as error:
         return json.dumps({"error": str(error)})
-    return json.dumps({"plan": generated.plan, "season_toml": generated.season_toml})
+    return json.dumps({"plan": generated.plan, "season_toml": generated.season_toml, "beginner": generated.beginner})
 
 
 # --- form → season file ------------------------------------------------------

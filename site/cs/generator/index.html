@@ -36,9 +36,7 @@
             nebo si odnést soubor sezóny pro <a href="../#make">nástroj v&nbsp;příkazové řádce</a>. Nic, co
             napíšete, se nikam neposílá.
           </p>
-          <p class="needs">
-            Stačí znát termíny svých závodů, čas z&nbsp;jednoho nedávného závodu a délku svých obvyklých běhů.
-          </p>
+          <p class="needs">Stačí znát datum závodu a kolik teď naběháte.</p>
         </div>
 
         <form
@@ -48,33 +46,76 @@
           data-reference="../"
         >
           <fieldset>
-            <legend>Vaše závody</legend>
+            <legend>Jak teď běháte?</legend>
+            <div class="choices">
+              <label class="choice">
+                <input name="load.beginner" type="radio" value="true" />
+                <span>
+                  <strong>S&nbsp;běháním začínám</strong>, nebo s&nbsp;touto tratí. Pozvolný plán: každý týden
+                  zhruba o&nbsp;kilometr víc, jen rovinky a krátké kopce, chůze je v&nbsp;pořádku.
+                </span>
+              </label>
+              <label class="choice">
+                <input name="load.beginner" type="radio" value="false" />
+                <span>
+                  <strong>Trénuji pravidelně.</strong> Intervaly, prahové tempo a závodní tempo podle toho, co
+                  závod potřebuje.
+                </span>
+              </label>
+            </div>
             <p class="hint">
-              Každý závod, ke kterému má plán směřovat. Stačí jeden hlavní závod; ostatní přidejte jako přípravné.
+              Nevíte? Nechte to být: plán bude pozvolný, když je váš dlouhý běh krátký nebo nezadáte čas ze závodu.
             </p>
+          </fieldset>
+
+          <fieldset>
+            <legend>Váš závod nebo cíl</legend>
+            <p class="hint">Závod, nebo vlastní cíl, třeba 10&nbsp;km do určitého data. Začínáte a cíl zatím nemáte? Odeberte ho: plán vás pak za 9 týdnů dovede k&nbsp;5&nbsp;km.</p>
             <div class="rows" id="races"></div>
-            <button class="add" type="button" data-add="race">Přidat závod</button>
+            <button class="add" type="button" data-add="race">Přidat další závod</button>
+          </fieldset>
+
+          <fieldset>
+            <legend>Kolik teď běháte</legend>
+            <div class="grid">
+              <label class="field">
+                <span>Dlouhý běh, km</span>
+                <input name="load.long_run_km" type="text" inputmode="numeric" placeholder="15" required />
+                <small>Váš nejdelší běh v&nbsp;poslední době; chůze se počítá.</small>
+              </label>
+              <label class="field">
+                <span>Lehký běh, km</span>
+                <input name="load.easy_run_km" type="text" inputmode="numeric" placeholder="12" required />
+                <small>Jeden z&nbsp;vašich obvyklých kratších běhů. Začínáte? Můžete nechat prázdné.</small>
+              </label>
+              <label class="field">
+                <span>Běhů týdně</span>
+                <input name="load.runs_per_week" type="text" inputmode="numeric" placeholder="4" />
+                <small>Prázdné znamená 4, nebo 3, když začínáte (2 až 4).</small>
+              </label>
+            </div>
           </fieldset>
 
           <fieldset>
             <legend>Nedávný závod</legend>
             <p class="hint">
-              Podle něj se spočítají všechna vaše tempa. Použijte závod, který jste nedávno běželi, na libovolnou
-              vzdálenost.
+              Podle něj se spočítají vaše tempa. Ještě jste nezávodili? Uběhněte sami 5&nbsp;km tak rychle, jak to
+              v&nbsp;pohodě jde, a zadejte ten čas. Začínáte? Nechte prázdné a běhejte tempem, při kterém se dá
+              mluvit.
             </p>
             <div class="grid">
               <label class="field">
                 <span>Vzdálenost, km</span>
-                <input name="paces.race_result.distance_km" type="text" inputmode="decimal" placeholder="42,195" required />
+                <input name="paces.race_result.distance_km" type="text" inputmode="decimal" placeholder="5" required />
               </label>
               <label class="field">
                 <span>Čas</span>
-                <input name="paces.race_result.time" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="3:30:02" required />
-                <small>Hodiny, minuty, sekundy; nebo minuty a sekundy.</small>
+                <input name="paces.race_result.time" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="27:30" required />
+                <small>Minuty a sekundy, nebo hodiny, minuty, sekundy.</small>
               </label>
             </div>
             <details class="fold" data-fold>
-              <summary>Nastavit tempa ručně (nepovinné)</summary>
+              <summary>Nastavit tempa ručně</summary>
               <p class="hint">
                 Tempo, které zadáte, nahradí to spočítané ze závodu; v&nbsp;minutách a sekundách na kilometr. Do
                 maratonského tempa patří cílové tempo.
@@ -100,36 +141,11 @@
             </details>
           </fieldset>
 
-          <fieldset>
-            <legend>Kolik teď běháte</legend>
-            <div class="grid">
-              <label class="field wide check">
-                <input name="load.beginner" type="checkbox" />
-                <span>S&nbsp;běháním nebo s&nbsp;touto tratí začínám: přidávat pozvolna</span>
-              </label>
-              <label class="field">
-                <span>Lehký běh, km</span>
-                <input name="load.easy_run_km" type="text" inputmode="numeric" placeholder="12" required />
-                <small>Délka jednoho lehkého běhu. Po celou sezónu zůstává stejná.</small>
-              </label>
-              <label class="field">
-                <span>Dlouhý běh, km</span>
-                <input name="load.long_run_km" type="text" inputmode="numeric" placeholder="15" required />
-                <small>Dlouhý běh prvního týdne.</small>
-              </label>
-              <label class="field">
-                <span>Běhů týdně</span>
-                <input name="load.runs_per_week" type="text" inputmode="numeric" placeholder="4" />
-                <small>Od 3 do 6. Jeden je trénink intenzity, jeden dlouhý běh, ostatní lehké. Prázdné znamená 4.</small>
-              </label>
-            </div>
-          </fieldset>
+          <details class="fold more" data-fold>
+            <summary>Další možnosti: začátek plánu, jednotlivé týdny, texty tabulky</summary>
 
-          <fieldset>
-            <legend>Kdy to začíná</legend>
-            <p class="hint">
-              Zadejte datum začátku nebo délku, nebo nic: pak plán začne v&nbsp;příštím pondělí.
-            </p>
+            <h3>Kdy to začíná</h3>
+            <p class="hint">Prázdné: plán začne v&nbsp;příštím pondělí.</p>
             <div class="grid">
               <label class="field">
                 <span>Datum začátku</span>
@@ -142,34 +158,28 @@
                 <small>Plán končí týdnem vašeho posledního závodu.</small>
               </label>
             </div>
-          </fieldset>
 
-          <fieldset>
-            <legend>Úpravy a doplňky</legend>
-            <details class="fold" data-fold>
-              <summary>Upravit jednotlivé týdny (nepovinné)</summary>
-              <p class="hint">
-                Úprava se týká jen svého týdne; týdny po ní se počítají dál podle pravidel. Týden se závodem si
-                závod ponechá.
-              </p>
-              <div class="rows" id="overrides"></div>
-              <button class="add" type="button" data-add="override">Přidat úpravu</button>
-            </details>
-            <details class="fold" data-fold>
-              <summary>Název a pravidla tabulky (nepovinné)</summary>
-              <div class="grid">
-                <label class="field wide">
-                  <span>Název</span>
-                  <input name="sheet.title" type="text" placeholder="training plan" />
-                </label>
-                <label class="field wide">
-                  <span>Pravidla pod tabulkou</span>
-                  <textarea name="sheet.rules" rows="3"></textarea>
-                  <small>Jedno pravidlo na řádek. Prázdné znamená obvyklá dvě, o tom, čeho se vzdát nejdřív.</small>
-                </label>
-              </div>
-            </details>
-          </fieldset>
+            <h3>Upravit jednotlivé týdny</h3>
+            <p class="hint">
+              Úprava se týká jen svého týdne; týdny po ní se počítají dál podle pravidel. Týden se závodem si
+              závod ponechá.
+            </p>
+            <div class="rows" id="overrides"></div>
+            <button class="add" type="button" data-add="override">Přidat úpravu</button>
+
+            <h3>Název a pravidla tabulky</h3>
+            <div class="grid">
+              <label class="field wide">
+                <span>Název</span>
+                <input name="sheet.title" type="text" placeholder="training plan" />
+              </label>
+              <label class="field wide">
+                <span>Pravidla pod tabulkou</span>
+                <textarea name="sheet.rules" rows="3"></textarea>
+                <small>Jedno pravidlo na řádek. Prázdné znamená obvyklá pravidla.</small>
+              </label>
+            </div>
+          </details>
 
           <div class="submit">
             <button type="submit">Sestavit tabulku</button>
@@ -184,37 +194,41 @@
               <button class="remove-row" type="button">Odebrat</button>
             </div>
             <div class="grid">
-              <label class="field wide">
-                <span>Název</span>
-                <input name="name" type="text" placeholder="Pražský maraton" required />
-              </label>
               <label class="field">
                 <span>Datum</span>
                 <input name="date" type="date" required />
-                <small>Den závodu, nebo první den závodu o&nbsp;více dnech.</small>
               </label>
               <label class="field">
                 <span>Vzdálenost, km</span>
-                <input name="distance_km" type="text" inputmode="decimal" placeholder="42,195" required />
-                <small>Do 10&nbsp;km, půlmaraton, maraton, nebo delší, což se počítá jako ultra.</small>
+                <input name="distance_km" type="text" inputmode="decimal" placeholder="10" required />
+                <small>Půlmaraton je 21,1, maraton 42,2.</small>
               </label>
-              <label class="field">
-                <span>Priorita</span>
-                <select name="priority">
-                  <option value="A">A: hlavní závod</option>
-                  <option value="B">B: důležitý závod, kratší vyladění</option>
-                  <option value="C">C: přípravný závod zařazený do tréninku</option>
-                </select>
-                <small>A a B mají vlastní vyladění a zotavení.</small>
+              <label class="field wide check">
+                <input name="goal" type="checkbox" />
+                <span>Vlastní cíl (třeba 10&nbsp;km do tohoto dne), ne závod</span>
               </label>
             </div>
             <details class="fold">
               <summary>Víc o tomto závodu</summary>
               <div class="grid">
+                <label class="field wide">
+                  <span>Název</span>
+                  <input name="name" type="text" placeholder="Pražský maraton" />
+                  <small>Pro seznam pod tabulkou. Prázdné: jeho číslo, jako výše.</small>
+                </label>
+                <label class="field">
+                  <span>Priorita</span>
+                  <select name="priority">
+                    <option value="A">A: hlavní závod</option>
+                    <option value="B">B: důležitý závod, kratší vyladění</option>
+                    <option value="C">C: přípravný závod zařazený do tréninku</option>
+                  </select>
+                  <small>A a B mají vlastní vyladění a zotavení.</small>
+                </label>
                 <label class="field">
                   <span>Poslední den</span>
                   <input name="end" type="date" />
-                  <small>U závodu o&nbsp;více dnech.</small>
+                  <small>U&nbsp;závodu o&nbsp;více dnech.</small>
                 </label>
                 <label class="field">
                   <span>Vyladění, týdny</span>
@@ -234,10 +248,6 @@
                 <label class="field wide check">
                   <input name="hilly" type="checkbox" />
                   <span>Kopcovitá trať: o&nbsp;úsilí rozhodují stoupání, ne stálé tempo (trail, hory)</span>
-                </label>
-                <label class="field wide check">
-                  <input name="goal" type="checkbox" />
-                  <span>Vlastní cíl (třeba 10&nbsp;km do tohoto dne), ne závod</span>
                 </label>
               </div>
               <p class="hint">
