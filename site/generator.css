@@ -302,6 +302,8 @@
     margin: 0;
   }
   .sheet-scroll {
+    width: auto;
+    margin: 0;
     padding: 0;
     overflow: visible;
   }

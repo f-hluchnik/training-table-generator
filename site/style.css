@@ -109,9 +109,12 @@
 
   --measure: 36rem;
   --gutter: clamp(1.25rem, 5vw, 4.5rem);
-  /* The page's width: the example sheet's (about 70.7rem) with a little air. The text keeps its
-     measure inside it, so text and sheet share one left edge (T-30). */
-  --page: 72rem;
+  /* The column, centred on the screen: as wide as its widest content, the generator's form and the
+     example's first weeks (about 42rem). The text keeps its measure inside it (T-30). */
+  --page: 44rem;
+  /* A whole sheet is wider than the column: it gets up to this much, centred on the column. */
+  --wide: 80rem;
+  --wide-width: min(var(--wide), 100vw - 2 * var(--gutter));
 }
 
 *,
@@ -210,6 +213,9 @@ h1 {
 }
 .sheet-scroll {
   overflow-x: auto;
+  /* Wider than the column and centred on it; a sheet wider still scrolls (T-30). */
+  width: var(--wide-width);
+  margin-left: calc((100% - var(--wide-width)) / 2);
   /* The sheet keeps the PDF's proportions and scrolls on narrow screens. */
   padding: 0 0 0.75rem;
 }
@@ -374,7 +380,11 @@ h1 {
 }
 
 .sheet-paper {
-  display: inline-block;
+  width: max-content;
+  margin: 0 auto;
+}
+.sheet-scroll.collapsed .sheet-paper {
+  margin: 0;
 }
 /* The first weeks, as wide as the text: the calendar and the sessions; the kilometre gauge comes
    with the whole season (T-30). */
@@ -382,6 +392,8 @@ h1 {
   display: none;
 }
 .sheet-scroll.collapsed {
+  width: auto;
+  margin-left: 0;
   max-height: var(--collapsed-height);
   overflow-y: hidden;
   -webkit-mask-image: linear-gradient(to bottom, #000 calc(100% - 2.5rem), transparent);
@@ -390,6 +402,8 @@ h1 {
 
 /* The sheet's footer: codes and dates in the mono, words in the serif, a thin rule between. */
 .sheet-footer {
+  /* As wide as the table above it: its own text never widens the sheet (T-30). */
+  contain: inline-size;
   padding: 0.9rem 0 0;
   font-size: 0.8125rem;
   line-height: 1.5;
