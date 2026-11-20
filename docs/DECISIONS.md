@@ -169,6 +169,14 @@ Default: A.
 - **Not done:** Pyodide still comes from jsDelivr with no subresource integrity (a worker's dynamic `import()` cannot carry it). Serving Pyodide from the site (an npm tarball with its sha512 pinned in the workflow) would remove the third party and allow a stricter policy, at the cost of about 10 MB in the deployed site; it is the owner's call, offered as a follow-up.
 - **Verified (S10, headless Chrome with the Pyodide files from npm):** the 1900 typo is refused in 0.09 s; a forced runaway build was stopped at 10.5 s, the page stayed responsive and the next build succeeded; both pages build, take a click and download the season file under the policy with no console violations. **Not verified:** the same on the live page (jsDelivr and Pages are unreachable from the sandbox), Safari, Firefox.
 
+### D-054 On the landing page the text is a centred column and the example sheet, wider than it, is centred too — Agreed (owner, S10)
+*Owner, S10:* "the website looks strange on desktop. The table is wider than the text. I think we should either put the text boxes to center or spread it." Then: it was the main page; the generator's form was fine as it was. On a wide screen the landing page's text sat at the left in a 36 rem column, while the example sheet is about 70 rem wide, so it stuck out to the right.
+- **Centre, not spread.** Prose kept to a readable line length gains nothing from being stretched; the sheet is the one wide thing. Under `.landing`, `main` and the example (`.sheet-figure`) are a three-track grid (free, `--measure`, free); text and captions take the middle track, the sheet takes all three and centres itself. The masthead stays at the edges; the colophon is centred on the same axis. The class is on the `.page` of both languages.
+- **The generator page is unchanged** (left-aligned, as the owner wanted). Its sheet is still wider than its form, and its footer text still stretches the sheet to the page width; neither was asked about.
+- **Narrow screens are as before.** Below about 75 rem the sheet scrolls inside its own box from its left edge; the page itself never scrolls sideways.
+- **A bug the centring showed.** On the landing page the sheet's footer text, when the season is expanded, was wider than the table and widened the whole sheet to the page width. It is now as wide as the table and no wider (`width: 0; min-width: 100%`), as in the PDF.
+- **Not verified:** Safari and Firefox; no automated test covers the layout, only the browser check.
+
 ## Open questions (need the owner)
 
 - **Q-1** *Answered:* Python 3.11 and 3.12 available; work in a virtual environment → D-011.
