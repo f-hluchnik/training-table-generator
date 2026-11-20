@@ -295,6 +295,7 @@
     display: none !important;
   }
   .page {
+    max-width: none;
     padding: 0;
   }
   .result {

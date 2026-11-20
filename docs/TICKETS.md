@@ -185,6 +185,9 @@ Checked: tests (`tests/test_beginner.py`; C10, C11 in `tests/test_checks.py`), r
 
 Checked: tests (the level in `tests/test_web.py`), ruff, mypy. In headless Chrome with the Pyodide 314.0.8 files from npm, both languages: no race and an open level builds 9 weeks to `GOAL 5 km` as a beginner, and a reload keeps it without a race; a goal prints `GOAL 10 km` and "10 km (goal)"; an open level with a 3 km long run and no race time builds a beginner's sheet with no warnings and sets the level; "I train regularly" requires the race time; with 1 km / 3 km it shows C10 and C11; a reload keeps the level; no console errors under the policy. The phone view is shorter (2,521 → 2,087 px at 390 px). Not verified: Safari, Firefox, a real iPhone.
 
+### T-30 A centred page — in review
+*Owner, S11:* the whole site is aligned to the left on a desktop, which feels odd. The page is now a block as wide as the example sheet with a little air (`--page: 72rem`; the sheet is about 70.7rem), centred, with the text column flush left inside it: text, masthead and sheet share one left edge, and a wide screen has even margins. Phones are unchanged (the page is wider than their screen). The generator's print layout drops the width (`max-width: none`), as it drops the padding. Checked by eye at 1440 and 1920 px, both pages.
+
 ### Later (not scheduled)
 - **T-12** Elevation for mountain ultras (Q-5). *Evaluated in S7; parked by the owner (Q-7).* The race-type gap it found is covered by T-15 (`hilly`).
 
