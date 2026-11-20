@@ -15,7 +15,7 @@ The tool turns a few inputs into a plan *outline* and automates the tedious, err
 
 ### D-002 Personal tool first, command line first
 The owner is the only known user. A website was nice-to-have, later (D-013 kept the option open). No web framework now.
-*Amended S6 (D-036):* the website is dropped; the tool stays command-line only.
+*Amended S6 (D-036):* the website is dropped; the tool stays command-line only. *Amended S10 (D-052):* the generator also runs in the browser.
 
 ### D-003 Renderer: Typst
 The PDF is rendered by a Typst template from `plan.json`.
@@ -137,7 +137,7 @@ Default: A.
 
 ### D-051 A landing page, not a web app — Agreed (owner, S9)
 *Owner, S9:* a small GitHub Pages page in this repository, in Czech and English, for people who just want to use the generator: purpose, philosophy, usage, less technical than the README.
-- **Not a reversal of D-036.** D-036 dropped running the generator in the browser (Pyodide, a server). This page only explains the command-line tool; the tool stays command-line only. *Amends* D-002 and D-036 in that sense.
+- **Not a reversal of D-036.** D-036 dropped running the generator in the browser (Pyodide, a server). This page only explains the command-line tool; the tool stays command-line only. *Amends* D-002 and D-036 in that sense. *Reversed by D-052 (S10): the generator now runs in the browser, on its own page.*
 - **Where:** `site/`, plain HTML and CSS with a small script, no build step, no dependency. Kept apart from `docs/`, which holds the development documents and should not be published. `site/index.html` (English) and `site/cs/index.html` (Czech), each linking to the other.
 - **The example sheet is real:** the workflow `.github/workflows/pages.yml` builds `seasons/test-2027.toml` into `site/sample/` (git-ignored) on every push to `main`, and the page draws it from that `plan.json`: the first 8 weeks, the whole season on request, with the sheet's footer. The page cannot show a sheet the generator would not print. Visitors can colour days and log km, as on paper; the km are coloured as the author does: green from 80 % of the plan, yellow from 50 %, red below. No PDF download (owner, S9: no point once the whole season shows on the page).
 - **Design:** the sheet's own typefaces (Libertinus Serif, DejaVu Sans Mono, self-hosted under their licences in `site/fonts/`; the mono's Czech letters are a latin-ext subset of DejaVu Sans Mono 2.37, made with fontTools, as Fontsource ships only its latin subset), white paper and black ink, colour only for the runner's markers (green, yellow, blue, red, as on the 2026 sheet).
@@ -145,6 +145,21 @@ Default: A.
 - **Honest about sources (owner, S9):** the rules come from the author's own practice, checked against published coaching guidance; the page says so, gives a real example (the author's threshold pace, about 10 s/km too fast for his race result) and links `docs/TRAINING_MODEL.md`.
 - **Czech terms (owner, S9):** lehký běh (easy run), trénink intenzity (quality run), trénink prahové hodnoty (threshold).
 - **Publishing** needs the owner: Settings → Pages → Source: GitHub Actions (CLAUDE.md §9).
+
+## Session S10 (20 Nov 2026): the generator in the browser (T-24)
+
+### D-052 The generator runs in the browser, under Pyodide — Agreed (owner, S10)
+*Owner, S10:* asked what it would take to generate the table on the website, then chose: the existing Python in the browser (Pyodide), a form in Czech and English with every season-file field, and a printout that may differ slightly from the PDF if that makes it simpler.
+- **A reversal, in part.** D-036 dropped the website and D-051 kept the landing page from running the generator. This brings back the generator in the browser, as route (a) of Q-6 without the Typst WebAssembly part. *Amends* D-002, D-036, D-051 and R-6. The command line stays the tool the sheet is designed for and the only source of the PDF (Typst, D-003).
+- **One copy of the rules.** The page runs the same `ttg` core under Pyodide (Python 3.14 in the pinned Pyodide). A TypeScript port (route b) would keep two copies of the training rules; a server (c) cannot run on GitHub Pages. No new season-file field (CLAUDE.md §3).
+- **`ttg.web` is the entry point** and the only new Python: the form sends the season file's tree with every value as the text typed, `web.generate` types the values (a blank is a missing field; a Czech decimal comma is accepted), hands the tree to `parse_season`, so the same validation and the same messages as for a file, then `expand` and `export`. It returns the plan and the season file written from the tree, which the page offers as a download, so what builds the sheet is exactly what the visitor can take to `ttg build`. It imports no Typst (a test guards that). Tested: the form of `2026.toml` builds `plan-2026.json`, and the file written from it reads back as the 2026 season.
+- **The form** has a control for every season-file field, in `site/generator/` and `site/cs/generator/`; `tests/test_site.py` fails if a field has no control, if the page and `generator.js` disagree on the controls, or if the two languages differ. A message names the field as the season file does (`race[2].date`), and the page marks that field and shows the message at it. Phase lengths and `hilly` are disabled for a C race, repetitions for a session without them: the parser would reject them anyway.
+- **Loading.** The Pages workflow builds the package as a wheel into `site/ttg.whl` (git-ignored). The page unpacks it into Pyodide with `unpackArchive`, with no micropip and no dependency, so only Pyodide's own files come from a CDN. Pyodide is pinned (314.0.8, jsDelivr) and is about 10 MB the first time, cached after. The page starts loading at once.
+- **Privacy.** Nothing the visitor types is sent anywhere. The last form that built is kept in `localStorage`, only to be there next time; the colours tried on the sheet are not kept.
+- **The sheet** is drawn by `site/sheet-render.js`, shared with the landing page's example (D-051), from the same `plan.json` as the PDF.
+- **Print is the browser's:** the sheet's HTML with a print stylesheet, A4 landscape, 8 mm margins, rows sized from the number of weeks like the PDF's (D-028, D-049; the constants are repeated in `generator.js`, adjusted for what the browser's borders add). Differences from the PDF: the type and spacing are the web page's; 40 weeks still fit one page, but a longer plan continues on a second page **without the header and the title** (the PDF repeats the header, D-037), and a printed sheet is always blank. Typst in the browser (WebAssembly) was not tried: a second large download, unverified (Q-6), and the owner accepted a differing printout.
+- **Language.** The errors, the warnings and the sheet's own labels (months, phases, the legend, the rules) come from Python and are English on both pages, as the landing page's example already was. The Czech page leads in Czech, marks the English with `lang="en"` and links each warning code to the Czech reference. Localising the sheet is PLAN §7's open item.
+- **Not verified (S10):** the exact jsDelivr path for this Pyodide version, which the build sandbox cannot reach (the same files from npm were served in its place); the Pages workflow itself; printing on a real printer; Safari and Firefox (checked only in Chrome).
 
 ## Open questions (need the owner)
 
@@ -157,7 +172,7 @@ Default: A.
 - **Q-8** *Answered (owner, S7):* (b), keep the race type by distance. The owner asked for a `hilly` marker that leans into hill repeats, designed by the coach: T-15.
 - **Q-9** *Answered (owner, S7):* an override must not replace a race → D-038.
 - **Q-10** *Answered (owner, S7):* C4 and C5 skip a race in the long run's place → D-039.
-- **Q-6** *Closed by D-036: no website.* Website route, later: (a) the Python core in the browser via Pyodide plus a Typst WebAssembly build, which works as a static site on GitHub Pages; (b) port the core to TypeScript; (c) a small server, which cannot run on GitHub Pages. No decision needed now; D-013 keeps (a) and (b) open. Typst-in-browser is not yet verified.
+- **Q-6** *Closed by D-036: no website. Taken up again in S10: route (a), without the Typst part → D-052.* Website route, later: (a) the Python core in the browser via Pyodide plus a Typst WebAssembly build, which works as a static site on GitHub Pages; (b) port the core to TypeScript; (c) a small server, which cannot run on GitHub Pages. No decision needed now; D-013 keeps (a) and (b) open. Typst-in-browser is not yet verified.
 
 ---
 

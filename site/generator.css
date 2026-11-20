@@ -1,0 +1,295 @@
+/* The generator page (D-052): the form wears the same clothes as the landing page, and the sheet
+   printed from it is laid out like the PDF's (A4 landscape, the rows sized by the number of weeks). */
+
+/* A rule that sets `display` must not defeat the `hidden` attribute. */
+.generator [hidden],
+.result [hidden] {
+  display: none !important;
+}
+
+.generator {
+  max-width: 46rem;
+  margin: clamp(2.5rem, 6vw, 4rem) 0 0;
+}
+.generator fieldset {
+  min-width: 0;
+  margin: 0 0 2.25rem;
+  padding: 0;
+  border: 0;
+  border-top: 1.5px solid var(--ink);
+}
+.generator legend {
+  padding: 0 0.7rem 0 0;
+  font-size: var(--step--1);
+  font-weight: 600;
+  line-height: 1.6;
+}
+.generator legend + .grid {
+  margin-top: 0.8rem;
+}
+.hint {
+  margin: 0.6rem 0 1rem;
+  color: var(--pencil);
+  font-size: var(--step--1);
+  line-height: 1.5;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(11rem, 1fr));
+  gap: 1rem 1.25rem;
+}
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  min-width: 0;
+}
+.field.wide {
+  grid-column: 1 / -1;
+}
+.field > span {
+  font-size: var(--step--1);
+  font-weight: 600;
+}
+.field small {
+  color: var(--pencil);
+  font-size: 0.78rem;
+  line-height: 1.35;
+}
+
+.generator input[type="text"],
+.generator input[type="date"],
+.generator select,
+.generator textarea {
+  width: 100%;
+  padding: 0.4rem 0.5rem;
+  border: 1px solid var(--ink);
+  border-radius: 0;
+  background: var(--paper);
+  color: var(--ink);
+  /* 16 px keeps phones from zooming into a focused field. */
+  font: inherit;
+  font-size: 1rem;
+  line-height: 1.3;
+  font-variant-numeric: lining-nums;
+}
+.generator textarea {
+  resize: vertical;
+}
+.generator input:disabled {
+  border-color: var(--rule);
+  background: var(--band-fill);
+}
+.generator [aria-invalid="true"] {
+  border-color: var(--event);
+  outline: 2px solid var(--event);
+  outline-offset: 1px;
+}
+.field.check {
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 0.6rem;
+}
+.field.check input {
+  flex: none;
+  width: 1.1rem;
+  height: 1.1rem;
+  margin: 0.2rem 0 0;
+  accent-color: var(--ink);
+}
+.field.check span {
+  font-weight: 400;
+}
+
+/* A race, or a week's change: a row of fields with a title, a thin rule between rows. */
+.row {
+  padding: 1.1rem 0 1.3rem;
+  border-top: 1px solid var(--rule);
+}
+.row:first-child {
+  padding-top: 0.4rem;
+  border-top: 0;
+}
+.row-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin: 0 0 0.7rem;
+}
+.generator h3.row-title {
+  margin: 0;
+  font-size: var(--step-0);
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+.fold {
+  margin: 1.1rem 0 0;
+}
+.fold > summary {
+  font-size: var(--step--1);
+  font-weight: 600;
+  cursor: pointer;
+}
+.fold > .grid,
+.fold > .rows {
+  margin-top: 0.9rem;
+}
+
+.generator button,
+.actions button {
+  padding: 0.35rem 0.8rem;
+  border: 1.5px solid var(--ink);
+  border-radius: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font: inherit;
+  font-size: var(--step--1);
+  cursor: pointer;
+}
+.generator button:hover,
+.actions button:hover {
+  background: var(--band-fill);
+}
+.generator .submit button {
+  padding: 0.55rem 1.5rem;
+  background: var(--ink);
+  color: var(--paper);
+  font-size: var(--step-0);
+}
+.generator .submit button:hover {
+  background: #333;
+}
+.generator .remove-row {
+  border-width: 1px;
+  border-color: var(--rule);
+  color: var(--pencil);
+}
+.submit {
+  display: flex;
+  align-items: baseline;
+  gap: 1rem;
+}
+#status {
+  color: var(--pencil);
+  font-size: var(--step--1);
+}
+
+/* ---------------------------------------------------------------- the outcome */
+
+.result {
+  margin: clamp(2.5rem, 6vw, 4rem) 0 0;
+  outline: none;
+}
+.problem,
+.failure,
+.warnings {
+  max-width: var(--measure);
+  margin: 0 0 1.5rem;
+  padding: 0.1rem 0 0.1rem 1rem;
+  border-left: 3px solid var(--ink);
+}
+.problem,
+.failure {
+  border-left-color: var(--event);
+}
+.problem p,
+.failure p,
+.warnings p {
+  margin: 0.5rem 0;
+}
+.warnings ul {
+  margin: 0.5rem 0;
+  padding: 0;
+  list-style: none;
+  font-size: var(--step--1);
+}
+.warnings li {
+  margin: 0 0 0.4rem;
+}
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin: 0 0 1.25rem;
+}
+.sheet-paper h2.sheet-title {
+  margin: 0 0 0.7rem;
+  padding: 0;
+  border: 0;
+  font-size: 1.15rem;
+  font-weight: 400;
+  line-height: 1.2;
+}
+.season-file {
+  max-width: var(--measure);
+  margin: 1.5rem 0 0;
+}
+.season-file > summary {
+  font-size: var(--step--1);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* ---------------------------------------------------------------- on paper */
+
+@page {
+  size: A4 landscape;
+  margin: 8mm;
+}
+
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  .page {
+    padding: 0;
+  }
+  .result {
+    margin: 0;
+  }
+  .sheet-scroll {
+    padding: 0;
+    overflow: visible;
+  }
+  /* Sized by the page script from the number of weeks, like the PDF's rows (D-028, D-049); the
+     widths are in rem, so a smaller root shrinks the sheet to the page. */
+  html {
+    font-size: calc(16px * var(--print-scale, 1));
+  }
+  .sheet-paper h2.sheet-title {
+    font-size: 14pt;
+  }
+  .sheet {
+    font-size: var(--print-font, 8pt);
+  }
+  /* The row's height is the cell's alone: a button or gauge with a height of its own makes the
+     browser split a row across the page break. */
+  .sheet th,
+  .sheet td {
+    height: var(--print-row, 6.4mm);
+    padding-top: 0;
+    padding-bottom: 0;
+    line-height: 1;
+  }
+  .day button,
+  .gauge-track {
+    height: 100%;
+    min-height: 0;
+  }
+  .day button {
+    position: static;
+  }
+  .sheet tr {
+    break-inside: avoid;
+  }
+  /* The colours are the runner's, on paper: a sheet printed from here is blank. */
+  .day button::before,
+  .day button::after {
+    display: none;
+  }
+  .gauge-track span.done {
+    background: none !important;
+  }
+}

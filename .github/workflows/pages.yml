@@ -1,6 +1,7 @@
 name: pages
 
-# Publishes the landing page in site/ with the example sheet built from the current code (D-051).
+# Publishes the landing page and the generator page in site/ (D-051, D-052): the example sheet is built
+# from the current code, and the generator page runs the same code in the browser, from a wheel.
 # Needs Settings → Pages → Source: GitHub Actions, set by the owner.
 on:
   push:
@@ -27,6 +28,8 @@ jobs:
       - run: pip install .
       # The page draws its example sheet from this plan.json.
       - run: ttg build seasons/test-2027.toml -o site/sample
+      # The generator page loads this wheel into Pyodide: the package itself, no dependencies (D-052).
+      - run: pip wheel . --no-deps -w wheel && cp wheel/ttg-*-py3-none-any.whl site/ttg.whl
       - uses: actions/configure-pages@v6
       - uses: actions/upload-pages-artifact@v5
         with:
